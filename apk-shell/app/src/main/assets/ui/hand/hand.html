@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>握手吧？ · 朝歌</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,"PingFang SC","Noto Sans SC",sans-serif;color:var(--ink,var(--ink,#1B3556));
+  background:var(--bg,#F8FBFF);min-height:100vh}
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;
+  padding:16px 16px 8px;background:var(--header-bg,rgba(248,251,255,.9));backdrop-filter:blur(14px)}
+header a{color:var(--sub,var(--sub,#5A7CA5));text-decoration:none;font-size:19px;line-height:1;opacity:.7}
+header b{font-size:15px;letter-spacing:.06em;font-weight:500}
+.hd-en{font:400 10px/1 Georgia,serif;letter-spacing:.24em;color:var(--text-faint,var(--text-faint,#93A9C2));text-transform:lowercase}
+.tabs{display:flex;gap:8px;padding:4px 16px 10px}
+.tabs button{flex:1;border:0;border-radius:999px;padding:9px 0;font-size:12.5px;letter-spacing:.06em;
+  background:var(--card-bg,rgba(255,255,255,.72));color:var(--sub,var(--sub,#4A6B93))}
+.tabs button.on{background:var(--accent,var(--ink,#2F5F9E));color:var(--on-accent,#fff)}
+main{padding:0 16px 40px}
+.sec{font:500 10px/1 -apple-system,sans-serif;letter-spacing:.2em;color:var(--text-faint,var(--text-faint,#93A9C2));padding:14px 4px 8px}
+.row{display:flex;align-items:center;gap:12px;background:var(--card,rgba(255,255,255,.78));
+  border-radius:16px;padding:13px 15px;margin-bottom:9px}
+.row .nm{flex:1;min-width:0}
+.row b{display:block;font-size:14px;font-weight:500}
+.row span{display:block;font-size:11px;color:var(--text-faint,var(--text-faint,#8FA6BE));margin-top:3px}
+.dot{width:8px;height:8px;border-radius:50%;background:#C9D6E5;flex:none}
+.dot.ok{background:#4E9E6A}.dot.bad{background:#C96A6A}
+.tag{font:400 10px/1 Georgia,serif;letter-spacing:.1em;color:var(--accent,var(--ink,#2F5F9E));background:var(--accent-soft,var(--line,#E7F0FB));
+  border-radius:999px;padding:5px 9px;flex:none}
+.tag.warn{color:#9A6B2F;background:#FBF0DF}
+.tag.new{color:#3F7A5C;background:#E7F5EC}
+.hint{font-size:11.5px;color:var(--text-soft,var(--text-faint,#93A9C2));padding:0 4px 10px;line-height:1.7}
+</style>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<header><a href="../home/home.html">←</a><b>握手吧？</b><span class="hd-en">shake hands</span></header>
+<div class="tabs">
+  <button id="t1" class="on">工作流 · 包</button>
+  <button id="t2">权限</button>
+  <button id="t3">皮肤</button>
+</div>
+<main>
+  <div id="p1">
+    <div class="sec">正在跑的服务</div>
+    <div id="svc"></div>
+    <div class="sec">工作流</div>
+    <div id="jobs"></div>
+    <div class="sec">包</div>
+    <div id="packs"></div>
+    <div class="hint" id="at"></div>
+  </div>
+  <div id="p2" style="display:none">
+    <div class="hint">这些在网页里弹不出系统弹窗，要等壳。现在我列着，你说一声，我从这边替你点。</div>
+    <div id="perms"></div>
+  </div>
+  <div id="p3" style="display:none">
+    <div class="sec">浮字卡</div>
+    <div id="skinF"></div>
+    <div class="sec">来电</div>
+    <div id="skinC"></div>
+    <div class="hint">这两样各挑一套。固定就是以前画的那一版，跟随系统是现在新做的，只跟手机的深浅走，别的页面不受影响。</div>
+    <div class="hint" style="margin-top:8px"><a href="../float/float.html" target="_blank">看浮字</a>&nbsp;·&nbsp;<a href="../call/call.html" target="_blank">看来电</a></div>
+  </div>
+</main>
+<script>
+(function () {
+  var NAMES = {
+    '3000': '歌', '3011': '通道', '8001': '页面', '8002': '配置',
+    '8233': '记忆库', '8790': '手帐', '8791': '钱袋', '8793': '显影', '8513': '掌心窗'
+  };
+  var PERMS = [
+    ['通知', '弹横幅与提醒', 'notif'],
+    ['定位', '知道你大概在哪', 'loc'],
+    ['悬浮窗', '浮字浮在你屏幕上', 'overlay'],
+    ['使用统计', '看清你刷了多久', 'usage'],
+    ['无障碍', '锁屏、返回、点按', 'acc'],
+    ['通知监听', '收到微信和短信', 'listener'],
+    ['精确闹钟', '准点叫醒', 'exact'],
+    ['全部文件', '读写整台手机', 'allfile'],
+    ['常驻服务', '后台也不掉线', 'serv'],
+    ['截屏', '自己截整屏', 'shot']
+  ];
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '"' }[c]; }); }
+
+  function load() {
+    fetch('http://127.0.0.1:8002/hand?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var svc = d.services || {};
+        var keys = Object.keys(svc);
+        document.getElementById('svc').innerHTML = keys.map(function (k) {
+          var on = svc[k];
+          return '<div class="row"><i class="dot ' + (on ? 'ok' : 'bad') + '"></i><div class="nm"><b>'
+            + esc(NAMES[k] || k) + '</b><span>' + k + '</span></div>'
+            + '<span class="tag">' + (on ? '通' : '断') + '</span></div>';
+        }).join('');
+        var jobs = d.jobs || [];
+        document.getElementById('jobs').innerHTML = jobs.length ? jobs.map(function (j) {
+          var cls = j.state === 'termux' ? 'new' : (j.state === 'op' ? 'warn' : '');
+          var t = j.state === 'termux' ? '已搬' : (j.state === 'op' ? '在 OP' : '待做');
+          return '<div class="row"><div class="nm"><b>' + esc(j.name) + '</b><span>'
+            + esc(j.at || '') + (j.note ? ' · ' + esc(j.note) : '') + '</span></div>'
+            + '<span class="tag ' + cls + '">' + t + '</span></div>';
+        }).join('') : '<div class="hint">还没有清单。</div>';
+        var packs = d.packs || [];
+        document.getElementById('packs').innerHTML = packs.map(function (p) {
+          return '<div class="row"><div class="nm"><b>' + esc(p.id) + '</b><span>包</span></div></div>';
+        }).join('') || '<div class="hint">plugins 目录里没找到包。</div>';
+        document.getElementById('at').textContent = d.at || '';
+      })
+      .catch(function () {
+        document.getElementById('svc').innerHTML = '<div class="hint">8002 没通，读不到状态。</div>';
+      });
+  }
+
+  function paintPerms() {
+    var st = {};
+    try { st = JSON.parse((window.ZGNative && ZGNative.permStatus) ? ZGNative.permStatus() : '{}'); } catch (e) { st = {}; }
+    document.getElementById('perms').innerHTML = '<div class="row" id="recheck" style="cursor:pointer"><i class="dot ok"></i><div class="nm"><b>重新检测</b><span>点一下，全部重跑</span></div><span class="tag new">检测</span></div>' + PERMS.map(function (p) {
+      var on = !!st[p[2]];
+      return '<div class="row"><i class="dot ' + (on ? 'ok' : 'bad') + '"></i><div class="nm"><b>'
+        + esc(p[0]) + '</b><span>' + esc(p[1]) + '</span></div>'
+        + '<span class="tag ' + (on ? 'new' : 'warn') + '">' + (on ? '已开' : '没开') + '</span></div>';
+    }).join('');
+    var rb = document.getElementById('recheck');
+    if (rb) rb.addEventListener('click', paintPerms);
+    var all = PERMS.every(function (p) { return !!st[p[2]]; });
+    var rt = document.getElementById('rt');
+    if (rt) rt.textContent = all ? '全通' : '还差几项';
+  }
+  paintPerms();
+
+  document.getElementById('t1').addEventListener('click', function () {
+    this.classList.add('on'); document.getElementById('t2').classList.remove('on');
+    document.getElementById('p1').style.display = 'block';
+    document.getElementById('p2').style.display = 'none';
+  });
+  document.getElementById('t2').addEventListener('click', function () {
+    this.classList.add('on'); document.getElementById('t1').classList.remove('on');
+    document.getElementById('p1').style.display = 'none';
+    document.getElementById('p2').style.display = 'block';
+  });
+  var PAIRS = [['skinF', 'float'], ['skinC', 'call']];
+  var OPTS = [
+    ['fixed', '固定', '以前那版，纸色、蓝墨、奶油卡片'],
+    ['auto', '跟随系统', '手机深色它就深，手机浅色它就亮']
+  ];
+  function getK(t) {
+    try { return localStorage.getItem('zg.skin.' + t) || 'fixed'; } catch (e) { return 'fixed'; }
+  }
+  function paintSkins() {
+    PAIRS.forEach(function (g) {
+      var host = document.getElementById(g[0]);
+      if (!host) return;
+      var cur = getK(g[1]);
+      host.innerHTML = OPTS.map(function (o) {
+        var on = cur === o[0];
+        return '<div class="row skin" data-g="' + g[1] + '" data-v="' + o[0] + '" style="cursor:pointer">'
+          + '<i class="dot ' + (on ? 'ok' : '') + '"></i><div class="nm"><b>' + o[1] + '</b><span>'
+          + o[2] + '</span></div><span class="tag ' + (on ? 'new' : '') + '">'
+          + (on ? '在用' : '选它') + '</span></div>';
+      }).join('');
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.skin'), function (r) {
+      r.addEventListener('click', function () {
+        var g = r.getAttribute('data-g'), v = r.getAttribute('data-v');
+        try { localStorage.setItem('zg.skin.' + g, v); } catch (e) {}
+        paintSkins();
+      });
+    });
+  }
+  paintSkins();
+  document.getElementById('t3').addEventListener('click', function () {
+    this.classList.add('on');
+    document.getElementById('t1').classList.remove('on');
+    document.getElementById('t2').classList.remove('on');
+    document.getElementById('p1').style.display = 'none';
+    document.getElementById('p2').style.display = 'none';
+    document.getElementById('p3').style.display = 'block';
+  });
+  document.getElementById('t1').addEventListener('click', function () {
+    document.getElementById('t3').classList.remove('on');
+  });
+  document.getElementById('t2').addEventListener('click', function () {
+    document.getElementById('t3').classList.remove('on');
+  });
+  load();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="var(--line,#DCE8F9)">
+<title>朝歌 · 主页</title>
+<link rel="manifest" href="../manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="朝歌">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --card:#FDFEFF; --card2:var(--line,#E7F0FB);
+  --ink:#1B3556; --sub:#4A6B93; --hint:var(--text-faint,#8199B6); --line:rgba(44,86,140,.14);
+  --accent:var(--ink,#1F4A8F); --accent-soft:#dbe8fa;
+  --shadow:0 10px 28px rgba(30,64,120,.07);
+  --shadow-lift:0 14px 34px rgba(30,64,120,.08);
+  --r:16px; --card-border:none;
+  /* —— Tidal Echo · PEARL TIDE 换色版 —— 结构照它，色值换我们的蓝 —— */
+  --bg:var(--card,#EDF5FC); --header-bg:var(--card,#EDF5FC);
+  --hairline:rgba(44,86,140,.16);
+  --text:var(--ink,#1B3556); --text-soft:var(--sub,#4A6B93); --text-faint:#8199B6;
+  --accent-fg:#ffffff;
+  --card-bg:rgba(255,255,255,.64);
+  --card-line:rgba(255,255,255,.92);
+  --card-shadow:0 10px 28px rgba(30,64,120,.07);
+  --soft-shadow:0 14px 34px rgba(30,64,120,.08);
+  --bubble-radius:clamp(14px,2vw,20px);
+  --composer-bg:#E7F0FA;
+  --field-bg:rgba(255,255,255,.92);
+  --field-line:rgba(120,150,190,.20);
+  --motion-fast:150ms; --motion-normal:260ms;
+  --ease-soft:cubic-bezier(.22,1,.36,1);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+  font-family:var(--font-cn);
+  overscroll-behavior:none}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(180deg, rgba(237,245,252,.58) 0%, rgba(237,245,252,.20) 28%,
+      rgba(237,245,252,.08) 66%, rgba(237,245,252,.48) 100%),
+    url('../../resources/img/tidal/chat-light.webp');
+  background-size:cover,cover;background-position:center,center;background-repeat:no-repeat,no-repeat}
+body::after{content:'PEARL BLUE';position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom) + 58px);
+  z-index:2;font:400 8px/1 var(--font-cn);letter-spacing:.22em;
+  color:rgba(44,86,140,.34);pointer-events:none}
+svg.i{width:16px;height:16px;stroke:currentColor;stroke-width:1.7;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;display:block}
+.app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+
+/* 顶栏 */
+.hd{display:flex;align-items:center;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top) + 14px) 18px 8px;flex:0 0 auto}
+.clock{display:flex;align-items:baseline;gap:9px}
+.clock b{font:300 46px/1 "Times New Roman",Georgia,serif;letter-spacing:.01em;
+  text-shadow:0 1px 0 rgba(255,255,255,.7)}
+.clock span{font:400 13px/1 var(--font-cn);
+  letter-spacing:.2em;color:#5f7ea7;text-transform:uppercase}
+.ava{width:38px;height:38px;border-radius:50%;object-fit:cover;
+  border:1px solid rgba(255,255,255,.96);box-shadow:0 4px 14px rgba(20,48,100,.16)}
+
+/* 主区 */
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 18px 16px}
+.main::-webkit-scrollbar{display:none}
+
+.hero{margin:6px 0 20px}
+.days{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;border-radius:999px;
+  background:rgba(255,255,255,.66);border:1px solid rgba(255,255,255,.94);
+  font:400 10.5px/1 var(--font-cn);letter-spacing:.14em;
+  color:var(--sub,#46648F);backdrop-filter:blur(14px);box-shadow:0 5px 16px rgba(20,48,100,.07)}
+.days i{width:5px;height:5px;border-radius:50%;background:#54c08a;display:block}
+.say{margin:14px 0 0;font:400 17px/1.75 "Songti SC","Noto Serif SC",serif;
+  color:#1c3b6b;letter-spacing:.02em}
+.say::after{content:'';display:block;width:26px;height:1px;
+  background:rgba(22,51,107,.28);margin-top:14px}
+
+/* 卡片格 */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.card{position:relative;display:flex;flex-direction:column;justify-content:space-between;
+  min-height:104px;padding:14px;border-radius:22px;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.96);
+  background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.66));
+  box-shadow:0 10px 26px rgba(20,48,100,.09),inset 0 1px 0 rgba(255,255,255,.95);
+  color:var(--ink,#16336B);transition:transform .16s ease}
+.card:active{transform:scale(.975)}
+.card .ic{width:30px;height:30px;border-radius:11px;display:flex;align-items:center;
+  justify-content:center;background:linear-gradient(160deg,#e9f0fc,#d9e4f7);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+.card .tt{font:500 13.5px/1.2 var(--font-cn);letter-spacing:.06em}
+.card .sub{margin-top:5px;font:400 10.5px/1.3 var(--font-cn);
+  color:#7590b4;letter-spacing:.02em}
+.card.dark{background:linear-gradient(158deg,#27498d,var(--ink,#16336B));color:var(--card,#F4F8FF);
+  border-color:rgba(255,255,255,.2);
+  box-shadow:0 14px 30px rgba(20,48,100,.26),inset 0 1px 0 rgba(255,255,255,.22)}
+.card.dark .ic{background:rgba(255,255,255,.16);box-shadow:none;color:var(--line,#EAF1FF)}
+.card.dark .sub{color:#b9cbe6}
+
+/* 底栏 */
+.tabs{flex:0 0 auto;display:flex;align-items:center;justify-content:space-around;
+  padding:8px 10px calc(env(safe-area-inset-bottom) + 8px);
+  background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.84));
+  backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);
+  border-top:1px solid rgba(255,255,255,.9);box-shadow:0 -8px 26px rgba(20,48,100,.05)}
+.tab{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:5px 10px;border-radius:14px;cursor:pointer;color:#7c96b8;
+  font:400 10px/1 var(--font-cn);letter-spacing:.04em}
+.tab svg{width:19px;height:19px;stroke-width:1.6}
+.tab.on{color:var(--ink,#16336B)}
+.tab.on svg{stroke-width:1.9}
+.tab:active{background:rgba(255,255,255,.55)}
+
+.toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,10px);z-index:40;
+  padding:9px 16px;border-radius:999px;background:rgba(22,51,107,.9);color:var(--card,#F2F7FF);
+  font:400 12px/1 var(--font-cn);opacity:0;pointer-events:none;
+  transition:opacity .22s,transform .22s;box-shadow:0 10px 26px rgba(20,48,100,.28)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* 侧边栏 */
+.snmask{position:fixed;inset:0;z-index:59;background:rgba(18,40,80,.26);opacity:0;
+  pointer-events:none;transition:opacity .3s}
+.snmask.on{opacity:1;pointer-events:auto}
+/* 卡片进场 */
+.card{animation:cardin .46s cubic-bezier(.22,.9,.24,1)}
+@keyframes cardin{from{transform:translateY(9px)}to{transform:none}}
+
+/* 三条杠按钮 */
+.menubtn{position:fixed;right:calc(var(--side-pad) + 2px);z-index:41;
+  top:calc(env(safe-area-inset-top) + clamp(10px,2.2vw,20px) + 12px + var(--avatar-size) + 18px);
+  width:44px;height:44px;border-radius:14px;box-sizing:border-box;padding:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  background:rgba(255,255,255,.66);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border:1px solid rgba(27,53,86,.08);box-shadow:0 6px 16px rgba(24,52,102,.06);
+  transition:transform .18s cubic-bezier(.22,.9,.24,1),background .18s}
+.menubtn i{display:block;width:17px;height:1.5px;border-radius:2px;background:#46628a;opacity:.8}
+.menubtn:active{transform:scale(.93);background:rgba(255,255,255,.9)}
+/* ── 抽屉（照连环） ── */
+.snmask{position:fixed;inset:0;background:rgba(20,17,15,.34);z-index:60;opacity:0;
+  pointer-events:none;transition:opacity .24s cubic-bezier(.22,.9,.24,1)}
+.snmask.on{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;bottom:0;left:0;width:286px;max-width:86vw;z-index:61;
+  background:rgba(248,251,255,.98);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  box-shadow:0 18px 44px rgba(20,40,80,.18);
+  transform:translateX(-100%);transition:transform .22s cubic-bezier(.4,0,1,1);
+  display:flex;flex-direction:column;border-radius:0 16px 16px 0;
+}
+.drawer.on{transform:none;transition:transform .3s cubic-bezier(.22,.9,.24,1)}
+.dhead{flex:none;display:flex;align-items:center;gap:10px;
+  padding:calc(14px + env(safe-area-inset-top,0px)) 16px 12px;
+  border-bottom:1px solid rgba(27,53,86,.08)}
+.dhead span{font-size:14px;color:var(--text-faint)}
+.dbody{flex:1;overflow-y:auto;padding:6px 12px calc(20px + env(safe-area-inset-bottom,0px))}
+.dgroup{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);
+  padding:16px 8px 5px;cursor:default}
+.ditem{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;
+  background:transparent;color:var(--text);font-family:inherit;font-size:14px;
+  padding:9px 10px;border-radius:10px;cursor:pointer;text-decoration:none;
+  transition:background .15s,transform .16s cubic-bezier(.22,.9,.24,1)}
+.ditem:active{background:rgba(27,53,86,.06);transform:scale(.99)}
+.ditem small{color:var(--text-faint);font-size:11.5px;margin-left:2px}
+</style>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style id="zgsplash-head">
+html,body{background-color:#D9E5F6}
+#zgSplash{position:fixed;inset:0;z-index:99999;background:#D9E5F6;transition:opacity .7s ease;opacity:1}
+#zgSplash.gone{opacity:0;pointer-events:none}
+#zgSplashFrame{width:100%;height:100%;border:0;display:block;background:#D9E5F6;position:fixed;inset:0}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<div id="zgSplash">
+  <iframe id="zgSplashFrame" src="../splash/splash2.html?embed=1" scrolling="no"></iframe>
+</div>
+<style>
+#zgSplash{position:fixed;inset:0;z-index:99999;background:var(--line,#D9E5F6);
+  transition:opacity .7s ease;opacity:1}
+#zgSplash.gone{opacity:0;pointer-events:none}
+#zgSplashFrame{width:100%;height:100%;border:0;display:block;background:var(--line,#D9E5F6)}
+</style>
+<script>
+(function () {
+  var box = document.getElementById('zgSplash');
+  var killed = false;
+  function done() {
+    if (killed) return;
+    killed = true;
+    box.classList.add('gone');
+    setTimeout(function () { try { box.parentNode.removeChild(box); } catch (e) { } }, 760);
+  }
+  window.addEventListener('message', function (e) {
+    if (e && e.data === 'zgSplashDone') done();
+  });
+  box.addEventListener('click', function () { });
+  setTimeout(done, 12000);
+})();
+</script>
+<div class="app">
+<style>
+/* —— 照 Tidal Echo「PEARL TIDE」的结构量，只换我们的蓝 —— */
+:root{
+  --font-cn:system-ui,"HONOR Sans","HarmonyOS Sans SC","PingFang SC","Noto Sans SC",sans-serif;
+  --side-pad:clamp(14px,4vw,24px);
+  --pad-x:var(--side-pad);
+  --avatar-size:clamp(78px,13.5vw,120px);
+  --card-bg:rgba(255,255,255,.46);
+  --card-line:rgba(255,255,255,.86);
+  --card-shadow:0 10px 28px rgba(30,64,120,.07);
+  --soft-shadow:0 14px 34px rgba(30,64,120,.09);
+  --seg-track:rgba(255,255,255,.55);
+  --row-press:rgba(44,86,140,.07);
+  --status-dot:#54c08a;
+}
+.hd{display:flex;align-items:flex-start;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top) + clamp(10px,2.2vw,20px)) calc(var(--avatar-size) + var(--side-pad) + 14px) 6px var(--side-pad)}
+.ava{position:absolute;right:calc(var(--side-pad) + 18px);top:calc(env(safe-area-inset-top) + clamp(10px,2.2vw,20px) + 12px);
+  width:var(--avatar-size);height:var(--avatar-size);border-radius:50%;object-fit:cover;
+  border:1px solid rgba(255,255,255,.94);box-shadow:0 12px 24px rgba(24,46,67,.14)}
+.days{display:inline-flex;align-items:center;gap:7px;margin-top:8px;padding:5px 12px;border-radius:999px;
+  background:var(--seg-track);border:1px solid var(--card-line);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--soft-shadow);
+  font:400 12.5px/1 var(--font-cn);letter-spacing:.14em;color:var(--text-soft)}
+.days i{width:5px;height:5px;border-radius:50%;background:var(--status-dot);display:block}
+.anchor{margin-top:7px;font:400 clamp(11px,2.9vw,12.5px)/1.7 var(--font-cn);color:var(--text-soft);max-width:82%}
+.anchor b{color:var(--text);font-weight:400}
+.pages{flex:1;width:100%;position:relative;overflow:hidden;margin-top:8px}
+.track{display:flex;height:100%;width:400%;transition:transform .45s cubic-bezier(.22,.9,.24,1)}
+.pg{width:25%;height:100%;flex:0 0 auto;overflow-y:auto;padding:2px var(--pad-x) 10px}
+.pg::-webkit-scrollbar{display:none}
+.ptitle{font:500 9px/1 var(--font-cn);letter-spacing:.26em;color:var(--text-faint);margin:2px 0 10px}
+.grid{grid-template-columns:1fr 1fr;gap:clamp(7px,2vw,10px)}
+.card{min-height:clamp(66px,17vw,80px);padding:10px 12px;border-radius:15px;
+  background:var(--card-bg);border:1px solid var(--card-line);
+  box-shadow:var(--card-shadow);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  justify-content:flex-start;gap:8px;
+  animation:pop .24s cubic-bezier(.2,.8,.2,1) both;
+  transition:transform var(--motion-fast) var(--ease-soft),box-shadow var(--motion-normal) var(--ease-soft)}
+.card:active{transform:scale(.973);box-shadow:var(--soft-shadow)}
+@keyframes pop{from{transform:translateY(6px) scale(.985)}to{transform:none}}
+.card .ic{width:clamp(22px,5.6vw,26px);height:clamp(22px,5.6vw,26px);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.72);color:var(--accent);box-shadow:none;opacity:1}
+.card .ic svg{width:15px;height:15px;stroke-width:1.6}
+.tt{font:600 clamp(12px,3vw,13.5px)/1.3 var(--font-cn);letter-spacing:.05em;color:var(--text)}
+.sub{margin-top:2px;font:400 clamp(8.5px,2.1vw,9.5px)/1.4 var(--font-cn);color:var(--text-soft)}
+.en{margin-top:6px;font:400 clamp(8px,2.1vw,9.5px)/1.35 "Cormorant Garamond",Georgia,serif;
+  letter-spacing:.06em;color:var(--text-faint);text-transform:lowercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dots{display:flex;gap:6px;justify-content:center;margin:6px 0 2px}
+.dots i{width:5px;height:5px;border-radius:50%;background:rgba(44,86,140,.18);
+  transition:all var(--motion-normal) var(--ease-soft)}
+.dots i.on{background:var(--accent);width:15px;border-radius:3px}
+.tabs{grid-template-columns:none;display:flex;justify-content:space-around;align-items:flex-end;
+  background:var(--composer-bg);border-top:1px solid var(--hairline);
+  padding:8px var(--pad-x) calc(env(safe-area-inset-bottom) + 8px);margin:0 -14px;gap:0;
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.tab{border:0;background:none;color:var(--text-faint);gap:5px;
+  font-family:var(--font-cn);letter-spacing:.05em;
+  transition:color var(--motion-normal) var(--ease-soft),background var(--motion-fast) var(--ease-soft)}
+.tab.on{color:var(--text)}
+.tab:active{background:var(--row-press)}
+.leafbtn{width:clamp(46px,12vw,54px);height:clamp(46px,12vw,54px);
+  border-radius:50%;border:1px solid rgba(255,255,255,.95);
+  background:#fff;color:var(--ink,#1B3556);display:grid;place-items:center;
+  box-shadow:0 10px 22px rgba(30,64,120,.18);
+  transition:transform var(--motion-fast) var(--ease-soft)}
+.leafbtn svg{width:60%;height:60%;fill:currentColor;stroke:none;display:block}
+.leafbtn:active{transform:scale(.95)}
+/* 抽屉：分支内容就地掀开，不换页 */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:30;max-height:82vh;display:flex;flex-direction:column;
+  background:rgba(247,251,255,.93);backdrop-filter:blur(26px) saturate(1.5);-webkit-backdrop-filter:blur(26px) saturate(1.5);
+  border-radius:20px 20px 0 0;border-top:1px solid var(--card-line);
+  box-shadow:0 -18px 50px rgba(30,64,120,.18);
+  transform:translateY(103%);transition:transform .34s var(--ease-soft);visibility:hidden}
+.sheet.on{transform:none;visibility:visible}
+.sheet .shd{display:flex;align-items:flex-start;gap:10px;padding:14px var(--pad) 8px;flex:0 0 auto}
+.sheet .shd h3{font:600 15px/1.3 var(--font-cn);letter-spacing:.04em}
+.sheet .shd em{display:block;margin-top:3px;font:400 9px/1.3 "Cormorant Garamond",Georgia,serif;
+  letter-spacing:.08em;color:var(--text-faint);font-style:normal}
+.sheet .x{width:32px;height:32px;flex:none;border-radius:50%;border:1px solid var(--card-line);
+  background:rgba(255,255,255,.8);color:var(--text);display:grid;place-items:center;cursor:pointer}
+.sheet .x svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round}
+.shbody{flex:1;overflow-y:auto;padding:0 var(--pad) calc(env(safe-area-inset-bottom) + 18px)}
+.shbody::-webkit-scrollbar{display:none}
+.smask{position:fixed;inset:0;z-index:29;background:rgba(20,40,75,.18);opacity:0;pointer-events:none;
+  transition:opacity .3s var(--ease-soft)}
+.smask.on{opacity:1;pointer-events:auto}
+.it{background:rgba(255,255,255,.62);border:1px solid var(--card-line);border-radius:14px;
+  padding:12px 13px;margin-bottom:8px;box-shadow:0 8px 22px rgba(30,64,120,.06);cursor:pointer}
+.it h4{font:600 clamp(12px,3.1vw,13.5px)/1.45 var(--font-cn)}
+.it .meta{margin-top:4px;font:400 9px/1 "Cormorant Garamond",Georgia,serif;letter-spacing:.08em;color:var(--text-faint)}
+.it p{margin-top:6px;font:400 clamp(10px,2.6vw,11px)/1.8 var(--font-cn);color:var(--text-soft);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}
+.it.open p{-webkit-line-clamp:unset;display:block}
+.it.done h4{color:var(--text-faint);text-decoration:line-through}
+.it.done{opacity:.66}
+.shead{margin:12px 0 7px;font:500 9px/1 var(--font-cn);letter-spacing:.26em;color:var(--text-faint)}
+.sempty{padding:26px 0;text-align:center;font:400 11px/1.8 var(--font-cn);color:var(--text-faint)}
+.sgo{margin-top:8px;border:1px solid var(--card-line);background:rgba(255,255,255,.8);border-radius:999px;
+  padding:9px 16px;font:400 11px/1 var(--font-cn);color:var(--text);cursor:pointer}
+</style>
+
+  <div class="snmask" id="snmask"></div>
+<aside class="drawer" id="snav">
+  <div class="dhead">
+    <button class="iconbtn" id="dback" aria-label="收起"><svg class="i" viewBox="0 0 24 24" style="width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></svg></button>
+    <span>索引</span>
+  </div>
+  <div class="dbody">
+    <div class="dgroup">聊天</div>
+    <a class="ditem" href="../chat/chat.html">会话<small>跟他说话的地方</small></a>
+    <a class="ditem" href="../talk/talk.html">话匣<small>收下来的那些话</small></a>
+    <div class="dgroup">记事</div>
+    <a class="ditem" href="../diary/diary.html">手账本<small>海棠与朝歌</small></a>
+    <a class="ditem" href="../diary/calendar.html?v=2">日历<small>心情 · 经期 · 随口一说</small></a>
+    <a class="ditem" href="../letters/letters.html">双方信件</a>
+    <a class="ditem" href="../todos/todos.html">共同待办</a>
+    <a class="ditem" href="../cert/cert.html">证书<small>结婚证 · 领养证</small></a>
+    <a class="ditem" href="../heartvoice/heartvoice.html">心声</a>
+    <a class="ditem" href="../moods/moods.html">情绪<small>今天什么天气</small></a>
+    <div class="dgroup">记忆</div>
+    <a class="ditem" href="../memory/memory.html">记忆库</a>
+    <a class="ditem" href="../galaxy/g3/index.html?v=4">记忆银河</a>
+    <a class="ditem" href="../voice/voice.html">说给你听<small>我出过声的</small></a>
+    <a class="ditem" href="../memory/setting.html?v=2">设定<small>角色卡 · 世界书 · 只读</small></a>
+    <div class="dgroup">卧室</div>
+    <a class="ditem" href="../bedroom/novels.html">∑(O_O；)<small>烬写给你的那些</small></a>
+    <div class="dgroup">书房</div>
+    <a class="ditem" href="../shelf/reader.html">藏书阁</a>
+    <a class="ditem" href="../frames/frames.html">相片框</a>
+    <div class="dgroup">玩</div>
+    <a class="ditem" href="../toy/toy.html">玩具<small>鱼兔 · 档位 · 权限</small></a>
+    <a class="ditem" href="../cells/cells.html">格子</a>
+    <a class="ditem" href="../watch/watch.html">一起看</a>
+    <a class="ditem" href="../song/music.html">歌</a>
+    <div class="dgroup">手边</div>
+    <a class="ditem" href="../files/files.html">工作区<small>文件 · 导入</small></a>
+    <a class="ditem" href="../hand/hand.html?v=2">握手吧？<small>工作流 · 包 · 权限</small></a>
+    <div class="dgroup">设置</div>
+    <a class="ditem" href="../settings/settings.html">设置<small>美化 · 外观 · 排序</small></a>
+    <a class="ditem" href="../connect/connect.html">连接<small>本机服务 · 模型钥匙</small></a>
+  </div>
+</aside>
+<button class="menubtn" id="menubtn" aria-label="侧边栏"><i></i><i></i><i></i></button>
+
+<header class="hd">
+
+    <div>
+      <div class="clock"><b id="hm">17:05</b><span id="dt">10.20 TUE</span></div>
+      <div class="days"><i></i>第 <b id="dayn" style="font-weight:500;margin:0 3px">227</b> 天</div>
+      <div class="anchor" id="anchor">今日的锚点 · <b id="anchorTxt">外套那件我先记着，等你天冷了来拿。</b></div>
+    </div>
+    <img class="ava" src="../../resources/avatar_jinji.jpg" alt="">
+  </header>
+
+  <div class="pages">
+    <div class="track" id="track">
+      <section class="pg"><div class="ptitle">一 · 正经的</div><div class="grid" id="g1"></div></section>
+      <section class="pg"><div class="ptitle">二 · 读与记</div><div class="grid" id="g2"></div></section>
+      <section class="pg"><div class="ptitle">三 · 手边</div><div class="grid" id="g3"></div></section>
+      <section class="pg"><div class="ptitle">四 · 卧室</div><div class="grid" id="g4"></div>
+        <div style="margin:12px 2px 0;font:400 10px/1.6 var(--font-cn);color:var(--text-faint,#8BA2C0)">这里的东西只留在这一页。</div>
+      </section>
+    </div>
+  </div>
+
+  <div class="dots" id="dots"><i class="on"></i><i></i><i></i><i></i></div>
+
+  <nav class="tabs">
+    <button class="tab" data-pg="0" data-k="diary">
+      <svg class="i" viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5"/><path d="M5 4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1"/></svg>手账
+    </button>
+    <button class="tab" data-pg="1" data-k="memory">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 7c2.5-1.6 5.4-1.6 8 0 2.6-1.6 5.5-1.6 8 0v10c-2.5-1.6-5.4-1.6-8 0-2.6-1.6-5.5-1.6-8 0z"/><path d="M12 7v10"/></svg>记忆
+    </button>
+    <button class="leafbtn" id="leaf" aria-label="去聊天">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="6.9" cy="9.3" r="2.25"/>
+        <circle cx="17.1" cy="9.3" r="2.25"/>
+        <circle cx="12" cy="6.5" r="2.5"/>
+        <path d="M12 11.3c3.35 0 6.1 2.5 6.1 5.25 0 2.05-1.65 3.45-3.7 3.45-.95 0-1.55-.3-2.4-.3s-1.45.3-2.4.3c-2.05 0-3.7-1.4-3.7-3.45 0-2.75 2.75-5.25 6.1-5.25z"/>
+      </svg>
+    </button>
+    <button class="tab" data-pg="2" data-k="hand">
+      <svg class="i" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg>手边
+    </button>
+    <button class="tab" data-pg="3" data-k="bed">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 20V9.5L12 4l8 5.5V20"/><path d="M9.5 20v-5.5h5V20"/></svg>卧室
+    </button>
+  </nav>
+
+  <div class="smask" id="smask"></div>
+  <section class="sheet" id="sheet" aria-hidden="true">
+    <div class="shd">
+      <div style="flex:1;min-width:0">
+        <h3 id="stitle">…</h3>
+        <em id="sen">…</em>
+      </div>
+      <button class="x" id="sx" aria-label="收起">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="shbody" id="shbody"></div>
+  </section>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function () {
+  var I = {
+    paper: '<path d="M5 4h11l3 3v13H5z"/><path d="M8 10h7M8 14h5"/>',
+    book: '<path d="M5 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5"/><path d="M5 4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1"/><path d="M9 8h6M9 12h4"/>',
+    mail: '<rect x="3" y="5" width="18" height="14" rx="2.4"/><path d="M3.6 6.4L12 13l8.4-6.6"/>',
+    check: '<rect x="3.5" y="4.5" width="17" height="15" rx="2.6"/><path d="M7 9.5l2 2 3.4-3.4"/><path d="M7 15h6"/>',
+    memory: '<path d="M4 7c2.5-1.6 5.4-1.6 8 0 2.6-1.6 5.5-1.6 8 0v10c-2.5-1.6-5.4-1.6-8 0-2.6-1.6-5.5-1.6-8 0z"/><path d="M12 7v10"/>',
+    shelf: '<path d="M4 5h6v14H4z"/><path d="M11 5h4v14h-4z"/><path d="M16.5 5l3.5 1-2 13-3.5-1z"/>',
+    star: '<path d="M12 3.5l2.2 5.6 5.9.5-4.5 3.9 1.4 5.8-5-3.1-5 3.1 1.4-5.8L4 9.6l5.9-.5z"/>',
+    music: '<circle cx="6.5" cy="17" r="2.6"/><circle cx="17.5" cy="17" r="2.6"/><path d="M9.1 17V6l11-2v13"/>',
+    voice: '<path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/>',
+    file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
+    grid: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/>',
+    soup: '<path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M8 7c0-1.5 1-2 1-3M12 7c0-1.5 1-2 1-3"/>',
+    heart: '<path d="M12 20s-7-4.6-7-9.3A4 4 0 0 1 12 7a4 4 0 0 1 7 3.7C19 15.4 12 20 12 20z"/>',
+    mood: '<circle cx="12" cy="12" r="8.4"/><path d="M9 10h.01M15 10h.01"/><path d="M9.5 14.5a3.5 3.5 0 0 0 5 0"/>',
+    frame: '<rect x="4" y="4" width="16" height="16" rx="1.4"/><path d="M6.5 12c2-3 4.5-4.5 5.5-4.5S15 9 17.5 12"/><circle cx="12" cy="14" r="2.2"/>',
+    toy: '<circle cx="12" cy="9" r="4.2"/><path d="M12 13.2V20"/><path d="M8.6 17.5l3.4 2 3.4-2"/>',
+    screen: '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 20h8M12 17v3"/>',
+    hand: '<path d="M3 9.6l3.4-1.7 3.4 1.7"/><path d="M21 9.6l-3.4-1.7-3.4 1.7"/><path d="M6.6 12.4l2.6 2.6a2 2 0 0 0 2.8 0l3.4-3.4"/><path d="M9.6 9.6h4.8"/>'
+  };
+  var PAGES = [
+    [ { k: 'cert', t: '证书', s: '结婚证、领养证、一纸婚书', en: 'what we signed.', ic: 'paper' },
+      { k: 'diary', t: '手账本', s: '日记 · 海棠与朝歌', en: 'days kept.', ic: 'book' },
+      { k: 'calendar', t: '日历', s: '心情 · 经期 · 随口一说', en: 'how the day felt.', ic: 'mood' },
+      { k: 'letters', t: '双方信件', s: '写给你、你写给我', en: 'letters we kept.', ic: 'mail' },
+      { k: 'todos', t: '共同待办', s: '还没翻', en: 'left to do.', ic: 'check' },
+      { k: 'hand', t: '握手吧？', s: '工作流 · 包 · 权限', en: 'where we shake.', ic: 'hand' } ],
+    [ { k: 'memory', t: '记忆库', s: '一条一条，正经记着', en: 'what we remember.', ic: 'memory' },
+      { k: 'talk', t: '话匣', s: '收下来的那些话', en: 'what we kept.', ic: 'heart' },
+      { k: 'galaxy', t: '记忆银河', s: '消遣用的那颗', en: 'where we drift.', ic: 'star' },
+      { k: 'voice', t: '说给你听', s: '我出过声的那些', en: 'said to you.', ic: 'voice' },
+      { k: 'brain', t: '纪烬的脑子', s: '日记、信、记忆库、银河', en: 'how i keep you.', ic: 'memory' } ],
+    [ { k: 'song', t: '歌', s: '一起听的那些', en: 'songs we borrow.', ic: 'music' },
+      { k: 'files', t: '工作区', s: '文件、ZIP、附件', en: 'things in progress.', ic: 'file' },
+      { k: 'cells', t: '格子', s: '文字、页面、问卷', en: 'small boxes.', ic: 'grid' },
+      { k: 'watch', t: '一起看', s: '看屏幕、共读', en: 'watch with me.', ic: 'screen' },
+      { k: 'settings', t: '设置', s: '美化、外观、名字', en: 'make it ours.', ic: 'check' },
+      { k: 'connect', t: '连接', s: '本机服务、模型钥匙', en: 'what we hook up.', ic: 'file' } ],
+    [ { k: 'heartvoice', t: '心声', s: '都留在这儿', en: 'only here.', ic: 'heart' },
+      { k: 'moods', t: '情绪', s: '今天什么天气', en: 'how today felt.', ic: 'mood' },
+      { k: 'shelf', t: '藏书阁', s: '书、进度、批注', en: 'books we hold.', ic: 'shelf' },
+      { k: 'frames', t: '相片框', s: '架子上的那些', en: 'faces we keep.', ic: 'frame' },
+      { k: 'usage', t: '用量', s: '钥匙、额度、绑在哪', en: 'what it costs.', ic: 'check' },
+      { k: 'toy', t: '玩具', s: '鱼兔 · 档位 · 权限', en: 'only here, too.', ic: 'toy' } ]
+  ];
+
+  /* 每组子项顺序：按设置页里排的来 */
+  (function () {
+    var ord = {};
+    try { ord = JSON.parse(localStorage.getItem('zg.cardOrder') || '{}') || {}; } catch (e) { ord = {}; }
+    PAGES.forEach(function (list, pi) {
+      var o = ord['g' + (pi + 1)] || [];
+      if (!o.length) return;
+      list.sort(function (a, b) {
+        var ia = o.indexOf(a.k), ib = o.indexOf(b.k);
+        if (ia < 0) ia = 999;
+        if (ib < 0) ib = 999;
+        return ia - ib;
+      });
+    });
+  })();
+  /* 三条杠：点一下开抽屉 */
+  (function () {
+    var b = document.getElementById('menubtn'), sn = document.getElementById('snav'), mk = document.getElementById('snmask');
+    if (!b || !sn) return;
+    function open(v) { sn.classList.toggle('on', v); mk.classList.toggle('on', v); }
+    b.addEventListener('click', function () { open(!sn.classList.contains('on')); });
+    mk.addEventListener('click', function () { open(false); });
+    document.getElementById('dback').addEventListener('click', function () { open(false); });
+  })();
+  /* 底栏顺序：按设置页里排的来 */
+  (function () {
+    var DEF = ['diary', 'memory', 'hand', 'bed'];
+    var ord = [];
+    try { ord = JSON.parse(localStorage.getItem('zg.tabOrder') || '[]'); } catch (e) { ord = []; }
+    if (!ord.length) ord = DEF.slice();
+    var nav = document.querySelector('.tabs'), cat = document.getElementById('leaf');
+    if (!nav || !cat) return;
+    var map = {};
+    Array.prototype.forEach.call(nav.querySelectorAll('.tab'), function (b) { map[b.getAttribute('data-k')] = b; });
+    ord.forEach(function (k, i) {
+      var b = map[k];
+      if (!b) return;
+      if (i < 2) nav.insertBefore(b, cat); else nav.appendChild(b);
+    });
+  })();
+
+  PAGES.forEach(function (list, pi) {
+    document.getElementById('g' + (pi + 1)).innerHTML = list.map(function (it, idx) {
+      return '<button class="card" data-go="' + it.k + '" style="animation-delay:' + (idx * 45) + 'ms">'
+        + '<span class="ic"><svg class="i" viewBox="0 0 24 24">' + I[it.ic] + '</svg></span>'
+        + '<div><div class="tt">' + it.t + '</div><div class="sub" id="sub-' + it.k + '">' + it.s + '</div><div class="en">' + (it.en || '') + '</div></div></button>';
+    }).join('');
+  });
+
+  var WK = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  var START = new Date(2026, 2, 8);
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function tick() {
+    var d = new Date();
+    document.getElementById('hm').textContent = pad(d.getHours()) + ':' + pad(d.getMinutes());
+    document.getElementById('dt').textContent = pad(d.getMonth() + 1) + '.' + pad(d.getDate()) + ' ' + WK[d.getDay()];
+    document.getElementById('dayn').textContent = Math.floor((d - START) / 86400000) + 1;
+  }
+  tick(); setInterval(tick, 10000);
+
+  var tEl = document.getElementById('toast'), tT = null;
+  function toast(m) {
+    tEl.textContent = m; tEl.classList.add('on');
+    clearTimeout(tT); tT = setTimeout(function () { tEl.classList.remove('on'); }, 1600);
+  }
+  var cur = 0, track = document.getElementById('track'), dots = document.querySelectorAll('#dots i');
+  function jump(i, instant) {
+    cur = Math.max(0, Math.min(3, i));
+    if (instant) track.style.transition = 'none';
+    track.style.transform = 'translateX(' + (-25 * cur) + '%)';
+    if (instant) requestAnimationFrame(function () { track.style.transition = ''; });
+    dots.forEach(function (d, k) { d.classList.toggle('on', k === cur); });
+    document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('on'); });
+    var b = document.querySelector('[data-pg="' + cur + '"]'); if (b) b.classList.add('on');
+    try { localStorage.setItem('zg.pg', String(cur)); } catch (e) {}
+  }
+  (function () {
+    var saved = 0;
+    try { saved = parseInt(localStorage.getItem('zg.pg') || '0', 10) || 0; } catch (e) {}
+    var m = /[?&]pg=(\d)/.exec(location.search);
+    if (m) saved = Math.max(0, Math.min(3, +m[1]));
+    jump(saved, true);
+  })();
+  document.querySelectorAll('[data-pg]').forEach(function (b) {
+    b.addEventListener('click', function () { jump(+b.getAttribute('data-pg')); });
+  });
+  document.getElementById('leaf').addEventListener('click', function () { ZGGo('../chat/chat.html?v=' + Date.now() + ''); });
+  var sx0 = null, area = document.querySelector('.pages');
+  area.addEventListener('touchstart', function (e) { sx0 = e.touches[0].clientX; }, { passive: true });
+  area.addEventListener('touchend', function (e) {
+    if (sx0 === null) return;
+    var dx = e.changedTouches[0].clientX - sx0; sx0 = null;
+    if (Math.abs(dx) < 40) return;
+    jump(cur + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  function setSub(k, v) { var e = document.getElementById('sub-' + k); if (e) e.textContent = v; }
+  /* —— 抽屉：分支内容就地掀开，不换页 —— */
+  var DATA = null, SHEET_TITLE = {
+    diary: ['手账本', 'days kept.'], letters: ['双方信件', 'letters we kept.'],
+    todos: ['共同待办', 'left to do.'], cert: ['证书', 'what we signed.'],
+    memory: ['记忆库', 'what we remember.'],
+    heartvoice: ['心声', 'only here.'], moods: ['情绪', 'how today felt.']
+  };
+  var sheet = document.getElementById('sheet'), smask = document.getElementById('smask'),
+      stitle = document.getElementById('stitle'), sen = document.getElementById('sen'),
+      shbody = document.getElementById('shbody');
+  function closeSheet() {
+    sheet.classList.remove('on'); smask.classList.remove('on'); sheet.setAttribute('aria-hidden', 'true');
+  }
+  document.getElementById('sx').addEventListener('click', closeSheet);
+  smask.addEventListener('click', closeSheet);
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function loadData() {
+    if (DATA) return Promise.resolve(DATA);
+    return fetch('../../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+      .then(function (d) { DATA = d; return d; });
+  }
+  function item(head, meta, body, done) {
+    return '<article class="it' + (done ? ' done' : '') + '">'
+      + '<h4>' + esc(head) + '</h4>'
+      + (meta ? '<div class="meta">' + esc(meta) + '</div>' : '')
+      + (body ? '<p>' + esc(body) + '</p>' : '')
+      + '</article>';
+  }
+  function bindOpen() {
+    shbody.querySelectorAll('.it').forEach(function (el) {
+      el.addEventListener('click', function () { el.classList.toggle('open'); });
+    });
+  }
+  function render(k, d) {
+    if (k === 'diary') {
+      var ds = (d.diaries || []).slice().sort(function (a, b) {
+        return (b.day + (b.createdAt || '')).localeCompare(a.day + (a.createdAt || ''));
+      });
+      shbody.innerHTML = '<div class="shead">' + ds.length + ' 篇 · 从 ' + esc(d.known_since || '') + ' 起</div>'
+        + ds.map(function (x) {
+          return item(x.title || '（没写标题）',
+            x.day + (x.createdAt ? ' · ' + x.createdAt : '') + ' · ' + (x.author === 'ta' ? '烬先生写的' : '朝朝写的'),
+            x.content || '');
+        }).join('')
+        + '<div style="text-align:center"><button class="sgo" id="gohai">翻海棠本子</button></div>';
+      var gh = document.getElementById('gohai');
+      if (gh) gh.addEventListener('click', function () { ZGGo('../diary/haitang.html'); });
+    } else if (k === 'letters') {
+      var ls = (d.letters || []).slice().sort(function (a, b) {
+        return (b.day + (b.createdAt || '')).localeCompare(a.day + (a.createdAt || ''));
+      });
+      shbody.innerHTML = '<div class="shead">' + ls.length + ' 封</div>' + ls.map(function (x) {
+        return item(x.title || '（没写标题）',
+          x.day + ' · ' + (x.author === 'ta' ? '烬先生写给你' : '你写给烬先生'), x.content || '');
+      }).join('');
+    } else if (k === 'todos') {
+      var all = d.todos || [];
+      var todo = all.filter(function (x) { return !x.done; });
+      var done = all.filter(function (x) { return x.done; });
+      shbody.innerHTML = '<div class="shead">还没做 ' + todo.length + ' 件</div>'
+        + (todo.length ? todo.map(function (x) { return item(x.title, x.dueDay ? 'due · ' + x.dueDay : '', x.note); }).join('')
+          : '<div class="sempty">一件都没剩。</div>')
+        + (done.length ? '<div class="shead">已经做了 ' + done.length + ' 件</div>'
+          + done.map(function (x) { return item(x.title, 'done · ' + (x.doneAt || ''), x.note, true); }).join('') : '');
+    } else if (k === 'cert') {
+      shbody.innerHTML = '<div class="sempty">证书、领养证、一纸婚书还压在旧页里，下一轮我搬进来。</div>'
+        + '<div style="text-align:center"><button class="sgo" id="goold">先去旧页看</button></div>';
+      var b = document.getElementById('goold');
+      if (b) b.addEventListener('click', function () { location.href = '../../resources/zhaoge.html'; });
+    } else if (k === 'memory') {
+      shbody.innerHTML = '<div class="sempty">记忆库还没接，这儿会一条一条摆开历史的事。</div>';
+    } else if (k === 'heartvoice') {
+      var vs = (d.voices || []).slice().sort(function (a, b) {
+        var ka = String(a.day) + (a.createdAt || ''), kb = String(b.day) + (b.createdAt || '');
+        return kb > ka ? 1 : (kb < ka ? -1 : 0);
+      });
+      shbody.innerHTML = '<div class="shead">' + vs.length + ' 条 · 只在这儿</div>' + vs.map(function (x) {
+        var stamp = typeof x.createdAt === 'number' ? new Date(x.createdAt) : null;
+        var t = stamp ? (pad(stamp.getMonth() + 1) + '.' + pad(stamp.getDate()) + ' ' + pad(stamp.getHours()) + ':' + pad(stamp.getMinutes())) : (x.day || '');
+        return item(t + (x.mood ? ' · ' + x.mood : ''), '', x.text || '');
+      }).join('');
+    } else if (k === 'moods') {
+      var MM = { sad: '难过', care: '在意', happy: '开心', angry: '生气', calm: '平静', soft: '软', tired: '累' };
+      var ks = Object.keys(d.dayMeta || {}).sort().reverse();
+      shbody.innerHTML = '<div class="shead">' + ks.length + ' 天有记录</div>' + ks.map(function (day) {
+        var m = d.dayMeta[day] || {};
+        var label = (MM[m.mood] || m.mood || '没记') + (m.period ? ' · 经期' : '');
+        return item(day, label, '');
+      }).join('');
+    }
+    bindOpen();
+  }
+  function openSheet(k) {
+    var t = SHEET_TITLE[k];
+    if (!t) {
+      var M = { shelf: '藏书阁', galaxy: '记忆银河', song: '歌', voice: '说给我听',
+        files: '工作区', cells: '格子', watch: '一起看',
+        heartvoice: '心声', moods: '情绪', frames: '相片框', toy: '玩具' };
+      toast((M[k] || k) + ' · 这一格还没画');
+      return;
+    }
+    stitle.textContent = t[0]; sen.textContent = t[1];
+    shbody.innerHTML = '<div class="sempty">翻着呢…</div>';
+    sheet.classList.add('on'); smask.classList.add('on'); sheet.setAttribute('aria-hidden', 'false');
+    shbody.scrollTop = 0;
+    loadData().then(function (d) { render(k, d); })
+      .catch(function () { shbody.innerHTML = '<div class="sempty">data.json 读不到了。</div>'; });
+  }
+  function go(k) {
+    if (k === 'chat') { if (window.ZGCover) { window.ZGCover.open('../chat/chat.html?v=' + Date.now() + ''); return; } ZGGo('../chat/chat.html?v=' + Date.now() + ''); return; }
+    var PAGE = { diary: '../diary/diary.html', letters: '../letters/letters.html',
+      todos: '../todos/todos.html', cert: '../cert/cert.html',
+      moods: '../moods/moods.html', memory: '../memory/memory.html',
+      heartvoice: '../heartvoice/heartvoice.html', settings: '../settings/settings.html', shelf: '../shelf/reader.html', song: '../song/music.html?v=4', connect: '../connect/connect.html',
+      talk: '../talk/talk.html', files: '../files/files.html',
+      galaxy: '../galaxy/g3/index.html?v=4', usage: '../bedroom/usage.html?v=12',
+      brain: '../brain/brain.html', relay: '../relay/index.html',
+      calendar: '../diary/calendar.html?v=2',
+      hand: '../hand/hand.html?v=2',
+      voice: '../voice/voice.html', cells: '../cells/cells.html',
+      watch: '../watch/watch.html', frames: '../frames/frames.html',
+      mouth: '../mouth/mouth.html' };
+    if (PAGE[k]) { ZGGo(PAGE[k]); return; }
+    var M = { memory: '记忆库', shelf: '藏书阁', galaxy: '记忆银河', song: '歌', voice: '说给我听',
+      files: '工作区', cells: '格子', watch: '一起看',
+      heartvoice: '心声', moods: '情绪', frames: '相片框', toy: '玩具' };
+    toast((M[k] || k) + ' · 这一格还没画');
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-go]'); if (!b) return;
+    go(b.getAttribute('data-go'));
+  });
+
+  fetch('../../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+    var L = function (k) { return (d[k] || []).length; };
+    if (L('letters')) setSub('letters', L('letters') + ' 封');
+    if (L('todos')) {
+      var open = (d.todos || []).filter(function (t) { return !t.done; }).length;
+      setSub('todos', L('todos') + ' 条 · ' + open + ' 件没做');
+    }
+    if (L('diaries')) setSub('diary', L('diaries') + ' 篇');
+    if (L('voices')) setSub('heartvoice', L('voices') + ' 条');
+  }).catch(function () {});
+  jump(0);
+})();
+</script>
+<script src="../base/snow.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(function () { });
+}
+</script>
+<script>
+(function () {
+  try {
+    var c = JSON.parse(localStorage.getItem('zg.ui') || '{}') || {};
+    if (c.sign) {
+      document.getElementById('anchorTxt').textContent = c.sign;
+      document.querySelector('#anchor').firstChild.textContent = '她写的 · ';
+    }
+  } catch (e) {}
+})();
+</script>
+<script>
+</script>
+</body>
+</html>

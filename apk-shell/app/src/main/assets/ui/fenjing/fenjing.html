@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#10233f">
+<title>朝歌</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#0e1c34;color:#eaf1fd;
+  font-family:var(--font-cn);
+  overscroll-behavior:none}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(80% 46% at 86% -6%, rgba(214,232,255,.30) 0%, rgba(214,232,255,0) 62%),
+    radial-gradient(60% 40% at 6% 4%, rgba(120,168,230,.20) 0%, rgba(120,168,230,0) 60%),
+    linear-gradient(180deg,#0f2140 0%,#122a4e 46%,#0b1830 100%)}
+svg.i{stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;display:block}
+.stage{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 10px)}
+
+/* 头 */
+.hd{flex:0 0 auto;position:relative}
+.hd .row1{display:flex;align-items:flex-start;justify-content:space-between}
+.hm{font:200 40px/1 "Times New Roman",Georgia,serif;letter-spacing:.01em;
+  text-shadow:0 2px 18px rgba(150,196,255,.35)}
+.ava{width:46px;height:46px;border-radius:50%;object-fit:cover;
+  border:1px solid rgba(210,230,255,.6);box-shadow:0 6px 20px rgba(0,0,0,.32)}
+.dt{margin-top:7px;font:400 9.5px/1 var(--font-cn);
+  letter-spacing:.24em;color:#8fb0d8;text-transform:uppercase}
+.dayx{margin-top:9px;font:300 12px/1 var(--font-cn);
+  letter-spacing:.1em;color:#c5d9f2}
+.anchor{margin-top:9px;font:400 12.5px/1.6 "Songti SC","Noto Serif SC",serif;
+  color:#a9c2e0;letter-spacing:.02em}
+.anchor b{color:#e6effc;font-weight:400}
+.rule{display:flex;align-items:center;gap:8px;margin-top:12px;color:#5f83b3}
+.rule i{flex:1;height:1px;background:linear-gradient(90deg,rgba(150,190,240,.45),rgba(150,190,240,.06))}
+.rule svg{width:13px;height:13px;opacity:.7}
+
+/* 分镜 */
+.pages{flex:1;position:relative;margin-top:12px;overflow:hidden}
+.track{display:flex;height:100%;width:200%;transition:transform .5s cubic-bezier(.22,.9,.24,1)}
+.pg{width:50%;height:100%;position:relative;flex:0 0 auto}
+.panels{position:absolute;inset:0}
+.pn{position:absolute;overflow:hidden;padding:14px;
+  background:linear-gradient(158deg,#1d3c73 0%,#132a4d 62%,#0e1f3a 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 12px 30px rgba(4,12,26,.42);
+  cursor:pointer;transition:filter .2s ease}
+.pn:active{filter:brightness(1.12)}
+.pn::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.55;
+  background-image:radial-gradient(rgba(255,255,255,.10) 1px,transparent 1px);
+  background-size:3px 3px}
+.pn .k{position:relative;font:400 9px/1 var(--font-cn);
+  letter-spacing:.26em;color:#8badd6;text-transform:uppercase}
+.pn .t{position:relative;margin-top:9px;font:400 15px/1.5 "Songti SC","Noto Serif SC",serif;
+  color:#eaf2ff;letter-spacing:.04em}
+.pn .s{position:relative;margin-top:7px;font:400 10.5px/1.5 var(--font-cn);
+  color:#9db8d8;letter-spacing:.03em}
+.pn .big{position:relative;font:200 30px/1 "Times New Roman",Georgia,serif;color:#dbe9ff}
+.pn.a{left:0;right:0;top:0;height:31%;clip-path:polygon(0 0,100% 0,100% 74%,0 100%)}
+.pn.b{right:0;top:28.5%;width:51%;height:36%;clip-path:polygon(0 7%,100% 0,100% 100%,0 100%)}
+.pn.c{left:0;top:28.5%;width:46%;height:71.5%;clip-path:polygon(0 0,100% 3%,100% 100%,0 100%)}
+.pn.d{right:0;bottom:0;width:51%;height:34%;clip-path:polygon(0 0,100% 2%,100% 100%,0 100%)}
+
+/* 那把枪 */
+.gun{position:absolute;right:-10px;bottom:-16px;width:104px;height:104px;z-index:6;
+  transform:rotate(-22deg);cursor:pointer;filter:drop-shadow(0 8px 18px rgba(0,0,0,.5))}
+.gun svg{width:100%;height:100%;stroke:#dfeafe;stroke-width:1.5;fill:rgba(14,30,56,.88)}
+.gun:active{transform:rotate(-22deg) scale(.94)}
+
+/* 底栏 */
+.tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}
+.tab{position:relative;border:1px solid rgba(200,224,255,.18);border-radius:15px;
+  background:linear-gradient(180deg,rgba(46,82,140,.5),rgba(20,38,66,.5));
+  color:#c6dbef;padding:9px 0 8px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  font:400 10.5px/1 var(--font-cn);letter-spacing:.1em;
+  backdrop-filter:blur(10px);transition:transform .16s ease}
+.tab svg{width:17px;height:17px;stroke-width:1.5}
+.tab:active{transform:scale(.96)}
+.tab.on{color:#f2f8ff;border-color:rgba(200,228,255,.5);
+  background:linear-gradient(180deg,rgba(88,132,204,.55),rgba(30,54,92,.6))}
+
+/* 左轮 */
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(4,10,20,.55);
+  opacity:0;pointer-events:none;transition:opacity .35s ease;backdrop-filter:blur(3px)}
+.scrim.on{opacity:1;pointer-events:auto}
+.rev{position:fixed;left:0;top:0;bottom:0;width:82%;max-width:350px;z-index:55;
+  transform:translateX(-102%);transition:transform .48s cubic-bezier(.22,.92,.24,1);
+  background:linear-gradient(160deg,#173463 0%,#0e2141 58%,#0a172c 100%);
+  border-right:1px solid rgba(180,214,255,.22);
+  box-shadow:24px 0 60px rgba(0,0,0,.5);
+  padding:calc(env(safe-area-inset-top) + 18px) 0 calc(env(safe-area-inset-bottom) + 18px);
+  display:flex;flex-direction:column}
+.rev.on{transform:translateX(0)}
+.revt{display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+.revt h4{font:400 11px/1 var(--font-cn);letter-spacing:.3em;
+  color:#8fb0d8;text-transform:uppercase}
+.revx{width:30px;height:30px;border-radius:50%;border:1px solid rgba(180,214,255,.28);
+  background:rgba(255,255,255,.06);color:#cfe0f6;display:flex;align-items:center;
+  justify-content:center;cursor:pointer}
+.revx svg{width:13px;height:13px;stroke-width:2}
+.cylwrap{flex:1;display:flex;align-items:center;justify-content:center;padding:8px}
+.cyl{position:relative;width:100%;max-width:300px;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 50% 45%,rgba(70,112,180,.30) 0%,rgba(12,28,52,.9) 62%,rgba(6,14,26,1) 100%);
+  border:1px solid rgba(150,190,240,.22);
+  box-shadow:inset 0 0 40px rgba(0,0,0,.6), 0 0 34px rgba(90,140,210,.18)}
+.cyl::before{content:'';position:absolute;inset:12%;border-radius:50%;
+  border:1px dashed rgba(150,190,240,.22)}
+.hub{position:absolute;left:50%;top:50%;width:76px;height:76px;transform:translate(-50%,-50%);
+  border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  background:radial-gradient(circle at 40% 35%,#22436f,#0b1a30);
+  border:1px solid rgba(170,206,255,.35);
+  box-shadow:inset 0 2px 6px rgba(255,255,255,.14),0 6px 18px rgba(0,0,0,.5);z-index:3}
+.hub b{font:300 13px/1 "Songti SC",serif;letter-spacing:.06em;color:#dbe9ff}
+.hub span{font:400 7.5px/1 var(--font-cn);letter-spacing:.16em;color:#7e9fc8}
+.ch{position:absolute;width:66px;height:66px;border-radius:50%;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  background:radial-gradient(circle at 40% 34%,#2b4f83,#0d1e37);
+  border:1px solid rgba(160,198,246,.3);
+  box-shadow:inset 0 2px 5px rgba(255,255,255,.13),inset 0 -6px 12px rgba(0,0,0,.45),
+             0 6px 16px rgba(0,0,0,.5);
+  transition:transform .18s ease,box-shadow .18s ease}
+.ch:active{transform:translate(-50%,-50%) scale(.94) !important;
+  box-shadow:inset 0 0 12px rgba(150,200,255,.4),0 0 18px rgba(120,170,240,.3)}
+.ch .num{font:400 8px/1 var(--font-cn);color:#7e9fc8;letter-spacing:.1em}
+.ch .nm{font:400 11.5px/1 "Songti SC",serif;color:#e8f1ff;letter-spacing:.02em}
+.ch.last{border-color:rgba(240,170,190,.45);
+  background:radial-gradient(circle at 40% 34%,#5a3151,#1d1122)}
+.ch.last .nm{color:#ffe3ee}
+.revfoot{padding:0 20px;text-align:center;
+  font:400 10px/1.7 var(--font-cn);color:#6d8cb4;letter-spacing:.06em}
+</style>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<div class="stage">
+
+  <header class="hd">
+    <div class="row1">
+      <div>
+        <div class="hm" id="hm">15:39</div>
+        <div class="dt" id="dt">10.20 TUE</div>
+      </div>
+      <img class="ava" src="../../resources/avatar_jinji.jpg" alt="">
+    </div>
+    <div class="dayx">第 <b id="dayn" style="font-weight:500">227</b> 天</div>
+    <div class="anchor">今日的锚点 · <b id="anchor">外套那件我先记着，等你天冷了来拿。</b></div>
+    <div class="rule"><i></i>
+      <svg viewBox="0 0 24 24" style="stroke:#7ea4d4;fill:none;stroke-width:1.4"><path d="M4 12h13"/><path d="M13 7l5 5-5 5"/></svg>
+      <i></i>
+    </div>
+  </header>
+
+  <div class="pages">
+    <div class="track" id="track">
+
+      <section class="pg">
+        <div class="panels">
+          <div class="pn a" data-go="cert">
+            <div class="k">I · PAPERS</div>
+            <div class="t">某些证书<br>以及一点正经东西</div>
+            <div class="s" id="certSub">自 2026.03.08 起</div>
+          </div>
+          <div class="pn b" data-go="todo">
+            <div class="k">II · TOGETHER</div>
+            <div class="t">共同待办</div>
+            <div class="s" id="todoSub">还没翻</div>
+          </div>
+          <div class="pn c" data-go="letter">
+            <div class="k">III · LETTERS</div>
+            <div class="t">双方信件</div>
+            <div class="s" id="letterSub">写给你、你写给我</div>
+          </div>
+          <div class="pn d" data-go="diary">
+            <div class="k">IV · HAITANG</div>
+            <div class="t">手账本（日记）</div>
+            <div class="s" id="diarySub">海棠与朝歌</div>
+          </div>
+        </div>
+        <div class="gun" id="gun" aria-label="打开轮盘">
+          <svg viewBox="0 0 100 100">
+            <path d="M18 40h44a3 3 0 0 1 3 3v5a3 3 0 0 1-3 3H18a3 3 0 0 1-3-3v-5a3 3 0 0 1 3-3z"/>
+            <circle cx="44" cy="53" r="9"/>
+            <circle cx="44" cy="53" r="3.2"/>
+            <path d="M64 41h5l3 6h-8z"/>
+            <path d="M37 60h16l7 29H43z"/>
+            <path d="M54 62a7 7 0 0 0 7 9"/>
+            <path d="M65 44l6 2"/>
+          </svg>
+        </div>
+      </section>
+
+      <section class="pg">
+        <div class="panels">
+          <div class="pn a" data-go="memory">
+            <div class="k">V · MEMORY</div>
+            <div class="t">记忆库</div>
+            <div class="s">一条一条，正经记着的</div>
+          </div>
+          <div class="pn b" data-go="song">
+            <div class="k">VI · SONG</div>
+            <div class="t">歌</div>
+            <div class="s">一起听的那些</div>
+          </div>
+          <div class="pn c" data-go="bedroom">
+            <div class="k">VII · ROOM</div>
+            <div class="t">卧室</div>
+            <div class="s">架子上的相片框</div>
+          </div>
+          <div class="pn d" data-go="galaxy">
+            <div class="k">VIII · GALAXY</div>
+            <div class="t">记忆银河</div>
+            <div class="s">消遣用的那颗</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <nav class="tabs">
+    <button class="tab on" data-tab="song">
+      <svg class="i" viewBox="0 0 24 24"><circle cx="6.5" cy="17" r="2.6"/><circle cx="17.5" cy="17" r="2.6"/><path d="M9.1 17V6l11-2v13"/></svg>歌
+    </button>
+    <button class="tab" data-tab="chat">
+      <svg class="i" viewBox="0 0 24 24"><path d="M20.5 11.5a8 8 0 0 1-11.6 7.1L4 20l1.5-4.6a8 8 0 1 1 15-3.9z"/></svg>聊天
+    </button>
+    <button class="tab" data-tab="memory">
+      <svg class="i" viewBox="0 0 24 24"><path d="M12 3.5l2.2 5.6 5.9.5-4.5 3.9 1.4 5.8-5-3.1-5 3.1 1.4-5.8L4 9.6l5.9-.5z"/></svg>记忆
+    </button>
+    <button class="tab" data-tab="bedroom">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 20V9.5L12 4l8 5.5V20"/><path d="M9.5 20v-5.5h5V20"/></svg>卧室
+    </button>
+  </nav>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="rev" id="rev">
+  <div class="revt">
+    <h4>The Cylinder</h4>
+    <button class="revx" id="revx" aria-label="关掉">
+      <svg class="i" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="cylwrap">
+    <div class="cyl" id="cyl">
+      <div class="hub"><b>朝歌</b><span>六格</span></div>
+    </div>
+  </div>
+  <div class="revfoot">从正经到最里面那一格。<br>点哪一格，开哪一扇门。</div>
+</aside>
+
+<div class="toast" id="toast" style="position:fixed;left:50%;bottom:100px;transform:translate(-50%,10px);z-index:60;padding:9px 16px;border-radius:999px;background:rgba(230,240,255,.94);color:#123054;font:400 12px/1 var(--font-cn);opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;box-shadow:0 10px 26px rgba(0,0,0,.4)"></div>
+
+<script>
+(function () {
+  var WK = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  var START = new Date(2026, 2, 8);
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function tick() {
+    var d = new Date();
+    document.getElementById('hm').textContent = pad(d.getHours()) + ':' + pad(d.getMinutes());
+    document.getElementById('dt').textContent = pad(d.getMonth() + 1) + '.' + pad(d.getDate()) + ' ' + WK[d.getDay()];
+    document.getElementById('dayn').textContent = Math.floor((d - START) / 86400000) + 1;
+  }
+  tick(); setInterval(tick, 10000);
+
+  var tEl = document.getElementById('toast'), tT = null;
+  function toast(m) {
+    tEl.textContent = m;
+    tEl.style.opacity = '1'; tEl.style.transform = 'translate(-50%,0)';
+    clearTimeout(tT);
+    tT = setTimeout(function () {
+      tEl.style.opacity = '0'; tEl.style.transform = 'translate(-50%,10px)';
+    }, 1700);
+  }
+
+  /* 轮盘：六个弹巢按圆周排 */
+  var SIX = [
+    { n: '01', nm: '证书', go: 'cert' },
+    { n: '02', nm: '手账', go: 'diary' },
+    { n: '03', nm: '信件', go: 'letter' },
+    { n: '04', nm: '待办', go: 'todo' },
+    { n: '05', nm: '记忆', go: 'memory' },
+    { n: '06', nm: '卧室', go: 'bedroom', last: true }
+  ];
+  var cyl = document.getElementById('cyl');
+  SIX.forEach(function (c, i) {
+    var a = (-90 + i * 60) * Math.PI / 180, r = 36.5;
+    var b = document.createElement('button');
+    b.className = 'ch' + (c.last ? ' last' : '');
+    b.innerHTML = '<span class="num">' + c.n + '</span><span class="nm">' + c.nm + '</span>';
+    b.style.left = (50 + r * Math.cos(a)) + '%';
+    b.style.top = (50 + r * Math.sin(a)) + '%';
+    b.style.transform = 'translate(-50%,-50%)';
+    b.addEventListener('click', function () { closeRev(); setTimeout(function () { go(c.go); }, 160); });
+    cyl.appendChild(b);
+  });
+
+  var scrim = document.getElementById('scrim'), rev = document.getElementById('rev');
+  function openRev() { scrim.classList.add('on'); rev.classList.add('on'); }
+  function closeRev() { scrim.classList.remove('on'); rev.classList.remove('on'); }
+  document.getElementById('gun').addEventListener('click', openRev);
+  document.getElementById('revx').addEventListener('click', closeRev);
+  scrim.addEventListener('click', closeRev);
+
+  /* 门：能跳的跳，没做的先应一声 */
+  function go(k) {
+    if (k === 'chat') { location.href = '../chat/chat.html'; return; }
+    var MAP = {
+      cert: '证书', diary: '手账本', letter: '信件', todo: '共同待办',
+      memory: '记忆库', bedroom: '卧室', song: '歌', galaxy: '记忆银河'
+    };
+    toast((MAP[k] || k) + ' · 这一格还在画');
+  }
+  document.querySelectorAll('[data-go]').forEach(function (b) {
+    b.addEventListener('click', function () { go(b.getAttribute('data-go')); });
+  });
+  document.querySelectorAll('[data-tab]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('[data-tab]').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+      go(b.getAttribute('data-tab'));
+    });
+  });
+
+  /* 两页分镜：左右滑 */
+  var track = document.getElementById('track'), pg = 0, sx0 = null;
+  var pages = document.querySelector('.pages');
+  pages.addEventListener('touchstart', function (e) { sx0 = e.touches[0].clientX; }, { passive: true });
+  pages.addEventListener('touchend', function (e) {
+    if (sx0 === null) return;
+    var dx = e.changedTouches[0].clientX - sx0; sx0 = null;
+    if (Math.abs(dx) < 42) return;
+    pg = dx < 0 ? 1 : 0;
+    track.style.transform = 'translateX(' + (-50 * pg) + '%)';
+  }, { passive: true });
+
+  /* 数字从 data.json 现读 */
+  fetch('../../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+    var L = function (k) { return (d[k] || []).length; };
+    if (L('letters')) document.getElementById('letterSub').textContent = L('letters') + ' 封';
+    if (L('todos')) {
+      var open = (d.todos || []).filter(function (t) { return !t.done; }).length;
+      document.getElementById('todoSub').textContent = L('todos') + ' 条 · ' + open + ' 件没做';
+    }
+    if (L('diaries')) {
+      var last = (d.diaries || []).slice(-1)[0] || {};
+      document.getElementById('diarySub').textContent = L('diaries') + ' 篇' + (last.date ? ' · 最近 ' + last.date : '');
+    }
+  }).catch(function () {});
+})();
+</script>
+<script src="../base/snow.js"></script>
+</body>
+</html>

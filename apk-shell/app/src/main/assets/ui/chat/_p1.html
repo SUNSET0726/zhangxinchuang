@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no,interactive-widget=resizes-content">
+<meta name="theme-color" content="#dce8f9">
+<title>朝歌 · 会话</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#dce8f9;color:#16336b;
+  font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Noto Sans SC",sans-serif;
+  overscroll-behavior:none}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(90% 55% at 82% -8%, #f4f9ff 0%, rgba(244,249,255,0) 62%),
+    radial-gradient(70% 40% at 6% 6%, #e6eefb 0%, rgba(230,238,251,0) 60%),
+    linear-gradient(180deg,#dae6f8 0%,#e8effa 44%,#f2f6fc 100%)}
+svg.i{width:16px;height:16px;stroke:currentColor;stroke-width:1.7;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;display:block}
+.app{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column}
+
+/* 顶栏 */
+.top{display:flex;align-items:center;gap:9px;flex:0 0 auto;
+  padding:calc(env(safe-area-inset-top) + 9px) 13px 9px;
+  background:linear-gradient(180deg,rgba(255,255,255,.66),rgba(255,255,255,.26));
+  backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);
+  border-bottom:1px solid rgba(255,255,255,.78);
+  box-shadow:0 8px 26px rgba(20,48,100,.06);z-index:12}
+.iconbtn{width:32px;height:32px;flex:0 0 auto;border:1px solid rgba(255,255,255,.92);
+  border-radius:50%;background:rgba(255,255,255,.55);color:#16336b;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 10px rgba(20,48,100,.07);transition:transform .16s ease}
+.iconbtn:active{transform:scale(.93)}
+.me{flex:1;min-width:0;display:flex;align-items:center;gap:9px;border:0;background:none;
+  cursor:pointer;text-align:left;color:inherit;padding:0}
+.ava{position:relative;width:36px;height:36px;flex:0 0 auto}
+.ava img{width:100%;height:100%;border-radius:50%;object-fit:cover;
+  border:1px solid rgba(255,255,255,.96);box-shadow:0 3px 10px rgba(20,48,100,.16)}
+.ava i{position:absolute;right:-1px;bottom:0;width:9px;height:9px;border-radius:50%;
+  background:#54c08a;border:1.5px solid #eff4fd}
+.metext{min-width:0;display:flex;flex-direction:column;gap:4px}
+.metext b{font:500 15px/1.1 var(--font-cn);letter-spacing:.03em}
+.metext i{font:400 10.5px/1.2 var(--font-cn);font-style:normal;
+  color:#6683a8;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* 消息区 */
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:16px 14px 22px;display:flex;flex-direction:column;scroll-behavior:smooth}
+.body::-webkit-scrollbar{display:none}
+.page{display:flex;flex-direction:column;gap:9px}
+.day{align-self:center;font:300 9.5px/1 var(--font-cn);
+  letter-spacing:.22em;text-transform:uppercase;color:#5a779e;
+  padding:7px 15px;border-radius:999px;background:rgba(255,255,255,.64);
+  border:1px solid rgba(255,255,255,.92);backdrop-filter:blur(14px);
+  box-shadow:0 5px 16px rgba(20,48,100,.07);margin:2px 0 6px}
+.msg{max-width:78%;padding:10px 14px;border-radius:20px;
+  font-size:15px;line-height:1.62;letter-spacing:.01em;
+  white-space:pre-wrap;word-break:break-word;
+  animation:in .42s cubic-bezier(.22,1.08,.36,1) both}
+.msg.him{align-self:flex-start;color:#f6f9ff;
+  background:linear-gradient(158deg,#27498d 0%,#16336b 100%);
+  border-radius:20px 20px 20px 6px;
+  box-shadow:0 10px 24px rgba(20,48,100,.22),inset 0 1px 0 rgba(255,255,255,.22)}
+.msg.me{align-self:flex-end;color:#16336b;background:rgba(255,255,255,.86);
+  border:1px solid rgba(255,255,255,.97);border-radius:20px 20px 6px 20px;
+  box-shadow:0 7px 20px rgba(20,48,100,.10),inset 0 1px 0 rgba(255,255,255,.9)}
+.msg a{color:inherit;text-decoration:underline;text-underline-offset:2px;opacity:.9}
+#chatlog{display:flex;flex-direction:column;gap:9px;padding-bottom:2px}
+@keyframes in{from{opacity:0;transform:translateY(11px) scale(.975)}to{opacity:1;transform:none}}
+.metime{align-self:flex-end;margin:-4px 4px 2px 0;
+  font:400 9.5px/1 var(--font-cn);letter-spacing:.08em;color:#7590b4}
+.timeline-t{align-self:center;margin:6px 0;
+  font:400 9.5px/1 var(--font-cn);letter-spacing:.1em;color:#6d87ab;
+  padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.5)}
+.acts{align-self:flex-start;display:flex;align-items:center;gap:16px;
+  margin:-5px 0 14px 4px;animation:in .3s ease both}
+.acts button{border:0;background:none;padding:0;color:#6d87ab;cursor:pointer;
+  display:flex;align-items:center;transition:color .16s ease,transform .16s ease}
+.acts button:active{transform:scale(.9)}
+.acts button.on{color:#1f4a8f}
+.acts button.playing{color:#1f4a8f;animation:breathe 1.5s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
+.acts time{font:400 9.5px/1 var(--font-cn);color:#8ba2c0;
+  letter-spacing:.06em;margin-left:2px}
+.srcmark{font-size:11px;color:#8ba2c0;margin-right:6px}
+.thinkbar{align-self:flex-start;display:flex;align-items:center;gap:7px;
+  border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.6);
+  color:#53709a;border-radius:999px;padding:6px 13px 6px 10px;cursor:pointer;
+  font:400 10px/1 var(--font-cn);letter-spacing:.2em;
+  text-transform:uppercase;backdrop-filter:blur(14px);
+  box-shadow:0 5px 16px rgba(20,48,100,.07);animation:in .35s ease both}
+.thinkbar .cv{width:13px;height:13px;transition:transform .28s ease;opacity:.7}
+/*CSS2*/
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<!--BODY-->
+</body>
+</html>

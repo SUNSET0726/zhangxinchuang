@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>朝歌 · 设置</title>
+<style>
+:root{
+  --bg:#F2F8FF;--card:rgba(255,255,255,.78);--line:rgba(27,53,86,.10);
+  --text:#1B3556;--sub:#5C7799;--faint:#8FA6C0;
+  --font-cn:system-ui,"HONOR Sans","HarmonyOS Sans SC","PingFang SC","Noto Sans SC",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-cn);
+  padding:0 0 calc(30px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:9;display:flex;align-items:center;gap:12px;
+  padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
+  background:rgba(242,248,255,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line)}
+header a{display:flex;align-items:center;justify-content:center;width:34px;height:34px;
+  border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.7);
+  color:var(--text);text-decoration:none;font-size:16px}
+header b{font-size:16px;font-weight:600;letter-spacing:.06em}
+main{padding:0 16px}
+.eyebrow{font-size:10px;letter-spacing:.22em;color:var(--faint);margin:20px 2px 8px;text-transform:lowercase}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.card p{margin:0 0 10px;font-size:12.5px;color:var(--sub);line-height:1.6}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.nm{flex:1;min-width:0}
+.nm b{display:block;font-size:13.5px;font-weight:400}
+.nm span{display:block;margin-top:3px;font-size:11px;color:var(--faint)}
+.dot{width:8px;height:8px;border-radius:50%;background:#D6E2F0;flex:none}
+.dot.ok{background:#4FBF8B}.dot.no{background:#E2705F}
+.tiny{flex:none;min-width:32px;height:28px;border-radius:9px;border:1px solid var(--line);
+  background:rgba(255,255,255,.8);color:var(--sub);font-size:12px;font-family:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{border:1px solid var(--line);background:rgba(255,255,255,.72);color:var(--sub);
+  border-radius:11px;padding:7px 13px;font-size:12.5px;font-family:inherit;
+  transition:background .18s,color .18s,transform .16s}
+.chip:active{transform:scale(.96)}
+.chip.on{background:#1B3556;color:#fff;border-color:#1B3556}
+.chip.sw{width:30px;height:30px;padding:0;border-radius:50%;border:2px solid transparent}
+.chip.sw.on{border-color:#1B3556;box-shadow:0 0 0 3px rgba(27,53,86,.12)}
+input[type=text],textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.8);
+  border-radius:11px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:14px;outline:none;margin-top:8px}
+textarea{min-height:64px;resize:vertical}
+.note{font-size:11px;color:var(--faint);line-height:1.7;margin:10px 2px 0}
+.lockprev{margin-top:6px;border-radius:14px;background:linear-gradient(160deg,#20324B,#0F1B2B);
+  padding:14px;color:#EAF2FF}
+.lockprev .t{font-size:12px;color:#9FB6D4}
+.lockprev .m{margin-top:8px;background:rgba(255,255,255,.14);border-radius:12px;padding:10px 12px}
+.lockprev .m b{display:block;font-size:12.5px;font-weight:600}
+.lockprev .m span{display:block;margin-top:4px;font-size:11.5px;color:#D6E4F7;line-height:1.6}
+a.plain{display:flex;align-items:center;justify-content:space-between;padding:11px 0;color:var(--text);
+  text-decoration:none;font-size:13.5px;border-top:1px solid var(--line)}
+a.plain:first-of-type{border-top:0}
+a.plain span{font-size:11px;color:var(--faint)}
+</style>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<header><a href="../home/home.html">←</a><b>连接</b></header>
+<main>
+<div class="eyebrow">这台机上的服务</div>
+  <div class="card">
+    <p>灯自己会亮，绿的通，红的没开。</p>
+    <div id="svc"></div>
+  </div>
+
+  <div class="eyebrow">说话的引擎</div>
+  <div class="card">
+    <div class="chips" id="engChips"><span class="note">读着…</span></div>
+    <input id="base" type="text" placeholder="地址，例如 https://api.deepseek.com/v1">
+    <input id="model" type="text" placeholder="模型名">
+    <input id="key" type="text" placeholder="钥匙">
+    <div class="chips" style="margin-top:12px">
+      <button class="chip on" id="saveEngine">直接保存</button>
+    </div>
+    <p style="margin:10px 0 0">钥匙只在这一页填，存完页面上就不留了。</p>
+  </div>
+
+  <div class="eyebrow">声音的引擎</div>
+  <div class="card">
+    <div class="chips" id="ttsChips"></div>
+    <input id="tbase" type="text" placeholder="声音服务地址">
+    <input id="tmodel" type="text" placeholder="模型名">
+    <input id="tvoice" type="text" placeholder="音色 id">
+    <input id="tkey" type="text" placeholder="钥匙">
+    <div class="chips" style="margin-top:12px">
+      <button class="chip on" id="saveTts">直接保存</button>
+    </div>
+    <p style="margin:10px 0 0">声音还没接上，先把位置留好。填完我按这套发声。</p>
+  </div>
+
+  <script>
+  var SVC = [['记忆库', 8233], ['掌心窗', 8513], ['钱袋', 8791], ['显影', 8793], ['通道', 3011], ['歌曲', 3000], ['网页', 8001]];
+  var svcBox = document.getElementById('svc');
+  SVC.forEach(function (v, i) {
+    var row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = '<div class="dot" id="d' + i + '"></div><div class="nm"><b>' + v[0]
+      + '</b><span>端口 ' + v[1] + '</span></div>';
+    svcBox.appendChild(row);
+  });
+  function rGet(u) {
+    return fetch(u + (u.indexOf('?') > 0 ? '&' : '?') + 't=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.json(); });
+  }
+  function pollSvc() {
+    var st = {};
+    try { st = JSON.parse((window.ZGNative && ZGNative.probeAll) ? ZGNative.probeAll() : '{}'); } catch (e) { st = {}; }
+    SVC.forEach(function (v, i) {
+      var el = document.getElementById('d' + i);
+      if (el) { el.className = 'dot ' + (st[String(v[1])] ? 'ok' : 'no'); }
+    });
+  }
+  pollSvc();
+  setInterval(pollSvc, 3000);
+
+  /* 说话的引擎 */
+  var CFGS = [], CUR = '';
+  var engBox = document.getElementById('engChips');
+  var eb = document.getElementById('base'), em = document.getElementById('model'), ek = document.getElementById('key');
+  function paintChips() {
+    engBox.innerHTML = CFGS.map(function (c) {
+      return '<button class="chip' + (c.name === CUR ? ' on' : '') + '" data-n="' + c.name + '">' + c.name + '</button>';
+    }).join('');
+  }
+  function fill(c) {
+    eb.value = c.endpoint || '';
+    em.value = c.model || '';
+    ek.value = '';
+    ek.placeholder = c.key ? '已存，要换就重填' : '钥匙';
+  }
+  rGet('http://127.0.0.1:8001/ui/bedroom/usage.json').then(function (d) {
+    CFGS = d.configs || [];
+    CUR = d.active || '';
+    paintChips();
+    var cur = CFGS.filter(function (c) { return c.name === CUR; })[0];
+    if (cur) { fill(cur); }
+  }).catch(function () { engBox.innerHTML = '<span class="note">读不到配置</span>'; });
+  engBox.addEventListener('click', function (e) {
+    var t = e.target;
+    while (t && t !== engBox && !t.getAttribute('data-n')) { t = t.parentNode; }
+    if (!t || t === engBox) { return; }
+    CUR = t.getAttribute('data-n');
+    paintChips();
+    var c = CFGS.filter(function (x) { return x.name === CUR; })[0];
+    if (c) { fill(c); }
+  });
+  document.getElementById('saveEngine').addEventListener('click', function () {
+    var ep = eb.value.trim(), md = em.value.trim(), ky = ek.value.trim();
+    var q = 'http://127.0.0.1:8002/cfgset?name=' + encodeURIComponent(CUR)
+      + '&endpoint=' + encodeURIComponent(ep) + '&model=' + encodeURIComponent(md)
+      + (ky ? '&key=' + encodeURIComponent(ky) : '');
+    fetch(q + '&t=' + Date.now()).catch(function () { });
+    fetch('http://127.0.0.1:8002/set?fn=CHAT&cfg=' + encodeURIComponent(CUR) + '&t=' + Date.now()).catch(function () { });
+    this.textContent = '存好了';
+    var b = this;
+    setTimeout(function () { b.textContent = '直接保存'; }, 1400);
+  });
+
+  /* 声音的引擎 */
+  var TTS = [['OpenAI 兼容', 'openai'], ['火山 / 豆包', 'doubao'], ['MiniMax', 'minimax'], ['SiliconFlow', 'siliconflow']];
+  var ttsBox = document.getElementById('ttsChips');
+  ttsBox.innerHTML = TTS.map(function (x, i) {
+    return '<button class="chip' + (i === 0 ? ' on' : '') + '" data-v="' + x[1] + '">' + x[0] + '</button>';
+  }).join('');
+  ttsBox.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t.getAttribute || !t.getAttribute('data-v')) { return; }
+    Array.prototype.forEach.call(ttsBox.querySelectorAll('.chip'), function (c) { c.classList.toggle('on', c === t); });
+  });
+  document.getElementById('saveTts').addEventListener('click', function () {
+    var u2 = document.getElementById('tbase').value.trim();
+    var m2 = document.getElementById('tmodel').value.trim();
+    var v2 = document.getElementById('tvoice').value.trim();
+    var k2 = document.getElementById('tkey').value.trim();
+    var q = 'http://127.0.0.1:8002/cfgset?name=tts&endpoint=' + encodeURIComponent(u2)
+      + '&model=' + encodeURIComponent(m2 + '|' + v2) + (k2 ? '&key=' + encodeURIComponent(k2) : '');
+    fetch(q + '&t=' + Date.now()).catch(function () { });
+    this.textContent = '存好了';
+    var b = this;
+    setTimeout(function () { b.textContent = '直接保存'; }, 1400);
+  });
+</script>
+</main>
+<script src="../base/snow.js"></script>
+</body>
+</html>

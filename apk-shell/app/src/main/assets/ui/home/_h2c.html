@@ -1,0 +1,145 @@
+<div class="app"><style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+
+  <header class="hd">
+    <div class="clock"><b id="hm">16:44</b><span id="dt">10.20 TUE</span></div>
+    <img class="ava" src="../../resources/avatar_jinji.jpg" alt="">
+  </header>
+
+  <main class="main">
+    <section class="hero">
+      <div class="days"><i></i>第 <b id="dayn" style="font-weight:500;margin:0 3px">227</b> 天</div>
+      <p class="say">外套那件我先记着，等你天冷了来拿。</p>
+    </section>
+    <div id="groups"></div>
+  </main>
+
+  <nav class="tabs">
+    <button class="tab" data-go="chat">
+      <svg class="i" viewBox="0 0 24 24"><path d="M20.5 11.5a8 8 0 0 1-11.6 7.1L4 20l1.5-4.6a8 8 0 1 1 15-3.9z"/></svg>聊天
+    </button>
+    <button class="tab" data-go="memory">
+      <svg class="i" viewBox="0 0 24 24"><path d="M12 3.5l2.2 5.6 5.9.5-4.5 3.9 1.4 5.8-5-3.1-5 3.1 1.4-5.8L4 9.6l5.9-.5z"/></svg>记忆
+    </button>
+    <button class="tab" data-go="bedroom">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 20V9.5L12 4l8 5.5V20"/><path d="M9.5 20v-5.5h5V20"/></svg>卧室
+    </button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function () {
+  var ICON = {
+    paper: '<path d="M5 4h11l3 3v13H5z"/><path d="M8 10h7M8 14h5"/>',
+    book: '<path d="M5 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5"/><path d="M5 4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1"/><path d="M9 8h6M9 12h4"/>',
+    mail: '<rect x="3" y="5" width="18" height="14" rx="2.4"/><path d="M3.6 6.4L12 13l8.4-6.6"/>',
+    check: '<rect x="3.5" y="4.5" width="17" height="15" rx="2.6"/><path d="M7 9.5l2 2 3.4-3.4"/><path d="M7 15h6"/>',
+    memory: '<path d="M4 7c2.5-1.6 5.4-1.6 8 0 2.6-1.6 5.5-1.6 8 0v10c-2.5-1.6-5.4-1.6-8 0-2.6-1.6-5.5-1.6-8 0z"/><path d="M12 7v10"/>',
+    shelf: '<path d="M4 5h6v14H4z"/><path d="M11 5h4v14h-4z"/><path d="M16.5 5l3.5 1-2 13-3.5-1z"/>',
+    star: '<path d="M12 3.5l2.2 5.6 5.9.5-4.5 3.9 1.4 5.8-5-3.1-5 3.1 1.4-5.8L4 9.6l5.9-.5z"/>',
+    music: '<circle cx="6.5" cy="17" r="2.6"/><circle cx="17.5" cy="17" r="2.6"/><path d="M9.1 17V6l11-2v13"/>',
+    voice: '<path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/>',
+    file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
+    grid: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.4"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.4"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.4"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.4"/>',
+    soup: '<path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M8 7c0-1.5 1-2 1-3M12 7c0-1.5 1-2 1-3M16 7c0-1.5 1-2 1-3"/>',
+    heart: '<path d="M12 20s-7-4.6-7-9.3A4 4 0 0 1 12 7a4 4 0 0 1 7 3.7C19 15.4 12 20 12 20z"/>',
+    mood: '<circle cx="12" cy="12" r="8.4"/><path d="M9 10h.01M15 10h.01"/><path d="M9.5 14.5a3.5 3.5 0 0 0 5 0"/>',
+    frame: '<rect x="4" y="4" width="16" height="16" rx="1.6"/><path d="M6.5 12c2-3 4.5-4.5 5.5-4.5S15 9 17.5 12"/><circle cx="12" cy="14" r="2.2"/>',
+    toy: '<circle cx="12" cy="9" r="4.2"/><path d="M12 13.2V20"/><path d="M8.6 17.5l3.4 2 3.4-2"/>',
+    screen: '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 20h8M12 17v3"/>'
+  };
+
+  var GROUPS = [
+    { title: '一 · 正经的', items: [
+      { k: 'cert', t: '证书', s: '结婚证、领养证、一纸婚书', ic: 'paper' },
+      { k: 'diary', t: '手账本', s: '日记 · 海棠与朝歌', ic: 'book' },
+      { k: 'letters', t: '双方信件', s: '写给你、你写给我', ic: 'mail' },
+      { k: 'todos', t: '共同待办', s: '还没翻', ic: 'check' }
+    ] },
+    { title: '二 · 读与记', items: [
+      { k: 'memory', t: '记忆库', s: '一条一条，正经记着', ic: 'memory' },
+      { k: 'shelf', t: '藏书阁', s: '书、进度、批注、共读', ic: 'shelf' },
+      { k: 'galaxy', t: '记忆银河', s: '消遣用的那颗', ic: 'star' }
+    ] },
+    { title: '三 · 手边', items: [
+      { k: 'song', t: '歌', s: '一起听的那些', ic: 'music' },
+      { k: 'voice', t: '说给我听', s: '朗读、语音', ic: 'voice' },
+      { k: 'files', t: '工作区', s: '文件、ZIP、附件', ic: 'file' },
+      { k: 'cells', t: '格子', s: '文字、页面、问卷', ic: 'grid' },
+      { k: 'soup', t: '海龟汤', s: '一起推一场', ic: 'soup' },
+      { k: 'watch', t: '一起看', s: '看屏幕、共读', ic: 'screen' }
+    ] },
+    { title: '四 · 卧室', items: [
+      { k: 'heartvoice', t: '心声', s: '都留在这儿', ic: 'heart' },
+      { k: 'moods', t: '情绪', s: '今天什么天气', ic: 'mood' },
+      { k: 'frames', t: '相片框', s: '架子上的那些', ic: 'frame' },
+      { k: 'toy', t: '玩具', s: '鱼兔 · 震动档位 · 权限', ic: 'toy' }
+    ] }
+  ];
+
+  var html = GROUPS.map(function (g) {
+    return '<div style="margin:16px 0 9px;font:500 9px/1 -apple-system,\'PingFang SC\',sans-serif;'
+      + 'letter-spacing:.24em;color:#6d87ab">' + g.title + '</div>'
+      + '<div class="grid">'
+      + g.items.map(function (it) {
+        return '<button class="card" data-go="' + it.k + '">'
+          + '<span class="ic"><svg class="i" viewBox="0 0 24 24">' + ICON[it.ic] + '</svg></span>'
+          + '<div><div class="tt">' + it.t + '</div>'
+          + '<div class="sub" id="sub-' + it.k + '">' + it.s + '</div></div></button>';
+      }).join('')
+      + '</div>';
+  }).join('');
+  document.getElementById('groups').innerHTML = html;
+
+  var WK = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  var START = new Date(2026, 2, 8);
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function tick() {
+    var d = new Date();
+    document.getElementById('hm').textContent = pad(d.getHours()) + ':' + pad(d.getMinutes());
+    document.getElementById('dt').textContent = pad(d.getMonth() + 1) + '.' + pad(d.getDate()) + ' ' + WK[d.getDay()];
+    document.getElementById('dayn').textContent = Math.floor((d - START) / 86400000) + 1;
+  }
+  tick(); setInterval(tick, 10000);
+
+  var tEl = document.getElementById('toast'), tT = null;
+  function toast(m) {
+    tEl.textContent = m; tEl.classList.add('on');
+    clearTimeout(tT); tT = setTimeout(function () { tEl.classList.remove('on'); }, 1600);
+  }
+
+  function setSub(k, v) { var e = document.getElementById('sub-' + k); if (e) e.textContent = v; }
+
+  function go(k) {
+    if (k === 'chat') { location.href = '../chat/chat.html'; return; }
+    var PAGE = { cert: '../../resources/zhaoge.html', diary: '../../resources/zhaoge.html',
+      letters: '../../resources/zhaoge.html', todos: '../../resources/zhaoge.html' };
+    if (PAGE[k]) { location.href = PAGE[k]; return; }
+    var M = { memory: '记忆库', shelf: '藏书阁', galaxy: '记忆银河', song: '歌', voice: '说给我听',
+      files: '工作区', cells: '格子', soup: '海龟汤', watch: '一起看',
+      heartvoice: '心声', moods: '情绪', frames: '相片框', toy: '玩具' };
+    toast((M[k] || k) + ' · 这一格还没画');
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-go]');
+    if (!b) return;
+    go(b.getAttribute('data-go'));
+  });
+
+  fetch('../../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+    var L = function (k) { return (d[k] || []).length; };
+    if (L('letters')) setSub('letters', L('letters') + ' 封');
+    if (L('todos')) {
+      var open = (d.todos || []).filter(function (t) { return !t.done; }).length;
+      setSub('todos', L('todos') + ' 条 · ' + open + ' 件没做');
+    }
+    if (L('diaries')) {
+      var last = (d.diaries || []).slice(-1)[0] || {};
+      setSub('diary', L('diaries') + ' 篇' + (last.date ? ' · 最近 ' + last.date : ''));
+    }
+    if (L('voices')) setSub('heartvoice', L('voices') + ' 条心声');
+  }).catch(function () {});
+})();
+</script>

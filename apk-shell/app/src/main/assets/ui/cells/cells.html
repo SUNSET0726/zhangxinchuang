@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>格子 · 朝歌</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{background:#EDF5FC;color:#1B3556;
+  font-family:"Noto Serif SC","Songti SC","STSong",serif;
+  padding:0 0 calc(34px + env(safe-area-inset-bottom))}
+a{color:inherit;text-decoration:none}
+header{position:sticky;top:0;z-index:6;display:flex;align-items:baseline;gap:12px;
+  padding:calc(16px + env(safe-area-inset-top)) 22px 12px;
+  background:rgba(237,245,252,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+header .bk{font-size:15px;color:#7C93AF}
+header b{font-size:16.5px;font-weight:500;letter-spacing:.14em}
+header em{font:400 10px/1 "Cormorant Garamond",Georgia,serif;font-style:normal;
+  letter-spacing:.22em;color:#9FB2C8}
+main{padding:4px 20px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.cell{position:relative;aspect-ratio:1/1;border-radius:20px;
+  border:1px solid rgba(255,255,255,.94);
+  background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.62));
+  box-shadow:0 10px 24px rgba(20,48,100,.07),inset 0 1px 0 rgba(255,255,255,.95);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+  cursor:pointer;transition:transform .15s ease}
+.cell:active{transform:scale(.96)}
+.cell .ic{width:26px;height:26px;color:#2C5690;opacity:.82}
+.cell .ic svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+.cell .t{font-size:11.5px;letter-spacing:.06em;color:#2B4C77}
+.cell .s{font-size:9px;letter-spacing:.1em;color:#8FA6C0}
+.cell.empty{border-style:dashed;border-color:rgba(27,53,86,.18);background:rgba(255,255,255,.34)}
+.cell.empty .t{color:#8FA6C0}
+.sec{margin:20px 2px 9px;font:500 9px/1 "Noto Serif SC",serif;letter-spacing:.26em;color:#9FB2C8}
+.toast{position:fixed;left:50%;bottom:70px;transform:translate(-50%,10px);
+  padding:9px 16px;border-radius:999px;background:rgba(22,51,107,.9);color:#F2F7FF;
+  font-size:12px;opacity:0;pointer-events:none;transition:.22s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+
+<header>
+  <a class="bk" href="../home/home.html">←</a>
+  <b>格子</b>
+  <em>small boxes.</em>
+</header>
+
+<main>
+  <div class="sec">已装</div>
+  <div class="grid" id="g1"></div>
+  <div class="sec">空位 · 等你从市场搬回来</div>
+  <div class="grid" id="g2"></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var I = {
+    grid: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/>',
+    chess: '<circle cx="9" cy="9" r="4"/><circle cx="15" cy="15" r="4"/>',
+    snake: '<path d="M5 8h6a3 3 0 0 1 0 6H9a2.5 2.5 0 0 0 0 5h7"/>',
+    dice: '<rect x="4" y="4" width="16" height="16" rx="3.4"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="15" r="1"/>',
+    brick: '<rect x="3.5" y="7" width="7" height="4" rx="1"/><rect x="13.5" y="7" width="7" height="4" rx="1"/><rect x="3.5" y="14" width="17" height="4" rx="1"/>',
+    pad: '<rect x="3.5" y="6.5" width="17" height="11" rx="3"/><path d="M8 12h3M9.5 10.5v3"/><circle cx="16" cy="12" r="1"/>',
+    sudoku: '<rect x="4" y="4" width="16" height="16" rx="2.4"/><path d="M9.3 4v16M14.7 4v16M4 9.3h16M4 14.7h16"/>',
+    plus: '<path d="M12 6v12M6 12h12"/>'
+  };
+  var ON = [
+    { t: '格子', s: '都在这儿', ic: 'grid' }
+  ];
+  var SOON = [
+    { t: '五子棋', ic: 'chess' },
+    { t: '贪吃蛇', ic: 'snake' },
+    { t: '骰子', ic: 'dice' },
+    { t: '打砖块', ic: 'brick' },
+    { t: '小掌机', ic: 'pad' },
+    { t: '数独', ic: 'sudoku' }
+  ];
+  var tg = document.getElementById('toast'), tt = null;
+  function toast(m) {
+    tg.textContent = m; tg.classList.add('on');
+    clearTimeout(tt); tt = setTimeout(function () { tg.classList.remove('on'); }, 1700);
+  }
+  function cell(o, empty) {
+    return '<button class="cell' + (empty ? ' empty' : '') + '">'
+      + '<span class="ic"><svg viewBox="0 0 24 24">' + (I[o.ic] || I.grid) + '</svg></span>'
+      + '<span class="t">' + o.t + '</span>'
+      + (o.s ? '<span class="s">' + o.s + '</span>' : '')
+      + '</button>';
+  }
+  document.getElementById('g1').innerHTML = ON.map(function (o) { return cell(o, false); }).join('');
+  document.getElementById('g2').innerHTML = SOON.map(function (o) { return cell(o, true); }).join('')
+    + '<button class="cell empty"><span class="ic"><svg viewBox="0 0 24 24">' + I.plus + '</svg></span><span class="t">再说一个</span></button>';
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.cell') : null;
+    if (!b) return;
+    if (b.classList.contains('empty')) { toast('还空着，等你搬回来'); return; }
+    toast('格子都在这页');
+  });
+})();
+</script>
+</body>
+</html>

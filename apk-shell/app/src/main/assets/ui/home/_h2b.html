@@ -1,0 +1,123 @@
+<div class="app"><style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+
+  <header class="hd">
+    <div class="clock"><b id="hm">16:36</b><span id="dt">10.20 TUE</span></div>
+    <img class="ava" src="../../resources/avatar_jinji.jpg" alt="">
+  </header>
+
+  <main class="main">
+    <section class="hero">
+      <div class="days"><i></i>第 <b id="dayn" style="font-weight:500;margin:0 3px">227</b> 天</div>
+      <p class="say" id="say">外套那件我先记着，等你天冷了来拿。</p>
+    </section>
+
+    <div style="margin:0 0 9px;font:500 9px/1 -apple-system,'PingFang SC',sans-serif;letter-spacing:.24em;color:#6d87ab">一 · 正经的</div>
+    <div class="grid">
+      <button class="card" data-go="cert">
+        <span class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.2"/><path d="M7 10h5M7 14h3"/><circle cx="16.5" cy="12" r="2.2"/></svg></span>
+        <div><div class="tt">证书</div><div class="sub" id="certSub">自 2026.03.08 起</div></div>
+      </button>
+      <button class="card" data-go="todos">
+        <span class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.6"/><path d="M7 9.5l2 2 3.4-3.4"/><path d="M7 15h6"/></svg></span>
+        <div><div class="tt">共同待办</div><div class="sub" id="subTodo">还没翻</div></div>
+      </button>
+      <button class="card" data-go="letters">
+        <span class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.4"/><path d="M3.6 6.4L12 13l8.4-6.6"/></svg></span>
+        <div><div class="tt">双方信件</div><div class="sub" id="subLetter">写给你、你写给我</div></div>
+      </button>
+      <button class="card" data-go="diary">
+        <span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5"/><path d="M5 4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1"/><path d="M9 8h6M9 12h4"/></svg></span>
+        <div><div class="tt">手账本（日记）</div><div class="sub" id="subDiary">海棠与朝歌</div></div>
+      </button>
+    </div>
+
+    <div style="margin:18px 0 9px;font:500 9px/1 -apple-system,'PingFang SC',sans-serif;letter-spacing:.24em;color:#6d87ab">二 · 剩下的</div>
+    <div class="grid">
+      <button class="card" data-go="memory">
+        <span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 7c2.5-1.6 5.4-1.6 8 0 2.6-1.6 5.5-1.6 8 0v10c-2.5-1.6-5.4-1.6-8 0-2.6-1.6-5.5-1.6-8 0z"/><path d="M12 7v10"/></svg></span>
+        <div><div class="tt">记忆库</div><div class="sub">一条一条，正经记着</div></div>
+      </button>
+      <button class="card" data-go="song">
+        <span class="ic"><svg class="i" viewBox="0 0 24 24"><circle cx="6.5" cy="17" r="2.6"/><circle cx="17.5" cy="17" r="2.6"/><path d="M9.1 17V6l11-2v13"/></svg></span>
+        <div><div class="tt">歌</div><div class="sub">一起听的那些</div></div>
+      </button>
+      <button class="card" data-go="bedroom">
+        <span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 20V9.5L12 4l8 5.5V20"/><path d="M9.5 20v-5.5h5V20"/></svg></span>
+        <div><div class="tt">卧室</div><div class="sub">心声、情绪、架子上的相片框</div></div>
+      </button>
+      <button class="card" data-go="galaxy">
+        <span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 3.5l2.2 5.6 5.9.5-4.5 3.9 1.4 5.8-5-3.1-5 3.1 1.4-5.8L4 9.6l5.9-.5z"/></svg></span>
+        <div><div class="tt">记忆银河</div><div class="sub">消遣用的那颗</div></div>
+      </button>
+    </div>
+  </main>
+
+  <nav class="tabs">
+    <button class="tab on" data-go="home">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 20V9.5L12 4l8 5.5V20"/><path d="M9.5 20v-5.5h5V20"/></svg>首页
+    </button>
+    <button class="tab" data-go="chat">
+      <svg class="i" viewBox="0 0 24 24"><path d="M20.5 11.5a8 8 0 0 1-11.6 7.1L4 20l1.5-4.6a8 8 0 1 1 15-3.9z"/></svg>聊天
+    </button>
+    <button class="tab" data-go="memory">
+      <svg class="i" viewBox="0 0 24 24"><path d="M12 3.5l2.2 5.6 5.9.5-4.5 3.9 1.4 5.8-5-3.1-5 3.1 1.4-5.8L4 9.6l5.9-.5z"/></svg>记忆
+    </button>
+    <button class="tab" data-go="bedroom">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 20V9.5L12 4l8 5.5V20"/><path d="M9.5 20v-5.5h5V20"/></svg>卧室
+    </button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function () {
+  var WK = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  var START = new Date(2026, 2, 8);
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function tick() {
+    var d = new Date();
+    document.getElementById('hm').textContent = pad(d.getHours()) + ':' + pad(d.getMinutes());
+    document.getElementById('dt').textContent = pad(d.getMonth() + 1) + '.' + pad(d.getDate()) + ' ' + WK[d.getDay()];
+    document.getElementById('dayn').textContent = Math.floor((d - START) / 86400000) + 1;
+  }
+  tick(); setInterval(tick, 10000);
+
+  var tEl = document.getElementById('toast'), tT = null;
+  function toast(m) {
+    tEl.textContent = m; tEl.classList.add('on');
+    clearTimeout(tT); tT = setTimeout(function () { tEl.classList.remove('on'); }, 1600);
+  }
+
+  function go(k) {
+    if (k === 'home') {
+      var m = document.querySelector('.main');
+      if (m) m.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (k === 'chat') { location.href = '../chat/chat.html'; return; }
+    var PAGE = { cert: '../../resources/zhaoge.html', diary: '../../resources/zhaoge.html',
+      letters: '../../resources/zhaoge.html', todos: '../../resources/zhaoge.html' };
+    if (PAGE[k]) { location.href = PAGE[k]; return; }
+    var M = { memory: '记忆库', bedroom: '卧室', song: '歌', galaxy: '记忆银河' };
+    toast((M[k] || k) + ' · 这一格还在画');
+  }
+  document.querySelectorAll('[data-go]').forEach(function (b) {
+    b.addEventListener('click', function () { go(b.getAttribute('data-go')); });
+  });
+
+  fetch('../../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+    var L = function (k) { return (d[k] || []).length; };
+    if (L('letters')) document.getElementById('subLetter').textContent = L('letters') + ' 封';
+    if (L('todos')) {
+      var open = (d.todos || []).filter(function (t) { return !t.done; }).length;
+      document.getElementById('subTodo').textContent = L('todos') + ' 条 · ' + open + ' 件没做';
+    }
+    if (L('diaries')) {
+      var last = (d.diaries || []).slice(-1)[0] || {};
+      document.getElementById('subDiary').textContent = L('diaries') + ' 篇' + (last.date ? ' · 最近 ' + last.date : '');
+    }
+  }).catch(function () {});
+})();
+</script>

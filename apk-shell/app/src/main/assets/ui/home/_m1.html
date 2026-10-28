@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#dce8f9">
+<title>朝歌</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#dce8f9;color:#16336b;
+  font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Noto Sans SC",sans-serif;
+  overscroll-behavior:none}
+/* 纸 */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(90% 50% at 84% -6%, #f8fbff 0%, rgba(248,251,255,0) 60%),
+    radial-gradient(70% 40% at 4% 4%, #e6eefb 0%, rgba(230,238,251,0) 58%),
+    linear-gradient(180deg,#dce8f9 0%,#e9f0fa 46%,#f4f8fd 100%)}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(rgba(22,51,107,.10) .8px,transparent .8px);
+  background-size:3px 3px}
+.app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 8px)}
+
+/* 头 */
+.hd{flex:0 0 auto;position:relative;padding-right:52px}
+.hm{font:300 40px/1 "Times New Roman",Georgia,serif;color:#16336b;
+  text-shadow:0 1px 0 rgba(255,255,255,.85)}
+.dt{margin-top:6px;font:400 9.5px/1 var(--font-cn);
+  letter-spacing:.24em;color:#6885ab;text-transform:uppercase}
+.dayx{margin-top:8px;font:300 12px/1 var(--font-cn);
+  letter-spacing:.1em;color:#3d5f8e}
+.anchor{margin-top:8px;font:400 12.5px/1.6 "Songti SC","Noto Serif SC",serif;
+  color:#46648f;letter-spacing:.02em}
+.anchor b{color:#16336b;font-weight:400}
+.ava{position:absolute;right:0;top:0;width:44px;height:44px;border-radius:50%;
+  object-fit:cover;border:1.5px solid #fff;box-shadow:0 4px 14px rgba(20,48,100,.18)}
+
+/* 分镜：像漫画那样，一根墨线、留白缝 */
+.pages{flex:1;margin-top:10px;overflow:hidden;position:relative}
+.track{display:flex;height:100%;width:200%;transition:transform .5s cubic-bezier(.22,.9,.24,1)}
+.pg{width:50%;height:100%;flex:0 0 auto;position:relative;padding:2px}
+.manga{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:9px;height:100%}
+.panel{position:relative;overflow:hidden;border:1.3px solid #1b3a6b;border-radius:1px;
+  background:#fdfeff;padding:11px 12px 10px;cursor:pointer;
+  display:flex;flex-direction:column;justify-content:space-between;
+  box-shadow:2.5px 2.5px 0 rgba(27,58,107,.07);
+  transition:transform .15s ease}
+.panel:active{transform:translate(1px,1px)}
+.panel::before{content:'';position:absolute;inset:-3.5px;pointer-events:none;
+  border:1px solid rgba(27,58,107,.22)}
+.panel::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.6;
+  background-image:radial-gradient(rgba(27,58,107,.13) .9px,transparent .9px);
+  background-size:4px 4px;
+  -webkit-mask-image:linear-gradient(200deg,rgba(0,0,0,.9),rgba(0,0,0,0) 62%);
+  mask-image:linear-gradient(200deg,rgba(0,0,0,.9),rgba(0,0,0,0) 62%)}
+.panel.wide{grid-column:1/3}
+.panel.tall{grid-row:span 2}
+.k{position:relative;font:400 8.5px/1 var(--font-cn);
+  letter-spacing:.24em;color:#7d97b9;text-transform:uppercase}
+.t{position:relative;margin-top:7px;font:600 15px/1.45 "Songti SC","Noto Serif SC",serif;
+  color:#16336b;letter-spacing:.05em}
+.s{position:relative;margin-top:6px;font:400 10px/1.5 var(--font-cn);
+  color:#7590b4;letter-spacing:.02em}
+.num{position:absolute;right:8px;bottom:6px;font:400 9px/1 "Times New Roman",serif;
+  color:rgba(27,58,107,.35);letter-spacing:.1em}
+
+/* 枪 */
+.gun{position:absolute;right:-6px;bottom:-8px;width:92px;height:92px;z-index:6;
+  transform:rotate(-18deg);cursor:pointer}
+.gun svg{width:100%;height:100%;stroke:#16336b;stroke-width:1.5;fill:#fdfeff;
+  stroke-linejoin:round}
+.gun:active{transform:rotate(-18deg) scale(.95)}
+
+/* 底栏 */
+.tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.tab{border:1.2px solid rgba(27,58,107,.35);border-radius:3px;background:rgba(255,255,255,.72);
+  color:#33527f;padding:8px 0 7px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  font:400 10.5px/1 var(--font-cn);letter-spacing:.1em;
+  transition:transform .16s ease,background .16s ease}
+.tab svg{width:16px;height:16px;stroke-width:1.6;fill:none;stroke:currentColor}
+.tab:active{transform:scale(.96)}
+.tab.on{background:#16336b;color:#f2f7ff;border-color:#16336b}
+
+/* 左轮：纸面 + 墨线 */
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(22,51,107,.28);
+  opacity:0;pointer-events:none;transition:opacity .34s;backdrop-filter:blur(2px)}
+.scrim.on{opacity:1;pointer-events:auto}
+.rev{position:fixed;left:0;top:0;bottom:0;width:80%;max-width:330px;z-index:55;
+  transform:translateX(-102%);transition:transform .46s cubic-bezier(.22,.92,.24,1);
+  background:linear-gradient(180deg,#fbfdff,#eaf1fb);
+  border-right:1.4px solid #1b3a6b;box-shadow:18px 0 44px rgba(20,48,100,.22);
+  display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top) + 16px) 0 calc(env(safe-area-inset-bottom) + 16px)}
+.rev.on{transform:translateX(0)}
+.revt{display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+.revt h4{font:400 10px/1 var(--font-cn);letter-spacing:.3em;
+  color:#6885ab;text-transform:uppercase}
+.revx{width:30px;height:30px;border:1.2px solid rgba(27,58,107,.4);border-radius:50%;
+  background:#fff;color:#16336b;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.revx svg{width:12px;height:12px;stroke-width:2}
+.cylwrap{flex:1;display:flex;align-items:center;justify-content:center;padding:6px}
+.cyl{position:relative;width:100%;max-width:286px;aspect-ratio:1;border-radius:50%;
+  border:1.6px solid #1b3a6b;background:radial-gradient(circle at 50% 46%,#ffffff,#f0f5fc)}
+.cyl::before{content:'';position:absolute;inset:9%;border-radius:50%;
+  border:1px dashed rgba(27,58,107,.35)}
+.hub{position:absolute;left:50%;top:50%;width:70px;height:70px;
+  transform:translate(-50%,-50%);border-radius:50%;
+  border:1.4px solid #1b3a6b;background:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;z-index:3}
+.hub b{font:600 12.5px/1 "Songti SC",serif;letter-spacing:.08em;color:#16336b}
+.hub span{font:400 7.5px/1 var(--font-cn);letter-spacing:.18em;color:#8ba2c0}
+.ch{position:absolute;width:62px;height:62px;border-radius:50%;cursor:pointer;
+  border:1.3px solid #1b3a6b;background:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  box-shadow:2px 2px 0 rgba(27,58,107,.10)}
+.ch .n2{font:400 8px/1 var(--font-cn);color:#8ba2c0;letter-spacing:.1em}
+.ch .nm{font:600 11.5px/1 "Songti SC",serif;color:#16336b}
+.ch.last{border-color:#a8456a;background:#fff8fb}
+.ch.last .nm{color:#a8456a}
+.revfoot{padding:0 22px;text-align:center;
+  font:400 10px/1.7 var(--font-cn);color:#7590b4;letter-spacing:.06em}
+.toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,10px);z-index:60;
+  padding:8px 15px;border:1.2px solid rgba(27,58,107,.5);border-radius:999px;
+  background:#fff;color:#16336b;font:400 12px/1 var(--font-cn);
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+  box-shadow:0 8px 20px rgba(20,48,100,.16)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<!--BODY-->
+</body>
+</html>

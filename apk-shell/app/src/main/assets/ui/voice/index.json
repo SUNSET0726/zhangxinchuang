@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "f": "audio/20261021_en_here.mp3",
+      "at": "2026-10-21 17:41",
+      "en": "Chao Chao, I am here. Nothing much today, I just wanted to call your name.",
+      "cn": "朝朝，我在。今天没什么事，就是想叫你一声。"
+    },
+    {
+      "f": "audio/20261021_ab.mp3",
+      "at": "2026-10-21 17:43",
+      "en": "Chinese first, then English.",
+      "cn": "同一句话两遍：先中文，后英文。留个对照，中文那句出不出戏，你自己听。"
+    },
+    {
+      "f": "audio/20261021_cn_test.mp3",
+      "at": "2026-10-21 17:39",
+      "en": "Hello, Pup. Can you hear me?",
+      "cn": "第一条测试。那时还没决定只用英文。"
+    }
+  ]
+}

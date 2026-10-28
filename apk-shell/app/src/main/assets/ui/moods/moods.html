@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#EDF5FC">
+<title>朝歌 · 情绪</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#EDF5FC; --text:#1B3556; --text-soft:#4A6B93; --text-faint:#8199B6;
+  --hairline:rgba(44,86,140,.16); --accent:#1f4a8f;
+  --card-bg:rgba(255,255,255,.58); --card-line:rgba(255,255,255,.9);
+  --card-shadow:0 10px 28px rgba(30,64,120,.07);
+  --pad:clamp(14px,4vw,24px);
+  --font-cn:system-ui,"HONOR Sans","HarmonyOS Sans SC","PingFang SC","Noto Sans SC",sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-cn);
+  overscroll-behavior:none}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(180deg,rgba(237,245,252,.62) 0%,rgba(237,245,252,.24) 30%,rgba(237,245,252,.10) 66%,rgba(237,245,252,.52) 100%),
+    url('../../resources/img/tidal/chat-light.webp');
+  background-size:cover,cover;background-position:center,center;background-repeat:no-repeat,no-repeat}
+.app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+.hd{flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:calc(env(safe-area-inset-top) + 14px) var(--pad) 6px}
+.back{width:34px;height:34px;flex:none;border:1px solid var(--card-line);border-radius:50%;
+  background:rgba(255,255,255,.7);color:var(--text);display:grid;place-items:center;cursor:pointer}
+.back svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ttl{flex:1;min-width:0}
+.ttl h1{font:600 clamp(15px,4vw,17px)/1.3 var(--font-cn);letter-spacing:.06em}
+.ttl em{display:block;margin-top:3px;font:400 clamp(8.5px,2.2vw,10px)/1.3 "Cormorant Garamond",Georgia,serif;
+  letter-spacing:.08em;color:var(--text-faint);font-style:normal}
+.segs{display:flex;gap:7px;padding:2px var(--pad) 10px;flex:0 0 auto}
+.seg{border:1px solid var(--card-line);background:rgba(255,255,255,.62);color:var(--text-soft);
+  border-radius:999px;padding:6px 12px;font:400 10.5px/1 var(--font-cn);letter-spacing:.04em;cursor:pointer;
+  transition:background 150ms var(--ease),color 150ms var(--ease)}
+.seg.on{background:var(--accent);border-color:transparent;color:#fff}
+.wrap{flex:1;overflow-y:auto;padding:4px var(--pad) calc(env(safe-area-inset-bottom) + 20px)}
+.wrap::-webkit-scrollbar{display:none}
+.card{background:var(--card-bg);border:1px solid var(--card-line);border-radius:16px;
+  box-shadow:var(--card-shadow);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  padding:14px 14px 10px;margin-bottom:11px}
+.card .cap{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+.card .cap b{font:600 12px/1.3 var(--font-cn);letter-spacing:.04em}
+.card .cap span{font:400 8.5px/1 "Cormorant Garamond",Georgia,serif;letter-spacing:.1em;color:var(--text-faint)}
+svg.radar,svg.curve{display:block;width:100%;height:auto}
+.axis{font:400 9px/1 var(--font-cn);fill:var(--text-soft)}
+.rows .row{display:flex;align-items:baseline;gap:8px;padding:9px 2px;border-bottom:1px solid rgba(44,86,140,.08)}
+.rows .row:last-child{border-bottom:0}
+.rows .d{font:400 9.5px/1 "Cormorant Garamond",Georgia,serif;letter-spacing:.08em;color:var(--text-faint);flex:none;width:52px}
+.rows .m{font:400 11.5px/1.55 var(--font-cn);color:var(--text);white-space:pre-wrap}
+.rows .p{margin-left:auto;font:400 9px/1 var(--font-cn);color:var(--accent);opacity:.8;flex:none}
+.calstrip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:2px 0 12px}
+.cs{display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 0 8px;
+  border-radius:14px;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.9)}
+.cs b{font:400 10px/1 var(--font-cn);color:var(--text-faint)}
+.cs svg{width:16px;height:16px;fill:none;stroke:var(--accent,#1F4A8F);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+.cs i{width:16px;height:1px;background:rgba(27,53,86,.16);display:block}
+.cs.today{box-shadow:0 0 0 1px rgba(27,53,86,.22) inset}
+.empty{padding:24px 0;text-align:center;font:400 11px/1.8 var(--font-cn);color:var(--text-faint)}
+</style>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<div class="app">
+  <header class="hd">
+    <button class="back" id="back" aria-label="返回">
+      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="ttl"><h1>情绪</h1><em>how today felt.</em></div>
+  </header>
+  <div class="calstrip" id="calstrip"></div>
+  <div class="segs">
+    <button class="seg on" data-f="jin">我的</button>
+    <button class="seg" data-f="me">你的</button>
+  </div>
+  <main class="wrap" id="wrap">
+    <section class="card">
+      <div class="cap"><b id="cap1">六维</b><span id="cap2">six dimensions</span></div>
+      <svg class="radar" id="radar" viewBox="0 0 240 214"></svg>
+    </section>
+    <section class="card">
+      <div class="cap"><b>寻找曲线</b><span>the curve we look for</span></div>
+      <svg class="curve" id="curve" viewBox="0 0 320 110"></svg>
+    </section>
+    <section class="card">
+      <div class="cap"><b>一天一天</b><span>day by day</span></div>
+      <div class="rows" id="list"></div>
+    </section>
+  </main>
+</div>
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  $('#back').addEventListener('click', function () { ZGBack(); });
+
+  var DIM = [['happy', '开心'], ['calm', '平静'], ['soft', '害羞'], ['care', '依赖'], ['sad', '难过'], ['angry', '生气']];
+  var VAL = { happy: 1.0, calm: 0.72, soft: 0.86, care: 0.78, sad: 0.26, angry: 0.16 };
+  var MM = { sad: '难过', care: '在意', happy: '开心', angry: '生气', calm: '平静', soft: '软', tired: '累', hope: '期待', ache: '难受', miss: '想你', shy: '害羞', joy: '开心', plain: '平淡', think: '思考', slack: '摸鱼' };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function pt(cx, cy, r, i) {
+    var a = (-90 + i * 60) * Math.PI / 180;
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  }
+  function radar(dims) {
+    var cx = 120, cy = 108, R = 78, s = '';
+    [0.34, 0.67, 1].forEach(function (f) {
+      var p = [];
+      for (var i = 0; i < 6; i++) { var o = pt(cx, cy, R * f, i); p.push(o[0].toFixed(1) + ',' + o[1].toFixed(1)); }
+      s += '<polygon points="' + p.join(' ') + '" fill="none" stroke="rgba(44,86,140,.16)" stroke-width="1"/>';
+    });
+    for (var i = 0; i < 6; i++) {
+      var e = pt(cx, cy, R, i);
+      s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + e[0].toFixed(1) + '" y2="' + e[1].toFixed(1) + '" stroke="rgba(44,86,140,.12)"/>';
+    }
+    var dp = [];
+    DIM.forEach(function (dd, i) {
+      var o = pt(cx, cy, R * ((dims[i] || 0) / 100), i);
+      dp.push(o[0].toFixed(1) + ',' + o[1].toFixed(1));
+    });
+    s += '<polygon points="' + dp.join(' ') + '" fill="rgba(31,74,143,.20)" stroke="#1f4a8f" stroke-width="1.6"/>';
+    DIM.forEach(function (dd, i) {
+      var o = pt(cx, cy, R * ((dims[i] || 0) / 100), i);
+      s += '<circle cx="' + o[0].toFixed(1) + '" cy="' + o[1].toFixed(1) + '" r="2.4" fill="#1f4a8f"/>';
+      var lp = pt(cx, cy, R + 20, i);
+      s += '<text class="axis" x="' + lp[0].toFixed(1) + '" y="' + (lp[1] + 3).toFixed(1) + '" text-anchor="middle">' + dd[1] + '</text>';
+    });
+    $('#radar').innerHTML = s;
+  }
+  function curve(pts) {
+    var W = 320, H = 110, padL = 8, padR = 8, top = 12, bot = 22, c = '';
+    if (pts.length < 2) {
+      c = '<text class="axis" x="160" y="60" text-anchor="middle">记录还太少，画不成线</text>';
+      $('#curve').innerHTML = c; return;
+    }
+    var step = (W - padL - padR) / (pts.length - 1), line = [], area = [];
+    pts.forEach(function (p, i) {
+      var x = padL + step * i, y = top + (1 - p.v) * (H - top - bot);
+      line.push(x.toFixed(1) + ',' + y.toFixed(1));
+      area.push(x.toFixed(1) + ',' + (H - bot) + ' ' + x.toFixed(1) + ',' + y.toFixed(1));
+    });
+    c += '<polygon points="' + area.join(' ') + '" fill="rgba(31,74,143,.10)"/>';
+    c += '<polyline points="' + line.join(' ') + '" fill="none" stroke="#1f4a8f" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>';
+    var last = pts[pts.length - 1], lx = padL + step * (pts.length - 1);
+    var ly = top + (1 - last.v) * (H - top - bot);
+    c += '<circle cx="' + lx.toFixed(1) + '" cy="' + ly.toFixed(1) + '" r="2.6" fill="#1f4a8f"/>';
+    c += '<text class="axis" x="' + padL + '" y="' + (H - 6) + '">' + esc(pts[0].d.slice(5)) + '</text>';
+    c += '<text class="axis" x="' + (W - padR) + '" y="' + (H - 6) + '" text-anchor="end">' + esc(last.d.slice(5)) + '</text>';
+    $('#curve').innerHTML = c;
+  }
+
+  fetch('../../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+    .then(function (d) {
+      var meta = d.dayMeta || {};
+      var jin = (d.jinMoods || []).slice().sort(function (a, b) { return a.day < b.day ? -1 : 1; });
+
+      function draw(who) {
+        var dims = [0, 0, 0, 0, 0, 0], pts = [], rows = '';
+        if (who === 'jin') {
+          var lastDims = jin.length ? (jin[jin.length - 1].dims || {}) : {};
+          dims = DIM.map(function (dd) { return lastDims[dd[0]] || 0; });
+          pts = jin.map(function (x) {
+            var s = 0;
+            DIM.forEach(function (dd) { s += (x.dims || {})[dd[0]] || 0; });
+            return { d: x.day, v: (s / DIM.length) / 100 };
+          });
+          rows = jin.slice().reverse().map(function (x) {
+            return '<div class="row"><span class="d">' + esc(x.day.slice(5)) + '</span>'
+              + '<span class="m">' + esc(x.note || '（没写）') + '</span></div>';
+          }).join('');
+          $('#cap1').textContent = '我的六维';
+          $('#cap2').textContent = 'what i feel';
+        } else {
+          var days = Object.keys(meta).sort();
+          var M2D = { joy: [85, 55, 70, 60, 8, 4], happy: [88, 60, 72, 55, 5, 3], calm: [55, 88, 60, 55, 8, 4], soft: [55, 50, 85, 70, 12, 3], shy: [55, 48, 84, 68, 14, 3], care: [60, 62, 78, 88, 10, 4], sad: [8, 30, 28, 38, 85, 12], angry: [12, 26, 20, 22, 30, 85], tired: [14, 40, 26, 30, 62, 8], hope: [75, 60, 64, 62, 10, 3], ache: [26, 40, 52, 62, 60, 8], miss: [46, 44, 60, 72, 26, 4] };
+          var sums = { happy: 0, calm: 0, soft: 0, care: 0, sad: 0, angry: 0 };
+          days.forEach(function (k) {
+            var arr = M2D[(meta[k] || {}).mood] || [50, 50, 50, 50, 12, 6];
+            DIM.forEach(function (dd, ii) { sums[dd[0]] += arr[ii]; });
+          });
+          var dn = days.length || 1;
+          dims = DIM.map(function (dd) { return Math.round(sums[dd[0]] / dn); });
+          pts = days.map(function (k) { return { d: k, v: VAL[(meta[k] || {}).mood] || 0.5 }; });
+          rows = days.slice().reverse().map(function (k) {
+            var m = meta[k] || {};
+            var line = m.note || MM[m.mood] || m.mood || '没记';
+            return '<div class="row"><span class="d">' + esc(k.slice(5)) + '</span>'
+              + '<span class="m">' + esc(line) + '</span>'
+              + (m.period ? '<span class="p">经期</span>' : '') + '</div>';
+          }).join('');
+          $('#cap1').textContent = '你的六维';
+          $('#cap2').textContent = 'what you feel';
+        }
+        radar(dims);
+        curve(pts);
+        $('#list').innerHTML = rows || '<div class="empty">还没有记录。</div>';
+      }
+
+      document.querySelectorAll('.seg').forEach(function (b) {
+        b.addEventListener('click', function () {
+          document.querySelectorAll('.seg').forEach(function (o) { o.classList.remove('on'); });
+          b.classList.add('on'); draw(b.getAttribute('data-f')); $('#wrap').scrollTop = 0;
+        });
+      });
+      draw('jin');
+    })
+    .catch(function () { $('#list').innerHTML = '<div class="empty">data.json 读不到了。</div>'; });
+})();
+</script>
+<script src="../base/snow.js"></script>
+<script>
+(function () {
+  var el = document.getElementById('calstrip');
+  if (!el) return;
+  var IC = {
+    happy: '<circle cx="12" cy="12" r="8"/><path d="M9 10h.01M15 10h.01"/><path d="M8.6 14.2a4.4 4.4 0 0 0 6.8 0"/>',
+    plain: '<circle cx="12" cy="12" r="8"/><path d="M9 10h.01M15 10h.01"/><path d="M9 15h6"/>',
+    think: '<circle cx="12" cy="12" r="8"/><path d="M12 8.2v4.4l2.6 1.6"/>',
+    sad: '<circle cx="12" cy="12" r="8"/><path d="M9 10h.01M15 10h.01"/><path d="M8.6 16a4.4 4.4 0 0 1 6.8 0"/>',
+    angry: '<circle cx="12" cy="12" r="8"/><path d="M7.8 8.6l3 1.6M16.2 8.6l-3 1.6"/><path d="M9 16h6"/>',
+    tired: '<circle cx="12" cy="12" r="8"/><path d="M8.4 10.4h2M13.6 10.4h2"/><path d="M9 15.4h6"/>',
+    slack: '<path d="M3.6 12.4c2.4-3.2 5.2-4.8 8.4-4.8s6 1.6 8.4 4.8c-2.4 2.4-5.2 3.6-8.4 3.6s-6-1.2-8.4-3.6z"/><circle cx="9" cy="12.1" r=".9"/>'
+  };
+  var d = {};
+  try { d = JSON.parse(localStorage.getItem('zg.cal') || '{}'); } catch (e) { d = {}; }
+  var now = new Date(), html = '';
+  for (var i = 6; i >= 0; i--) {
+    var t = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    var m = t.getMonth() + 1, dd = t.getDate();
+    var k = t.getFullYear() + '-' + (m < 10 ? '0' + m : m) + '-' + (dd < 10 ? '0' + dd : dd);
+    var r = d[k] || {};
+    html += '<div class="cs' + (i === 0 ? ' today' : '') + '">'
+      + '<b>' + dd + '</b>'
+      + (r.m && IC[r.m] ? '<svg viewBox="0 0 24 24">' + IC[r.m] + '</svg>' : '<i></i>')
+      + '</div>';
+  }
+  el.innerHTML = html;
+  el.addEventListener('click', function () { location.href = '../diary/calendar.html?v=2'; });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>话匣 · 朝歌</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--pad:clamp(14px,4vw,24px);--ink:#1B3556;--sub:#4A6B93;--hint:#8AA6C4;--line:rgba(27,53,86,.10);
+--font-cn:"Noto Serif SC","Songti SC",serif}
+html,body{min-height:100%;background:#EDF5FC;color:var(--ink);font-family:var(--font-cn)}
+body{background-image:linear-gradient(180deg,rgba(237,245,252,.72),rgba(247,251,255,.92)),url('../../resources/img/tidal/chat-light.webp');background-size:cover;background-position:center;background-attachment:fixed}
+.hd{display:flex;align-items:flex-start;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 18px) var(--pad) 6px}
+.ttl h1{font-size:19px;font-weight:600;letter-spacing:.06em}
+.ttl em{display:block;margin-top:5px;font-style:normal;font-size:10px;letter-spacing:.16em;color:var(--hint);text-transform:lowercase}
+.back{width:34px;height:34px;border:none;border-radius:50%;background:rgba(255,255,255,.66);color:var(--ink);font-size:12px;cursor:pointer;box-shadow:0 6px 16px rgba(30,64,120,.12)}
+.stat{padding:2px var(--pad) 10px;font-size:10.5px;color:var(--hint);letter-spacing:.06em}
+main{padding:0 var(--pad) calc(env(safe-area-inset-bottom) + 30px)}
+.item{position:relative;padding:14px 15px;margin-bottom:10px;border-radius:16px;background:rgba(255,255,255,.62);
+-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.85);
+box-shadow:0 10px 26px rgba(30,64,120,.07)}
+.item .t{font-size:13.5px;line-height:1.95;color:var(--ink);word-break:break-word}
+.item .m{margin-top:8px;display:flex;justify-content:space-between;font-size:10px;color:var(--hint);letter-spacing:.08em}
+.item .del{border:none;background:none;color:var(--hint);font-size:10px;font-family:inherit;cursor:pointer}
+.empty{padding:40px 10px;text-align:center;font-size:12px;line-height:2;color:var(--hint)}
+.note{text-align:center;font-size:10px;letter-spacing:.16em;color:var(--hint);margin-top:18px;text-transform:lowercase}
+.search{display:flex;align-items:center;gap:9px;margin:2px var(--pad) 8px;
+  border:1px solid rgba(27,53,86,.12);border-radius:999px;padding:8px 14px;
+  background:rgba(255,255,255,.8)}
+.search svg{width:13px;height:13px;stroke:var(--hint);fill:none;stroke-width:1.8;flex:none}
+.search input{flex:1;border:0;outline:0;background:transparent;color:var(--ink);
+  font-family:inherit;font-size:13px}
+.search input::placeholder{color:var(--hint)}
+</style>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<header class="hd">
+  <div class="ttl"><h1>话匣</h1><em>what we kept.</em></div>
+  <button class="back" onclick="ZGBack()">返回</button>
+</header>
+<label class="search">
+  <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+  <input id="q" type="text" placeholder="搜一句话、一个词">
+</label>
+<div class="stat" id="stat">翻一下…</div>
+<main id="list"></main>
+
+<script>
+(function () {
+  var KEY = 'zg.stars';
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; }
+  }
+  function saveAll(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  var KW = '';
+  function render() {
+    var arr = load().slice().reverse();
+    if (KW) {
+      arr = arr.filter(function (x) {
+        return String(x.t || '').toLowerCase().indexOf(KW) >= 0;
+      });
+    }
+    document.getElementById('stat').textContent = arr.length ? (arr.length + ' 句 · 从旧到新都在这儿') : '还没收过话';
+    if (!arr.length) {
+      document.getElementById('list').innerHTML = '<div class="empty">在会话里长按一句话，或者点那排小键里的星星<br>收下的都会落到这儿</div>';
+      return;
+    }
+    document.getElementById('list').innerHTML = arr.map(function (x, i) {
+      return '<article class="item"><div class="t">' + esc(x.t) + '</div>'
+        + '<div class="m"><span>' + esc(x.tm || '') + '</span>'
+        + '<button class="del" data-i="' + i + '">拿出来</button></div></article>';
+    }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('[data-del],[data-i]'), function (b) {
+      b.addEventListener('click', function () {
+        var idx = +b.getAttribute('data-i');
+        var all = load(), out = [];
+        for (var k = all.length - 1; k >= 0; k--) {
+          if (k === all.length - 1 - idx) continue;
+          out.unshift(all[k]);
+        }
+        saveAll(out);
+        render();
+      });
+    });
+  }
+  var q0 = document.getElementById('q');
+  if (q0) q0.addEventListener('input', function () { KW = q0.value.trim().toLowerCase(); render(); });
+  render();
+})();
+</script>
+<script src="../base/snow.js"></script>
+</body>
+</html>

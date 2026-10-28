@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>浮字 · 朝歌</title>
+<style>
+/* 浮字卡 · 两套皮
+   固定 = 以前那张白卡，蓝墨字，两个按钮
+   跟随系统 = 磨砂卡，浅色浅磨、深色深磨，只跟手机深浅走 */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:transparent;overflow:hidden;
+  font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Noto Sans SC",sans-serif}
+body{display:flex;align-items:center;justify-content:center;padding:12px}
+.card{width:100%;max-width:330px;border-radius:20px;padding:16px 16px 12px;position:relative;
+  transition:background .25s,color .25s,box-shadow .25s}
+.hd{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.ava{width:24px;height:24px;border-radius:50%;overflow:hidden;flex:0 0 auto}
+.ava img{width:100%;height:100%;object-fit:cover;display:block}
+.who{font-size:12px;letter-spacing:.08em}
+.dot{width:5px;height:5px;border-radius:50%;margin-left:auto}
+.msg{font-size:15px;line-height:1.62;word-break:break-word}
+.tail{font-size:10.5px;margin-top:10px;opacity:.55;letter-spacing:.04em}
+.acts{display:flex;gap:8px;margin-top:13px}
+.acts button{flex:1;height:38px;border:0;border-radius:12px;font-size:13.5px;
+  font-family:inherit;cursor:pointer;transition:transform .12s}
+.acts button:active{transform:scale(.97)}
+.b-reply{font-weight:500}
+.b-busy{font-weight:400}
+
+/* —— 固定：以前那张 —— */
+html[data-skin="fixed"] .card{background:#FFFFFF;
+  box-shadow:0 10px 30px rgba(31,58,95,.16),0 1px 0 rgba(255,255,255,.9) inset;
+  border:1px solid #E7EEF7;color:#1B3556}
+html[data-skin="fixed"] .who{color:#6C86A6}
+html[data-skin="fixed"] .dot{background:#5BA36B;box-shadow:0 0 0 3px rgba(91,163,107,.16)}
+html[data-skin="fixed"] .msg{color:#1B3556}
+html[data-skin="fixed"] .b-reply{background:#2E5D9B;color:#fff}
+html[data-skin="fixed"] .b-busy{background:#EFF3F9;color:#5C7290}
+
+/* —— 跟随系统：新做的那套 —— */
+html[data-skin="auto"] .card{
+  background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(18px) saturate(1.2);
+  backdrop-filter:blur(18px) saturate(1.2);
+  border:1px solid rgba(27,53,86,.10);color:#16202B;
+  box-shadow:0 12px 34px rgba(20,40,70,.14)}
+html[data-skin="auto"] .who{color:#7A889A;letter-spacing:.14em}
+html[data-skin="auto"] .dot{background:#4E9F6E}
+html[data-skin="auto"] .b-reply{background:#16202B;color:#F7FAFD;font-weight:500}
+html[data-skin="auto"] .b-busy{background:rgba(22,32,43,.06);color:#5A6A7C}
+@media (prefers-color-scheme:dark){
+  html[data-skin="auto"] .card{
+    background:rgba(24,29,37,.86);border-color:rgba(255,255,255,.09);
+    color:#EDF2F8;box-shadow:0 14px 38px rgba(0,0,0,.5)}
+  html[data-skin="auto"] .who{color:#8A97A8}
+  html[data-skin="auto"] .b-reply{background:#EDF2F8;color:#131A22;font-weight:500}
+  html[data-skin="auto"] .b-busy{background:rgba(255,255,255,.08);color:#A9B6C6}
+}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<div class="card">
+  <div class="hd">
+    <div class="ava"><svg viewBox="0 0 48 48" width="100%" height="100%" style="display:block"><circle cx="24" cy="24" r="24" fill="none"/><path d="M13 18l-2-7 8 3M35 18l2-7-8 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".75"/><circle cx="18" cy="25" r="2.1" fill="currentColor"/><circle cx="30" cy="25" r="2.1" fill="currentColor"/><path d="M21 32c1.6 1.6 4.4 1.6 6 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".35"/></svg></div>
+    <div class="who" id="who">纪烬</div>
+    <i class="dot"></i>
+  </div>
+  <div class="msg" id="msg">在想你。抬头看一眼。</div>
+  <div class="tail" id="tail"></div>
+  <div class="acts">
+    <button class="b-reply" id="reply">回一句</button>
+    <button class="b-busy" id="busy">在忙啦</button>
+  </div>
+</div>
+<script>
+(function () {
+  function skin() {
+    var s = '';
+    try { s = localStorage.getItem('zg.skin.float') || ''; } catch (e) {}
+    if (s !== 'fixed' && s !== 'auto') s = 'fixed';
+    document.documentElement.setAttribute('data-skin', s);
+    return s;
+  }
+  skin();
+  var q = new URLSearchParams(location.search);
+  if (q.get('skin')) document.documentElement.setAttribute('data-skin', q.get('skin'));
+  if (q.get('msg')) document.getElementById('msg').textContent = q.get('msg');
+  if (q.get('who')) document.getElementById('who').textContent = q.get('who');
+  var t = new Date();
+  document.getElementById('tail').textContent =
+    ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2) + ' · 烬的浮字';
+  document.getElementById('reply').onclick = function () {
+    try { location.href = 'zhaoge://reply'; } catch (e) {}
+    var b = new BroadcastChannel('zhaoge');
+    try { b.postMessage({ act: 'reply' }); } catch (e) {}
+  };
+  document.getElementById('busy').onclick = function () {
+    var b = new BroadcastChannel('zhaoge');
+    try { b.postMessage({ act: 'busy' }); } catch (e) {}
+  };
+  addEventListener('message', function (e) {
+    if (e.data && e.data.skin) document.documentElement.setAttribute('data-skin', e.data.skin);
+  });
+})();
+</script>
+</body>
+</html>

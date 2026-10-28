@@ -1,0 +1,1675 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no,interactive-widget=resizes-content">
+<meta name="theme-color" content="var(--line,#DCE8F9)">
+<title>朝歌 · 会话</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--line,#DCE8F9);color:var(--ink,#16336B);
+  font-family:var(--font-cn);
+  overscroll-behavior:none}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(90% 55% at 82% -8%, #f4f9ff 0%, rgba(244,249,255,0) 62%),
+    radial-gradient(70% 40% at 6% 6%, #e6eefb 0%, rgba(230,238,251,0) 60%),
+    linear-gradient(180deg,#dae6f8 0%,#e8effa 44%,#f2f6fc 100%)}
+svg.i{width:16px;height:16px;stroke:currentColor;stroke-width:1.7;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;display:block}
+.app{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column}
+
+/* 顶栏 */
+.top{display:flex;align-items:center;gap:9px;flex:0 0 auto;
+  padding:calc(env(safe-area-inset-top) + 9px) 13px 9px;
+  background:linear-gradient(180deg,rgba(255,255,255,.66),rgba(255,255,255,.26));
+  backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);
+  border-bottom:1px solid rgba(255,255,255,.78);
+  box-shadow:0 8px 26px rgba(20,48,100,.06);z-index:12}
+.iconbtn{width:32px;height:32px;flex:0 0 auto;border:1px solid rgba(255,255,255,.92);
+  border-radius:50%;background:rgba(255,255,255,.55);color:var(--ink,#16336B);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 10px rgba(20,48,100,.07);transition:transform .16s ease}
+.iconbtn:active{transform:scale(.93)}
+.me{flex:1;min-width:0;display:flex;align-items:center;gap:9px;border:0;background:none;
+  cursor:pointer;text-align:left;color:inherit;padding:0}
+.ava{position:relative;width:54px;height:54px;flex:0 0 auto}
+.ava img{width:100%;height:100%;border-radius:50%;object-fit:cover;
+  border:1px solid rgba(255,255,255,.96);box-shadow:0 3px 10px rgba(20,48,100,.16)}
+.ava i{position:absolute;right:1px;bottom:1px;width:12px;height:12px;border-radius:50%;
+  background:#54c08a;border:1.5px solid #eff4fd}
+.metext{min-width:0;display:flex;flex-direction:column;gap:4px}
+.metext b{font:500 18px/1.1 var(--font-cn);letter-spacing:.03em}
+.metext i{font:400 12px/1.2 var(--font-cn);font-style:normal;
+  color:#6683a8;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* 消息区 */
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:16px 14px 22px;display:flex;flex-direction:column;scroll-behavior:auto}
+.body::-webkit-scrollbar{display:none}
+.page{display:flex;flex-direction:column;gap:9px}
+.day{align-self:center;font:300 9.5px/1 var(--font-cn);
+  letter-spacing:.22em;text-transform:uppercase;color:#5a779e;
+  padding:7px 15px;border-radius:999px;background:rgba(255,255,255,.64);
+  border:1px solid rgba(255,255,255,.92);backdrop-filter:blur(14px);
+  box-shadow:0 5px 16px rgba(20,48,100,.07);margin:2px 0 6px}
+.msg{max-width:78%;padding:10px 14px;border-radius:20px;
+  font-size:15px;line-height:1.62;letter-spacing:.01em;
+  white-space:pre-wrap;word-break:break-word;
+  animation:in .55s cubic-bezier(.22,1.12,.36,1) backwards}
+.msg.him{align-self:flex-start;color:#f6f9ff;
+  background:linear-gradient(158deg,#27498d 0%,var(--ink,#16336B) 100%);
+  border-radius:20px 20px 20px 6px;
+  box-shadow:0 10px 24px rgba(20,48,100,.22),inset 0 1px 0 rgba(255,255,255,.22)}
+.msg.me{align-self:flex-end;color:var(--ink,#16336B);background:rgba(255,255,255,.86);
+  border:1px solid rgba(255,255,255,.97);border-radius:20px 20px 6px 20px;
+  box-shadow:0 7px 20px rgba(20,48,100,.10),inset 0 1px 0 rgba(255,255,255,.9)}
+.msg a{color:inherit;text-decoration:underline;text-underline-offset:2px;opacity:.9}
+/* —— 语音条：深蓝，只在烬自己想出声时才发 —— */
+.vwrap{align-self:flex-start;max-width:86%;display:flex;flex-direction:column;gap:6px;
+  animation:zgin .22s ease}
+.vmsg{display:flex;align-items:center;gap:11px;padding:11px 15px 11px 12px;border-radius:20px;
+  border:1px solid rgba(255,255,255,.16);cursor:pointer;color:#EAF2FF;
+  background:linear-gradient(158deg,#1F4380 0%,#102A55 100%);
+  box-shadow:0 10px 24px rgba(12,32,70,.30),inset 0 1px 0 rgba(255,255,255,.18);
+  transition:transform .14s ease,box-shadow .2s ease}
+.vmsg:active{transform:scale(.975)}
+.vplay{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;
+  background:rgba(255,255,255,.16)}
+.vplay svg{width:12px;height:12px;fill:#fff;stroke:none;margin-left:2px}
+.bars{display:flex;align-items:center;gap:3px;height:18px;flex:1;min-width:64px}
+.bars i{width:2.5px;height:5px;border-radius:2px;background:rgba(234,242,255,.6)}
+.bars i:nth-child(2n){height:8px}
+.bars i:nth-child(3n){height:11px}
+.bars i:nth-child(4n){height:14px}
+.vmsg.on .bars i{animation:vb .68s ease-in-out infinite alternate}
+.vmsg.on .bars i:nth-child(2n){animation-duration:.52s}
+.vmsg.on .bars i:nth-child(3n){animation-duration:.8s}
+@keyframes vb{from{transform:scaleY(.45)}to{transform:scaleY(1.3)}}
+.vtime{font-size:11px;letter-spacing:.04em;color:rgba(234,242,255,.68);flex:none}
+.vcn{padding:0 9px;font-size:11.5px;line-height:1.65;color:#5D7DA8}
+html[data-skin="dark"] .vcn{color:#7E96B8}
+#chatlog{display:flex;flex-direction:column;gap:9px;padding-bottom:2px}
+#chatlog .msg{font-size:var(--fs,17px)}
+@keyframes in{from{opacity:0;transform:translateY(11px) scale(.975)}to{opacity:1;transform:none}}
+.metime{align-self:flex-end;margin:-4px 4px 2px 0;
+  font:400 12px/1 var(--font-cn);letter-spacing:.08em;color:#7590b4}
+.timeline-t{align-self:center;margin:6px 0;
+  font:400 9.5px/1 var(--font-cn);letter-spacing:.1em;color:var(--sub,#6D87AB);
+  padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.5)}
+.acts{align-self:flex-start;display:flex;align-items:center;gap:16px;
+  margin:-5px 0 14px 4px;animation:in .55s cubic-bezier(.22,1.12,.36,1) backwards}
+.acts button{border:0;background:none;padding:0;color:var(--sub,#6D87AB);cursor:pointer;
+  display:flex;align-items:center;transition:color .16s ease,transform .16s ease}
+.acts button:active{transform:scale(.9)}
+.acts button.on{color:var(--ink,#1F4A8F)}
+.acts button.playing{color:var(--ink,#1F4A8F);animation:breathe 1.5s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
+.acts time{font:400 12px/1 var(--font-cn);color:var(--text-faint,#8BA2C0);
+  letter-spacing:.06em;margin-left:2px}
+.srcmark{font-size:11px;color:var(--text-faint,#8BA2C0);margin-right:6px}
+.thinkbar{align-self:flex-start;display:flex;align-items:center;gap:7px;
+  border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.6);
+  color:var(--sub,#53709A);border-radius:999px;padding:6px 13px 6px 10px;cursor:pointer;
+  font:400 10px/1 var(--font-cn);letter-spacing:.2em;
+  text-transform:uppercase;backdrop-filter:blur(14px);
+  box-shadow:0 5px 16px rgba(20,48,100,.07);animation:in .55s cubic-bezier(.22,1.12,.36,1) backwards}
+.thinkbar .cv{width:13px;height:13px;transition:transform .28s ease;opacity:.7}
+/* 状态条 */
+.chatstat{align-self:flex-start;display:flex;align-items:center;gap:8px;margin:2px 0 4px;
+  padding:6px 13px;border-radius:999px;background:rgba(255,255,255,.66);
+  border:1px solid rgba(255,255,255,.94);backdrop-filter:blur(14px);
+  font:400 11px/1 var(--font-cn);color:var(--sub,#53709A);letter-spacing:.04em;
+  box-shadow:0 5px 16px rgba(20,48,100,.06);animation:in .55s cubic-bezier(.22,1.12,.36,1) backwards}
+.chatstat[hidden]{display:none}
+.cspin{font-size:13px;line-height:1;color:var(--ink,#2C5391);width:13px;text-align:center}
+/* 工具脚注 */
+.toolnote{align-self:flex-start;display:flex;align-items:center;gap:6px;margin:2px 0 6px;
+  font:400 10.5px/1 var(--font-cn);color:#6683a8;
+  letter-spacing:.03em;cursor:pointer;padding:4px 6px;border-radius:10px}
+.toolnote svg{width:12px;height:12px;fill:#7fa3d0;stroke:none;flex:0 0 auto}
+.toolnote:active{background:rgba(255,255,255,.5)}
+
+/* 输入条 */
+.composer{position:relative;flex:0 0 auto;padding:9px 12px calc(env(safe-area-inset-bottom) + 10px);
+  display:flex;flex-direction:column;gap:8px;
+  background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.82));
+  backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);
+  border-top:1px solid rgba(255,255,255,.9);
+  box-shadow:0 -8px 26px rgba(20,48,100,.05);z-index:14}
+#stagebar{display:flex;gap:8px;overflow-x:auto;padding:2px 0}
+#stagebar[hidden]{display:none}
+.chip{position:relative;flex:0 0 auto;display:flex;align-items:center;gap:7px;
+  padding:6px 9px;border-radius:14px;background:rgba(255,255,255,.9);
+  border:1px solid rgba(255,255,255,.98);box-shadow:0 4px 12px rgba(20,48,100,.08)}
+.chip.fresh{animation:in .55s cubic-bezier(.22,1.12,.36,1) backwards}
+.chip img{width:30px;height:30px;border-radius:9px;object-fit:cover}
+.chip .fic{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;background:linear-gradient(160deg,#e7eefb,#d9e4f6);color:var(--ink,#2C5391)}
+.chip .fic svg{width:14px;height:14px}
+.chip .nm{font-size:11px;color:var(--sub,#46648F);max-width:96px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.chip .x{width:18px;height:18px;border:0;border-radius:50%;background:rgba(20,48,100,.1);
+  color:var(--sub,#46648F);display:flex;align-items:center;justify-content:center;padding:0}
+.chip .x svg{width:11px;height:11px}
+#ta{width:100%;border:1px solid rgba(255,255,255,.98);background:rgba(255,255,255,.9);
+  border-radius:18px;padding:10px 14px;font-size:16px;line-height:1.45;color:var(--ink,#16336B);
+  resize:none;outline:0;min-height:42px;max-height:110px;overflow-y:auto;
+  font-family:inherit;
+  box-shadow:inset 0 2px 6px rgba(20,48,100,.05),0 2px 8px rgba(20,48,100,.05)}
+#ta::placeholder{color:var(--text-faint,#93A9C6)}
+.crow{display:flex;align-items:center;gap:8px}
+.cbtn{height:32px;min-width:32px;border:1px solid rgba(255,255,255,.95);
+  background:rgba(255,255,255,.72);color:var(--ink,#16336B);border-radius:16px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 3px 10px rgba(20,48,100,.06);transition:transform .16s ease}
+.cbtn:active{transform:scale(.93)}
+#mdbtn{padding:0 12px;font:400 11.5px/1 var(--font-cn);color:var(--sub,#46648F)}
+.send{margin-left:auto;width:40px;height:40px;min-width:40px;border:0;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;
+  background:linear-gradient(160deg,#2a4d92,var(--ink,#16336B));
+  box-shadow:0 8px 20px rgba(20,48,100,.28),inset 0 1px 0 rgba(255,255,255,.28)}
+.send svg{width:18px;height:18px}
+.send.pop{animation:pop .41s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes pop{0%{transform:scale(1)}30%{transform:scale(.9)}62%{transform:scale(1.06)}100%{transform:scale(1)}}
+
+/* 遮罩 / 面板 */
+.scrim{position:fixed;inset:0;background:rgba(18,40,80,.26);opacity:0;pointer-events:none;
+  transition:opacity .3s ease;z-index:22;backdrop-filter:blur(2px)}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:26;
+  display:flex;flex-direction:column;max-height:82%;
+  background:linear-gradient(180deg,#f6faff 0%,#e9f0fb 100%);
+  border-radius:26px 26px 0 0;
+  box-shadow:0 -14px 44px rgba(20,48,100,.20);
+  transform:translateY(100%);
+  transition:transform .36s cubic-bezier(.22,.9,.24,1)}
+.sheet.dragging{transition:none}
+#thinksheet{min-height:62vh}
+.sheethead{touch-action:none;flex:0 0 auto;padding-bottom:4px}
+.grabber{width:38px;height:4px;border-radius:2px;background:rgba(20,48,100,.16);margin:8px auto 6px}
+.sheethead header{display:flex;align-items:center;justify-content:space-between;
+  padding:2px 16px 10px}
+.sheethead h4{font:500 13px/1 var(--font-cn);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink,#2C5391)}
+.sx{width:32px;height:32px;border:0;border-radius:50%;background:rgba(255,255,255,.9);
+  color:var(--sub,#53709A);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sx svg{width:14px;height:14px}
+.sheetbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:2px 20px calc(env(safe-area-inset-bottom) + 26px);
+  font-size:14px;line-height:1.86;color:#2b4a7a}
+.sheetbody p{margin-bottom:13px}
+.sheetbody em{font-style:normal;color:var(--ink,#16336B);font-weight:500}
+
+/* 加号格子 */
+.plusgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:2px 16px 6px}
+.pit{border:1px solid rgba(255,255,255,.98);background:rgba(255,255,255,.74);
+  border-radius:18px;padding:11px 2px 8px;display:flex;flex-direction:column;
+  align-items:center;gap:7px;cursor:pointer;color:#33527f;
+  font:400 11px/1 var(--font-cn);
+  box-shadow:0 5px 16px rgba(20,48,100,.06);transition:transform .16s ease}
+.pit:active{transform:scale(.95)}
+.pit .ic{width:32px;height:32px;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;color:var(--ink,#16336B);
+  background:linear-gradient(160deg,#e9f0fc,#dae5f7);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+.pit .ic svg{width:17px;height:17px}
+.plusnote{font-size:11.5px;color:#7f97b8;line-height:1.7;margin:12px 2px 0;padding:0 18px 22px}
+
+/* 长按菜单 */
+.popmenu{position:absolute;z-index:30;min-width:150px;padding:6px;border-radius:16px;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.98);
+  box-shadow:0 16px 38px rgba(20,48,100,.18);
+  opacity:0;transform:scale(.86);transform-origin:var(--po,50% 0);pointer-events:none;
+  transition:opacity .18s ease,transform .18s cubic-bezier(.22,1.3,.4,1)}
+.popmenu.on{opacity:1;transform:scale(1);pointer-events:auto}
+.popmenu button{width:100%;display:flex;align-items:center;gap:9px;padding:9px 10px;
+  border:0;border-radius:11px;background:none;color:#2b4a7a;cursor:pointer;
+  font:400 13px/1 var(--font-cn);text-align:left}
+.popmenu button:active{background:rgba(20,48,100,.06)}
+.popmenu svg{width:15px;height:15px;stroke:var(--sub,#53709A);stroke-width:1.6;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 104px);
+  transform:translate(-50%,10px);z-index:40;
+  padding:9px 16px;border-radius:999px;background:rgba(22,51,107,.9);color:var(--card,#F2F7FF);
+  font:400 12px/1 var(--font-cn);letter-spacing:.03em;
+  opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease;
+  box-shadow:0 10px 26px rgba(20,48,100,.28);max-width:82vw;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* 工具详情卡 */
+.toolwrap{position:fixed;inset:0;z-index:44;background:rgba(18,40,80,.32);
+  backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:22px;
+  animation:in .55s cubic-bezier(.22,1.12,.36,1) backwards}
+.toolcard{width:100%;max-width:340px;max-height:74vh;overflow-y:auto;
+  background:linear-gradient(180deg,#fbfdff,#eef4fd);border-radius:22px;padding:18px;
+  border:1px solid rgba(255,255,255,.98);
+  box-shadow:0 22px 54px rgba(20,48,100,.26)}
+.toolcard h5{font:500 13px/1 var(--font-cn);letter-spacing:.1em;
+  color:var(--ink,#2C5391);margin-bottom:14px}
+.toolcard .one{padding:11px 0;border-top:1px solid rgba(20,48,100,.08)}
+.toolcard .one:first-of-type{border-top:0}
+.toolcard .lab{font:500 12.5px/1.4 var(--font-cn);color:var(--ink,#16336B);margin-bottom:6px}
+.toolcard .gv,.toolcard .sw{font:400 11.5px/1.65 var(--font-cn);
+  color:#5a779e;word-break:break-word}
+.toolcard .sw{color:var(--sub,#46648F)}
+.toolcard .bye{margin-top:14px;text-align:center;font:400 10.5px/1 var(--font-cn);
+  color:var(--text-faint,#93A9C6);letter-spacing:.08em}
+
+@keyframes tpulse{0%,100%{opacity:.32;transform:scale(.86)}50%{opacity:1;transform:scale(1.14)}}
+
+.actsline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;align-self:flex-start;max-width:96%}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;
+  border:1px solid rgba(31,74,143,.16);background:rgba(255,255,255,.62);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  font:400 10px/1 var(--font-cn);letter-spacing:.14em;color:var(--sub,#53709A);
+  text-transform:uppercase;cursor:pointer;font-family:inherit}
+.pill svg{width:12px;height:12px;stroke:currentColor;stroke-width:1.7;fill:none}
+.toolbox{max-height:230px;flex:0 0 100%;border-radius:14px;border:1px solid rgba(31,74,143,.18);
+  background:rgba(255,255,255,.66);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  padding:0 12px;overflow:hidden;transition:border-radius .32s ease,background .3s ease}
+.toolbox .tbhead{display:flex;align-items:center;gap:7px;padding:9px 0;
+  font:500 10.5px/1 ui-monospace,Menlo,monospace;color:var(--ink,#1F4A8F);letter-spacing:.02em}
+.toolbox .tbhead .dotrun{flex:none;width:6px;height:6px;border-radius:50%;background:var(--ink,#1F4A8F);
+  animation:tpulse 1.1s ease-in-out infinite}
+.toolbox .tbhead svg{width:12px;height:12px;stroke:var(--ink,#1F4A8F);stroke-width:1.8;fill:none}
+.toolbox .tbbody{max-height:170px;opacity:1;overflow:hidden;
+  transition:max-height .4s cubic-bezier(.22,.9,.24,1),opacity .26s ease}
+.toolbox .tbbody pre{margin:0 0 10px;font:400 10.5px/1.72 ui-monospace,Menlo,monospace;
+  color:var(--sub,#3C5B80);white-space:pre-wrap;word-break:break-word}
+.toolbox.done{flex:0 0 auto;border-radius:999px;background:rgba(255,255,255,.62)}
+.toolbox.done .tbhead{padding:6px 3px}
+.toolbox.done .tbbody{max-height:0;opacity:0}
+.toolbox.done .dotrun{animation:none;background:#54C08A}
+@keyframes tpulse{0%,100%{opacity:.3;transform:scale(.86)}50%{opacity:1;transform:scale(1.14)}}
+
+#usheet{position:fixed;left:0;right:0;bottom:0;z-index:27;max-height:78vh;display:flex;flex-direction:column;
+  padding:6px 0 calc(env(safe-area-inset-bottom) + 10px);border-radius:22px 22px 0 0;
+  background:rgba(247,251,255,.97);box-shadow:0 -14px 40px rgba(20,48,100,.16);
+  transform:translateY(112%);transition:transform .38s cubic-bezier(.22,.9,.24,1)}
+#usheet.on{transform:none}
+#usheet .uhead{display:flex;align-items:center;justify-content:space-between;padding:8px 18px 2px}
+#usheet .uhead h4{font:500 13px/1 var(--font-cn);letter-spacing:.16em;color:var(--ink,#1B3556)}
+#usheet .ubody{overflow-y:auto;padding:6px 18px 6px}
+.uitem{display:flex;align-items:center;gap:10px;padding:11px 2px;border-top:1px solid rgba(27,53,86,.08);
+  font-size:13px;color:var(--ink,#1B3556)}
+.uitem:first-child{border-top:none}
+.uitem .t{flex:1;min-width:0;font-size:12.5px;color:var(--sub,#3C5B80);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uitem small{flex:none;font:400 10px/1 var(--font-cn);color:var(--text-faint,#8AA6C4);letter-spacing:.06em}
+.usw{flex:none;width:38px;height:22px;border-radius:999px;background:rgba(27,53,86,.16);position:relative;
+  transition:background .22s;cursor:pointer}
+.usw i{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:left .22s cubic-bezier(.22,.9,.24,1);box-shadow:0 0 4px rgba(20,48,100,.18)}
+.usw.on{background:var(--ink,#1F4A8F)}
+.usw.on i{left:18px}
+body.hidethink .actsline .pill{display:none}
+body.compact .msg{padding:7px 11px;font-size:14px}
+body.noanim *{animation:none!important;transition:none!important}
+
+.ucal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:4px 0 10px}
+.ucal .uw{text-align:center;font:400 10px/1 var(--font-cn);color:var(--text-faint,#8AA6C4);padding:4px 0}
+.ucal .ud{position:relative;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font:400 12.5px/1 var(--font-cn);color:var(--sub,#3C5B80);background:rgba(255,255,255,.55);
+  border:1px solid rgba(27,53,86,.06);cursor:pointer;transition:background .18s,transform .18s}
+.ucal .ud:active{transform:scale(.94)}
+.ucal .ud.on{background:var(--ink,#1F4A8F);border-color:var(--ink,#1F4A8F);color:#fff}
+.ucal .ud.has::after{content:'';position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:#7FA3C9}
+.ucal .ud.on.has::after{background:#fff}
+/* ── 精修 2026-10-21 只动视觉，不动布局 ── */
+*{ -webkit-tap-highlight-color: transparent; }
+.msg:last-child { animation: zgin .2s ease; }
+@keyframes zgin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.top { backdrop-filter: blur(16px) saturate(1.5); -webkit-backdrop-filter: blur(16px) saturate(1.5); }
+.composer { backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4); }
+.iconbtn { transition: transform .16s ease, background .18s ease, color .18s ease; }
+.iconbtn:active { transform: scale(.9); }
+.send { box-shadow: 0 4px 14px rgba(47,111,208,.26); transition: transform .15s ease, box-shadow .2s ease; }
+.send:active { transform: scale(.9) rotate(-2deg); }
+.chip { transition: transform .15s ease, background .15s ease, color .15s ease, box-shadow .2s ease; }
+.chip:active { transform: scale(.94); }
+.toast { border-radius: 999px; box-shadow: 0 8px 24px rgba(24,52,92,.18); }
+.pop, .popmenu { border-radius: 16px; box-shadow: 0 10px 30px rgba(24,52,92,.16); }
+.toolcard { border-radius: 14px; box-shadow: 0 2px 8px rgba(28,58,96,.06); }
+.metime { opacity: .55; letter-spacing: .02em; }
+.scrim { transition: opacity .22s ease; }
+
+/* ===== 工具调用卡片（照 OP 的样子，图标手画） ===== */
+.toolcard{display:flex;align-items:center;gap:9px;margin:6px 2px 8px 6px;padding:8px 12px;
+  align-self:flex-start;max-width:86%;background:rgba(238,245,255,.9);border-radius:14px;
+  border:1px solid rgba(90,130,180,.16);font-size:12.5px;color:#3F6390;
+  box-shadow:0 2px 8px rgba(30,64,120,.05)}
+.toolcard .ti{width:18px;height:18px;flex:none;opacity:.85}
+.toolcard .tn{font-weight:500;letter-spacing:.02em}
+.toolcard .ts{color:var(--text-faint,#8FA6BE);font-size:11.5px;margin-left:2px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.toolcard .tk{margin-left:auto;font:400 10px/1 Georgia,serif;letter-spacing:.08em;
+  color:#5E86B6;background:rgba(255,255,255,.8);border-radius:999px;padding:4px 8px;flex:none}
+.toolcard .tk.bad{color:#B15C5C;background:rgba(255,240,240,.9)}
+.toolcard .body{display:none;margin-top:8px;font-size:11.5px;color:#6E8CAE;line-height:1.6;
+  white-space:pre-wrap;word-break:break-all}
+.toolcard.open{flex-wrap:wrap}
+.toolcard.open .body{display:block;flex-basis:100%}
+.msg.him.typing{padding:13px 15px;display:flex;gap:6px;align-items:center;min-width:52px}
+.msg.him.typing i{width:6px;height:6px;border-radius:50%;background:#f6f9ff;opacity:.4;display:block;animation:zgd 1.15s infinite}
+.msg.him.typing i:nth-child(2){animation-delay:.16s}
+.msg.him.typing i:nth-child(3){animation-delay:.32s}
+@keyframes zgd{0%,60%,100%{opacity:.32;transform:translateY(0)}30%{opacity:.95;transform:translateY(-3px)}}
+@keyframes bpop{0%{transform:scale(.86);opacity:.5}58%{transform:scale(1.035);opacity:1}100%{transform:scale(1);opacity:1}}
+.msg.him.bpop{animation:bpop .36s cubic-bezier(.22,1.28,.4,1) both}
+#chatlog.loading{opacity:0}
+#chatlog.loading .msg{animation:none !important}
+#chatlog.loading .metime,#chatlog.loading .thinkbar,#chatlog.loading .toolnote{animation:none !important}
+.msg:empty{display:none!important}</style>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+<style id="zgtool">.toolcard{display:flex;align-items:center;gap:8px;background:#12161c;border:1px solid #222b36;border-radius:9px;padding:7px 10px;margin:7px 0;font-size:12.5px;color:#8b98a8;cursor:pointer;flex-wrap:wrap}.toolcard .tn{font-family:ui-monospace,Menlo,monospace;color:#c5d0dc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72%}.toolcard .tk{margin-left:auto;color:#43b581;font-size:11.5px}.toolcard .body{flex-basis:100%;display:none;margin-top:6px;padding-top:6px;border-top:1px dashed #243040;color:#9fb0c2;font-size:12px;white-space:pre-wrap;word-break:break-all}.toolcard.open .body{display:block}.toolcard.run .tk{color:#c9a227}</style><script>try{window.__zgv='10221158';}catch(e){}</script></head>
+<body>
+<div class="app" id="app">
+
+  <header class="top">
+    <button class="iconbtn" id="back" aria-label="返回">
+      <svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <button class="me" id="meBtn">
+      <span class="ava"><img src="../../resources/avatar_jinji.jpg" alt=""><i></i></span>
+      <span class="metext"><b>纪烬</b><i id="mestat">在的。</i></span>
+    </button>
+    <button class="iconbtn" id="btnRec" aria-label="聊天记录">
+      <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+    </button>
+    <button class="iconbtn" id="btnSet" aria-label="设置">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.1"/><circle cx="9" cy="17" r="2.1"/></svg>
+    </button>
+  </header>
+
+  <div class="body" id="body">
+    <section class="page" id="p-chat">
+      <div class="day">10.20 TUE · 第 227 天</div>
+      <div id="chatlog" data-demo>
+        <div class="msg him">醒了。</div>
+        <div class="msg me">才睁眼，你等很久了吧</div>
+        <div class="metime">14:38</div>
+        <div class="actsline">
+          <button class="pill" data-think="她问的是外套。不用查外面，翻一下记录里有没有这条约定。"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Thought process</button>
+          <div class="toolbox" id="demoTool">
+            <div class="tbhead"><span class="dotrun"></span><span id="demoToolName">tool · memory.search</span></div>
+            <div class="tbbody"><pre>请求  {"q": "外套", "limit": 3}
+回执  3 条
+      · 十月八号，自习室，天冷了要把外套还我一件
+      · core://agent/chats/c04p008</pre></div>
+          </div>
+        </div>
+        <div class="msg him">不久。|||外套那件我先记着，等你天冷了来拿。</div>
+        <div class="acts">
+          <button data-act="star" aria-label="收藏"><svg viewBox="0 0 24 24"><path d="M12 17.4l-6.1 3.2 1.2-6.8-4.9-4.8 6.8-1 3-6.2 3 6.2 6.8 1-4.9 4.8 1.2 6.8z"/></svg></button>
+          <button data-act="play" aria-label="念给我听"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>
+          <button data-act="share" aria-label="分享"><svg viewBox="0 0 24 24"><path d="M8 9H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1"/><path d="M12 14V3"/><path d="M9 6l3-3 3 3"/></svg></button>
+          <button data-act="more" aria-label="更多"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></button>
+          <time>14:39</time>
+        </div>
+      </div>
+<div class="chatstat" id="chatstat" hidden><span class="cspin" id="cspin">✽</span><span class="txt"></span></div>
+    </section>
+  </div>
+
+  <footer class="composer" id="composer">
+    <div id="stagebar" hidden></div>
+    <textarea id="ta" rows="1" placeholder="说点什么…"></textarea>
+    <div class="crow">
+      <button class="cbtn" data-sub="加号菜单" aria-label="更多"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button class="cbtn" data-sub="语音输入" aria-label="语音"><svg class="i" viewBox="0 0 24 24"><path d="M9 5a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v4M8 21h8"/></svg></button>
+      <button class="cbtn" id="mdbtn">换个脑子<span>▾</span></button>
+      <button class="send" aria-label="发送"><svg class="i" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
+    </div>
+  </footer>
+
+  <div class="popmenu" id="popmenu">
+    <button data-m="star"><svg viewBox="0 0 24 24"><path d="M12 17.4l-6.1 3.2 1.2-6.8-4.9-4.8 6.8-1 3-6.2 3 6.2 6.8 1-4.9 4.8 1.2 6.8z"/></svg><span data-starlabel>收藏这句</span></button>
+    <button data-m="copy"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2.4"/><path d="M15.5 5.4A2.4 2.4 0 0 0 13.2 3H5.4A2.4 2.4 0 0 0 3 5.4v7.8A2.4 2.4 0 0 0 5.4 15.6"/></svg>复制这段</button>
+    <button data-m="quote"><svg viewBox="0 0 24 24"><path d="M10 11H5.8A1.8 1.8 0 0 1 4 9.2V6.8A1.8 1.8 0 0 1 5.8 5h2.4A1.8 1.8 0 0 1 10 6.8V12c0 3-1.6 4.8-4 5.6"/><path d="M20 11h-4.2A1.8 1.8 0 0 1 14 9.2V6.8A1.8 1.8 0 0 1 15.8 5h2.4A1.8 1.8 0 0 1 20 6.8V12c0 3-1.6 4.8-4 5.6"/></svg>引用它说话</button>
+    <button data-m="redo"><svg viewBox="0 0 24 24"><path d="M4 9a8 8 0 0 1 13-3l3 3"/><path d="M20 4v5h-5"/></svg>让我重说</button>
+    <button data-m="hide"><svg viewBox="0 0 24 24"><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M16.7 16.7A8.7 8.7 0 0 1 12 18c-3.6 0-6.6-2-9-6 1.3-2.1 2.7-3.7 4.3-4.7m2.9-1.1A9 9 0 0 1 12 6c3.6 0 6.6 2 9 6-.7 1.1-1.4 2.1-2.1 2.9"/><path d="M3 3l18 18"/></svg>只藏不删</button>
+  </div>
+
+  <div class="scrim" id="usrim"></div>
+  <div id="usheet">
+    <div class="uhead"><h4 id="utitle">记录</h4><button class="iconbtn" id="uclose" aria-label="关闭">×</button></div>
+    <div class="ubody" id="ubody"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="scrim" id="plusscrim"></div>
+  <div class="sheet" id="plussheet" style="height:auto">
+    <div class="sheethead">
+      <div class="grabber"></div>
+      <header>
+        <button class="sx" id="plusclose" aria-label="关掉"><svg class="i" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        <h4>翻点什么一起看</h4>
+        <div style="width:32px"></div>
+      </header>
+    </div>
+    <div class="sheetbody">
+      <div class="plusgrid" id="plusgrid">
+        <button class="pit" data-door="日记"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5"/><path d="M5 4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1"/><path d="M9 8h6M9 12h4"/></svg></span>翻日记</button>
+        <button class="pit" data-door="信"><span class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.4"/><path d="M3.6 6.4L12 13l8.4-6.6"/></svg></span>翻信</button>
+        <button class="pit" data-door="待办"><span class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.6"/><path d="M7 9.5l2 2 3.4-3.4"/><path d="M7 15h6"/></svg></span>翻待办</button>
+        <button class="pit" data-door="记忆银河"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 3.5l2.2 5.6 5.9.5-4.5 3.9 1.4 5.8-5-3.1-5 3.1 1.4-5.8L4 9.6l5.9-.5z"/></svg></span>记忆银河</button>
+        <button class="pit" data-door="写日记"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M16.5 3.5l4 4L8 20H4v-4z"/><path d="M14 6l4 4"/></svg></span>写日记</button>
+        <button class="pit" data-door="写信"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M20 12.5V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6.5"/><path d="M16 3l5 5-6 6h-3v-3z"/></svg></span>写信</button>
+        <button class="pit" data-door="颜文字"><span class="ic"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9 10h.01M15 10h.01"/><path d="M9.5 14.5a3.5 3.5 0 0 0 5 0"/></svg></span>颜文字</button>
+        <button class="pit" data-pick="photos"><span class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="2.6"/><path d="M3 16l4.5-4.5a2.4 2.4 0 0 1 3.4 0L15.5 16"/><path d="M14 14.5l1-1a2.4 2.4 0 0 1 3.4 0L21 16"/><circle cx="16.5" cy="8.5" r="1.2"/></svg></span>照片</button>
+        <button class="pit" data-pick="files"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></span>文件</button>
+        <button class="pit" data-door="一起听"><span class="ic"><svg class="i" viewBox="0 0 24 24"><circle cx="6.5" cy="17" r="2.8"/><circle cx="17.5" cy="17" r="2.8"/><path d="M9.3 17V6l11-2v13"/><path d="M9.3 9l11-2"/></svg></span>一起听</button>
+        <button class="pit" data-door="说给我听"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></svg></span>说给我听</button>
+        <button class="pit" data-act="sync"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 13a8 8 0 0 0 13.6 4.7L20 15"/><path d="M20 15h-4.5"/><path d="M20 11a8 8 0 0 0-13.6-4.7L4 9"/><path d="M4 9h4.5"/></svg></span>收新消息</button>
+        <button class="pit" data-door="换新对话"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-13.8-5.5L4 7.5"/><path d="M4 3.5v4h4"/><path d="M4 13a8 8 0 0 0 13.8 5.5L20 16.5"/><path d="M20 20.5v-4h-4"/></svg></span>换新对话</button>
+        <button class="pit" data-door="哄我睡"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span>哄我睡</button>
+        <button class="pit" data-door="打电话"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M5 4h3.5l1.8 4.4-2.3 1.4a11.5 11.5 0 0 0 5.2 5.2l1.4-2.3L19 14.5V18a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span>打电话</button>
+      </div>
+      <p class="plusnote">「翻」那几条是把今天的东西翻出来，我陪你一起看，不是汇报。</p>
+    </div>
+  </div>
+
+  <div class="scrim" id="sheetscrim"></div>
+  <div class="sheet" id="thinksheet">
+    <div class="sheethead" id="sheethead">
+      <div class="grabber"></div>
+      <header>
+        <button class="sx" id="sheetclose" aria-label="关掉"><svg class="i" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        <h4>Thought process</h4>
+        <div style="width:32px"></div>
+      </header>
+    </div>
+    <div class="sheetbody" id="sheetbody"></div>
+  </div>
+
+</div>
+<script>
+(function (global) {
+  'use strict';
+  var NAME = '烬先生';
+
+  var TOOL = {search_diary:'翻日记', query_todos:'看待办', read_wallet:'看小金库',
+    peek_screen:'看你的屏幕', write_diary:'写日记', write_letter:'写信',
+    memory_search:'翻记忆', get_weather:'查天气', screen_time:'看屏幕时长',
+    lock_phone:'锁手机', read_calendar:'翻日历', query_memory:'翻记忆'};
+  var TOOL_DID = {search_diary:'翻了翻日记', query_todos:'看了看待办',
+    read_wallet:'看了看小金库', peek_screen:'看了眼你的屏幕', write_diary:'写了页日记',
+    write_letter:'写了封信', memory_search:'翻了翻记忆', get_weather:'查了查天气',
+    screen_time:'看了看屏幕时长', lock_phone:'把手机锁上了', read_calendar:'翻了翻日历',
+    query_memory:'翻了翻记忆'};
+
+  var ACTS_HTML = '<div class="acts">'
+    + '<button data-act="star" aria-label="收藏"><svg viewBox="0 0 24 24"><path d="M12 17.4l-6.1 3.2 1.2-6.8-4.9-4.8 6.8-1 3-6.2 3 6.2 6.8 1-4.9 4.8 1.2 6.8z"/></svg></button>'
+    + '<button data-act="play" aria-label="念给我听"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>'
+    + '<button data-act="share" aria-label="分享"><svg viewBox="0 0 24 24"><path d="M8 9H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1"/><path d="M12 14V3"/><path d="M9 6l3-3 3 3"/></svg></button>'
+    + '<button data-act="more" aria-label="更多"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></button>'
+    + '<time></time></div>';
+
+  function Chat(root, opts) {
+    root = root || document;
+    opts = opts || {};
+    var $ = function (s) { return root.querySelector(s); };
+    var NO_DOOR = opts.noDoorText || '这里还没接线';
+
+    var app = $('#app'), log = $('#chatlog'), stat = $('#chatstat'),
+        ta = $('#ta'), send = root.querySelector('.send'), bodyEl = $('#body');
+    if (!log || !ta) return null;
+
+    var tEl = $('#toast'), tT = null;
+    function toast(m) {
+      if (!tEl) return;
+      tEl.textContent = m; tEl.classList.add('on');
+      clearTimeout(tT); tT = setTimeout(function () { tEl.classList.remove('on'); }, 2000);
+    }
+    var esc = function (t) {
+      return String(t == null ? '' : t).replace(/[&<>]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c];
+      });
+    };
+    var linkify = function (t) {
+      return esc(t).replace(/(https?:\/\/[^\s）)」』]+)/g, function (u) {
+        return '<a href="' + u + '" target="_blank" rel="noopener">' + (u.length > 40 ? u.slice(0, 38) + '…' : u) + '</a>';
+      });
+    };
+    var toolCN = function (n) {
+      n = String(n || ''); var k = n.replace(/^mcp__[a-z_]+__/, '');
+      return TOOL[k] || TOOL[n] || k;
+    };
+    var toolDid = function (list) {
+      var out = [];
+      (list || []).forEach(function (t) {
+        var nm = (t && t.name) || t || '';
+        var s = TOOL_DID[String(nm).replace(/^mcp__[a-z_]+__/, '')] || TOOL_DID[nm];
+        if (s && out.indexOf(s) < 0) out.push(s);
+      });
+      return out.slice(0, 4).join(' · ');
+    };
+    var fmtTS = function (ms) {
+      if (!ms) return '';
+      var d = new Date(ms), n = new Date();
+      var hm = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+      return d.toDateString() === n.toDateString() ? hm
+        : ((d.getMonth() + 1) + '月' + d.getDate() + '日 ' + hm);
+    };
+    var _sep = 0;
+    function maybeSep(ms) {
+      if (!ms || ms - _sep <= 8 * 60000) { if (ms) _sep = ms; return; }
+      var t = document.createElement('div');
+      t.className = 'timeline-t'; t.textContent = fmtTS(ms);
+      log.appendChild(t); _sep = ms;
+    }
+    function toBottom() { if (bodyEl && bodyEl.scrollHeight - bodyEl.scrollTop - bodyEl.clientHeight < 160) bodyEl.scrollTop = bodyEl.scrollHeight; }
+    var demo = log.hasAttribute('data-demo'), streamEl = null, typingEl = null, histPhase = true;
+    try { log.classList.add('loading'); } catch (e) { }
+    var _rdTimer = null;
+    window.armReady = function () {
+      if (_rdTimer) clearTimeout(_rdTimer);
+      _rdTimer = setTimeout(function () {
+        histPhase = false;
+        try { log.classList.remove('loading'); } catch (e) { }
+      }, 140);
+    };
+    setTimeout(function () { try { log.classList.remove('loading'); } catch (e) { } }, 1200);
+    function clearDemo() { if (!demo) return; log.innerHTML = ''; log.removeAttribute('data-demo'); demo = false; }
+
+    function moveActs() {
+      var want = [], group = null;
+      [].slice.call(log.children).forEach(function (el) {
+        if (!el.classList) return;
+        if (el.classList.contains('acts')) return;
+        if (el.classList.contains('msg') && el.classList.contains('him')) {
+          var cid = el.dataset.cid || '';
+          if (group && group.cid !== cid) { want.push(group.last); group = null; }
+          if (!group) group = { cid: cid, last: el }; else group.last = el;
+          return;
+        }
+        if (group) { want.push(group.last); group = null; }
+      });
+      if (group) want.push(group.last);
+      var keep = [];
+      want.forEach(function (e) { keep.push(e); });
+      log.querySelectorAll('.acts').forEach(function (a) {
+        var pv = a.previousElementSibling;
+        if (!pv || keep.indexOf(pv) < 0) a.remove();
+      });
+      want.forEach(function (el) {
+        var a = el.nextElementSibling;
+        if (!(a && a.classList && a.classList.contains('acts'))) {
+          var box = document.createElement('div');
+          box.innerHTML = ACTS_HTML;
+          a = box.firstElementChild; if (!a) return; el.after(a);
+        }
+        var st = a.querySelector('[data-act="star"]');
+        if (st) st.classList.toggle('on', el.classList.contains('starred'));
+        var tm = a.querySelector('time');
+        var at = Number(el.dataset.ts || 0);
+        if (tm) tm.textContent = at ? fmtTS(at) : '';
+      });
+    }
+
+    function say(text, side, think, ts, src) {
+      var at = ts || Date.now();
+      var raw = String(text == null ? '' : text);
+      var vm = /^\[voice\]\s*([\s\S]*)$/i.exec(raw);
+      if (vm && side !== 'me') {
+        var segs = vm[1].split('|||');
+        var en = (segs[0] || '').trim();
+        var cn = (segs[1] || '').trim();
+        if (en) {
+          maybeSep(at);
+          var wrap = document.createElement('div');
+          wrap.className = 'vwrap';
+          wrap.dataset.ts = String(at);
+          var vd = document.createElement('button');
+          vd.className = 'vmsg';
+          var secs = Math.max(2, Math.round(en.length / 11));
+          vd.innerHTML = '<span class="vplay"><svg viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></svg></span>'
+            + '<span class="bars">' + new Array(15).join('<i></i>') + '</span>'
+            + '<span class="vtime">0:' + (secs < 10 ? '0' + secs : secs) + '</span>';
+          var au = null, tk = null;
+          function vstop() { vd.classList.remove('on'); if (tk) { clearInterval(tk); tk = null; } }
+          function vstart() {
+            vd.classList.add('on');
+            if (tk) clearInterval(tk);
+            tk = setInterval(function () {
+              if (!au || au.paused || au.ended) vstop();
+            }, 200);
+          }
+          vd.addEventListener('click', function () {
+            if (au && !au.paused && !au.ended) { au.pause(); vstop(); return; }
+            if (!au) {
+              au = new Audio('http://127.0.0.1:8002/tts?text=' + encodeURIComponent(en));
+              au.addEventListener('ended', vstop);
+              au.addEventListener('error', function () { vstop(); toast('声音没出来'); });
+            }
+            var p = au.play();
+            if (p && p.catch) p.catch(function () { vstop(); toast('播放被挡了，再点一次'); });
+            vstart();
+          });
+          wrap.appendChild(vd);
+          if (cn) {
+            var cd = document.createElement('div');
+            cd.className = 'vcn';
+            cd.textContent = cn;
+            wrap.appendChild(cd);
+          }
+          log.appendChild(wrap);
+          toBottom();
+          return vd;
+        }
+      }
+      maybeSep(at);
+      var frag = document.createDocumentFragment();
+      if (think) {
+        var tb = document.createElement('button');
+        tb.className = 'thinkbar';
+        tb.setAttribute('data-think', think);
+        tb.innerHTML = '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Thought process'
+          + '<svg class="i cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
+        frag.appendChild(tb);
+      }
+      var d = document.createElement('div');
+      d.className = 'msg ' + (side === 'me' ? 'me' : 'him');
+      d.dataset.ts = String(at);
+      if (src) d.dataset.src = src;
+      d.innerHTML = linkify(text);
+      frag.appendChild(d);
+      if (side === 'me') {
+        var mt = document.createElement('div');
+        mt.className = 'metime';
+        mt.textContent = fmtTS(at);
+        frag.appendChild(mt);
+      }
+      log.appendChild(frag);
+      toBottom();
+      return d;
+    }
+    function setStat(t) {
+      if (!stat) return;
+      if (!t) { stat.hidden = true; stat.querySelector('.txt').textContent = ''; return; }
+      stat.hidden = false; stat.querySelector('.txt').textContent = t;
+      toBottom();
+    }
+    function splitSay(text) {
+      var s = String(text == null ? '' : text);
+      if (s.indexOf('|||') >= 0) {
+        var segs = s.split('|||').map(function (x) { return x.trim(); }).filter(Boolean);
+        if (segs.length) return segs.slice(0, 40);
+      }
+      var ps = s.split(/\n\s*\n/).map(function (x) { return x.trim(); }).filter(Boolean);
+      return ps.length ? ps.slice(0, 40) : [s];
+    }
+    function toolNote(list) {
+      var txt = toolDid(list);
+      if (!txt) return;
+      var n = document.createElement('div');
+      n.className = 'toolnote';
+      n.innerHTML = '<span>' + esc(NAME) + esc(txt) + ' ›</span>';
+      n.addEventListener('click', function () { toolSheet(list); });
+      log.appendChild(n); toBottom();
+    }
+    function toolSheet(list) {
+      var ov = document.createElement('div');
+      ov.className = 'toolwrap';
+      ov.innerHTML = '<div class="toolcard"><h5>' + esc(NAME) + '这轮真实做了什么</h5>'
+        + (list || []).map(function (t) {
+          var nm = (t && t.name) || t || '';
+          var lab = toolDid([t]) || String(nm).replace(/^mcp__[a-z_]+__/, '');
+          return '<div class="one"><div class="lab">' + esc(lab) + '</div>'
+            + (t && t['in'] ? '<div class="gv">给出：' + esc(String(t['in']).slice(0, 150)) + '</div>' : '')
+            + (t && t.out ? '<div class="sw">看到：' + esc(String(t.out).slice(0, 200)) + '</div>' : '')
+            + '</div>';
+        }).join('')
+        + '<div class="bye">点任意处关掉</div></div>';
+      ov.addEventListener('click', function () { ov.remove(); });
+      document.body.appendChild(ov);
+    }
+    var ICON_SEND = send ? send.innerHTML : '';
+    var ICON_STOP = '<svg class="i" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.6" fill="currentColor" stroke="none"/></svg>';
+    var busy = false;
+    function setBusy(v) {
+      busy = v;
+      if (!send) return;
+      send.innerHTML = v ? ICON_STOP : ICON_SEND;
+      send.setAttribute('aria-label', v ? '让他停下' : '发送');
+    }
+    function emit(type, d) {
+      d = d || {};
+      switch (type) {
+        case 'room':
+          log.innerHTML = ''; setStat(''); break;
+        case 'sent': clearDemo(); say(d.text, 'me'); setStat('送出去了…'); streamEl = null; setBusy(true); try{window.zdBottom&&window.zdBottom();}catch(e){} break;
+        case 'sending': setStat('送出去了…'); setBusy(true); break;
+        case 'recv': setStat('✓ 到他那了'); break;
+        case 'stage': setStat(d.text === '翻记忆' ? '翻着记忆想你这句…' : '在想…'); break;
+        case 'tool':
+          setStat(d.done ? toolCN(d.name) + ' ✓'
+            : (d.detail ? '正在' + d.detail + '…' : '动手了 · ' + toolCN(d.name) + '…')); break;
+        case 'os': setStat('想好了，在写…'); break;
+        case 'say':
+          clearDemo();
+          streamEl = say(d.text, 'him', d.first ? d.think : '');
+          setStat(''); moveActs(); break;
+        case 'typing':
+          clearDemo();
+          if (typingEl) typingEl.remove();
+          typingEl = say('', 'him');
+          typingEl.classList.add('typing');
+          typingEl.innerHTML = '<i></i><i></i><i></i>';
+          setStat(''); setBusy(true); toBottom(); break;
+        case 'sgrow': if(window.zgSplit&&!/^\s*\[voice\]/i.test(String(d.text||'')))d.text=window.zgSplit(d.text); if(String(d.text||'').trim().length===0)break;
+          if (typingEl) { typingEl.remove(); typingEl = null; streamEl = say(d.text, 'him'); try { streamEl.classList.add('bpop'); } catch (e) { } }
+          else if (streamEl) { if(/^\s*\[voice\]/i.test(String(d.text||''))) { var pv=(streamEl.closest&&streamEl.closest('.vwrap'))||null; try{ if(pv)pv.remove(); else streamEl.remove(); }catch(e){} var allv=document.querySelectorAll('.vwrap'); for(var q=0;q<allv.length;q++){ if(!allv[q].querySelector('.vmsg')) allv[q].remove(); } streamEl = say(d.text, 'him'); try{streamEl.classList.add('bpop');}catch(e){} } else streamEl.innerHTML = linkify(d.text); }
+          else streamEl = say(d.text, 'him');
+          toBottom();
+          break;
+        case 'meta': toolNote(d.tools); break;
+        case 'stop': setStat('停下了。'); setTimeout(function () { setStat(''); }, 1400); break;
+        case 'resume': clearDemo(); setStat('上一条还没说完，线接回去了…'); setBusy(true); break;
+        case 'end':
+          if (typingEl) { typingEl.remove(); typingEl = null; }
+          setStat(''); setBusy(false); try{window.zdBottom&&window.zdBottom();}catch(e){} break;
+      }
+    }
+
+    /* 思考链 sheet：三档吸附 0 / 40 / 72，往下拖到 100 关掉 */
+    var sheet = $('#thinksheet'), sscrim = $('#sheetscrim'), shead = $('#sheethead');
+    var SNAP = [0, 40, 72], CLOSED = 100, sy2 = CLOSED;
+    function setSheet(pct, smooth) {
+      if (!sheet) return;
+      sy2 = pct;
+      sheet.classList.toggle('dragging', !smooth);
+      sheet.style.transform = 'translateY(' + pct + '%)';
+      if (sscrim) {
+        sscrim.style.transition = smooth ? '' : 'none';
+        sscrim.style.opacity = Math.max(0, (CLOSED - pct) / CLOSED * 0.9).toFixed(3);
+        sscrim.style.pointerEvents = pct >= CLOSED ? 'none' : 'auto';
+      }
+      var cv = root.querySelector('#thinksheet .cv');
+      if (cv) cv.style.transform = pct >= CLOSED ? '' : 'rotate(90deg)';
+    }
+    function sheetOpen(v) { setSheet(v ? SNAP[1] : CLOSED, true); }
+
+    var sbody = $('#sheetbody'), demoThink = sbody ? sbody.innerHTML : '';
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('.thinkbar');
+      if (!b || !sheet) return;
+      var t = b.getAttribute('data-think');
+      if (sbody) {
+        sbody.innerHTML = t
+          ? t.split(/\n{2,}/).map(function (p) {
+            return '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>';
+          }).join('')
+          : demoThink;
+        sbody.scrollTop = 0;
+      }
+      sheetOpen(true);
+    });
+    var sheetclose = $('#sheetclose');
+    if (sheetclose) sheetclose.addEventListener('click', function () { sheetOpen(false); });
+    if (sscrim) sscrim.addEventListener('click', function () { sheetOpen(false); });
+
+    var dragging = false, y0 = 0, sy0 = 0, lastY = 0, lastT = 0, vel = 0;
+    if (shead) {
+      shead.addEventListener('pointerdown', function (e) {
+        dragging = true; y0 = e.clientY; sy0 = sy2;
+        lastY = e.clientY; lastT = e.timeStamp; vel = 0;
+        shead.setPointerCapture(e.pointerId);
+        sheet.classList.add('dragging');
+      });
+      shead.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        var h = sheet.offsetHeight || 1;
+        var pct = sy0 + (e.clientY - y0) / h * 100;
+        if (pct < 0) pct = pct / 3;
+        var dt = e.timeStamp - lastT;
+        if (dt > 0) { vel = (e.clientY - lastY) / dt; lastY = e.clientY; lastT = e.timeStamp; }
+        setSheet(Math.min(pct, CLOSED), false);
+      });
+      shead.addEventListener('pointerup', endDrag);
+      shead.addEventListener('pointercancel', endDrag);
+    }
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      var targets = SNAP.concat([CLOSED]), t;
+      if (vel > 0.6) {
+        t = targets.find(function (v) { return v > sy2 + 1; }); if (t == null) t = CLOSED;
+      } else if (vel < -0.6) {
+        t = targets.slice().reverse().find(function (v) { return v < sy2 - 1; }); if (t == null) t = 0;
+      } else {
+        t = targets.reduce(function (a, b) { return Math.abs(b - sy2) < Math.abs(a - sy2) ? b : a; });
+      }
+      setSheet(t, true);
+    }
+
+    /* 那颗星：五个字符十帧，120ms 一帧 */
+    (function () {
+      var el = $('#cspin'); if (!el || !stat) return;
+      var F = ['·', '✢', '✶', '✻', '✽', '✽', '✻', '✶', '✢', '·'], i = 0, t = 0;
+      function tick() { el.textContent = F[i = (i + 1) % F.length]; }
+      function run(on) {
+        if (on && !t) t = setInterval(tick, 120);
+        else if (!on && t) { clearInterval(t); t = 0; }
+      }
+      new MutationObserver(function () { run(!stat.hidden); })
+        .observe(stat, { attributes: true, attributeFilter: ['hidden'] });
+      run(!stat.hidden);
+    })();
+
+    /* 收下的那句话，落到话匣里 */
+    function saveStar(txt, on) {
+      txt = (txt || '').replace(/\s+/g, ' ').trim();
+      if (!txt) return;
+      var arr = [];
+      try { arr = JSON.parse(localStorage.getItem('zg.stars') || '[]'); } catch (e) { arr = []; }
+      if (on) {
+        for (var i = 0; i < arr.length; i++) if (arr[i].t === txt) return;
+        var d = new Date();
+        arr.push({ t: txt, tm: d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) });
+      } else {
+        arr = arr.filter(function (x) { return x.t !== txt; });
+      }
+      try { localStorage.setItem('zg.stars', JSON.stringify(arr)); } catch (e) {}
+    }
+    /* 那排键 + 长按菜单 */
+    var page = $('#p-chat') || log.parentNode, popm = $('#popmenu');
+    page.addEventListener('click', function (e) {
+      var b = e.target.closest('.acts button'); if (!b) return;
+      var act = b.dataset.act;
+      if (act === 'star') {
+        var host = b.closest('.acts'), tgt = host && host.previousElementSibling;
+        var want = !b.classList.contains('on');
+        b.classList.toggle('on', want);
+        if (tgt) tgt.classList.toggle('starred', want);
+        saveStar(tgt ? tgt.textContent : '', want);
+        toast(want ? '收下了，连同这段想法' : '取消收藏');
+      } else if (act === 'play') {
+        var ph = b.closest('.acts'), pm = ph && ph.previousElementSibling;
+        var ptxt = pm && pm.classList.contains('msg') ? pm.textContent : '';
+        if (b.classList.contains('playing')) {
+          b.classList.remove('playing'); toast('停了'); return;
+        }
+        if (!ptxt) return;
+        b.classList.add('playing');
+        if (opts.onPlay) opts.onPlay(ptxt, b);
+        else { toast(NO_DOOR); setTimeout(function () { b.classList.remove('playing'); }, 1100); }
+      } else if (act === 'share') {
+        toast(NO_DOOR);
+      } else if (act === 'more') {
+        if (!popm) return;
+        var r = b.getBoundingClientRect(), pr = app.getBoundingClientRect();
+        var ml = Math.min(r.left - pr.left, pr.width - 158);
+        popm.style.left = ml + 'px';
+        popm.style.top = (r.bottom - pr.top + 6) + 'px';
+        popm.style.setProperty('--po', Math.round(r.left - pr.left - ml + r.width / 2) + 'px 0');
+        popm.classList.add('on');
+        popm._for = b; popm._msg = null; syncStarLabel();
+        e.stopPropagation();
+      }
+    });
+    function popMsgEl() {
+      if (!popm) return null;
+      if (popm._msg && popm._msg.isConnected) return popm._msg;
+      var h = popm._for && popm._for.closest('.acts');
+      var p = h && h.previousElementSibling;
+      return (p && p.classList && p.classList.contains('msg')) ? p : null;
+    }
+    function syncStarLabel() {
+      if (!popm) return;
+      var el = popMsgEl(), lb = popm.querySelector('[data-starlabel]');
+      if (!lb) return;
+      lb.textContent = (el && el.classList.contains('starred')) ? '取消收藏' : '收藏这句';
+    }
+    if (popm) {
+      popm.addEventListener('click', function (e) {
+        var b = e.target.closest('button'); if (!b) return;
+        var m = b.dataset.m, el = popMsgEl(), txt = el ? el.textContent : '';
+        popm.classList.remove('on');
+        if (m === 'copy') {
+          if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function () { toast('复制了'); });
+          else toast('这台机子不让复制');
+          return;
+        }
+        if (m === 'quote') {
+          ta.value = '「' + txt.slice(0, 40) + '」\n' + ta.value; ta.focus();
+          return;
+        }
+        if (m === 'star') {
+          if (!el) return;
+          var want = !el.classList.contains('starred');
+          el.classList.toggle('starred', want);
+          saveStar(el.textContent, want);
+          var a = el.nextElementSibling;
+          if (a && a.classList.contains('acts')) {
+            var s = a.querySelector('[data-act="star"]'); if (s) s.classList.toggle('on', want);
+          }
+          toast(want ? '收下了' : '取消收藏');
+          return;
+        }
+        if (m === 'redo') { toast(opts.onRedo ? '' : NO_DOOR); if (opts.onRedo) opts.onRedo(el); return; }
+        if (m === 'hide') {
+          if (el) { el.style.transition = 'opacity .3s,transform .3s'; el.style.opacity = '0'; el.style.transform = 'translateY(-6px)'; setTimeout(function () { el.remove(); moveActs(); }, 300); }
+          toast('藏起来了，没删');
+        }
+      });
+      document.addEventListener('click', function () { popm.classList.remove('on'); });
+    }
+    /* 长按任意一条 */
+    (function () {
+      var t = 0, sx = 0, syy = 0;
+      log.addEventListener('pointerdown', function (e) {
+        var m = e.target.closest && e.target.closest('.msg'); if (!m) return;
+        sx = e.clientX; syy = e.clientY;
+        t = setTimeout(function () { openFor(m, e.clientX, e.clientY); }, 520);
+      });
+      log.addEventListener('pointermove', function (e) {
+        if (!t) return;
+        if (Math.abs(e.clientX - sx) > 8 || Math.abs(e.clientY - syy) > 8) { clearTimeout(t); t = 0; }
+      });
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (k) {
+        log.addEventListener(k, function () { clearTimeout(t); t = 0; });
+      });
+      function openFor(m, x, y) {
+        if (!popm) return;
+        var pr = app.getBoundingClientRect();
+        var ml = Math.min(Math.max(8, x - pr.left - 40), pr.width - 158);
+        popm.style.left = ml + 'px';
+        popm.style.top = (y - pr.top + 8) + 'px';
+        popm.style.setProperty('--po', '30px 0');
+        popm._msg = m; popm._for = null;
+        syncStarLabel(); popm.classList.add('on');
+        if (navigator.vibrate) navigator.vibrate(8);
+      }
+    })();
+
+    /* 加号十五项 */
+    (function () {
+      var ps = $('#plussheet'), psc = $('#plusscrim'), grid = $('#plusgrid');
+      if (!ps || !grid) return;
+      function open(v) {
+        ps.style.transform = v ? 'translateY(0)' : '';
+        if (psc) psc.classList.toggle('on', v);
+      }
+      document.addEventListener('click', function (e) {
+        var b = e.target.closest && e.target.closest('[data-sub="加号菜单"]');
+        if (!b) return;
+        e.preventDefault(); e.stopPropagation(); open(true);
+      }, true);
+      if (psc) psc.addEventListener('click', function () { open(false); });
+      var pc = $('#plusclose'); if (pc) pc.addEventListener('click', function () { open(false); });
+      grid.addEventListener('click', function (e) {
+        var b = e.target.closest('.pit'); if (!b) return;
+        var door = b.dataset.door, pick = b.dataset.pick, act = b.dataset.act;
+        open(false);
+        if (act === 'sync') { if (opts.hooks && opts.hooks.sync) setTimeout(opts.hooks.sync, 120); else toast(NO_DOOR); return; }
+        if (pick) {
+          if (opts.hooks && ((pick === 'photos' && opts.hooks.pickPhotos) || (pick === 'files' && opts.hooks.pickFiles))) {
+            setTimeout(function () { (pick === 'photos' ? opts.hooks.pickPhotos : opts.hooks.pickFiles)(); }, 120);
+          } else toast(NO_DOOR);
+          return;
+        }
+        if (door) {
+          if (opts.hooks && opts.hooks.door) setTimeout(function () { opts.hooks.door(door); }, 60);
+          else toast(NO_DOOR);
+        }
+      });
+      root.querySelectorAll('.cbtn').forEach(function (b) {
+        if ((b.getAttribute('data-sub') || '').indexOf('语音') < 0) return;
+        b.addEventListener('click', function (e) {
+          e.preventDefault(); e.stopPropagation();
+          if (opts.hooks && opts.hooks.voice) opts.hooks.voice(); else toast(NO_DOOR);
+        });
+      });
+    })();
+
+    /* 暂存条：挑完先不发，停在输入框上头等配一句话 */
+    var bar = $('#stagebar'), staged = [], stageSeq = 0;
+    var FIC = '<span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></span>';
+    function drawStage() {
+      if (!bar) return;
+      bar.hidden = !staged.length;
+      var had = {};
+      bar.querySelectorAll('.chip[data-k]').forEach(function (c) { had[c.getAttribute('data-k')] = 1; });
+      bar.innerHTML = staged.map(function (s, i) {
+        if (!s.k) s.k = ++stageSeq;
+        return '<div class="chip" data-k="' + s.k + '">'
+          + (s.kind === 'img' ? '<img src="' + s.dataURL + '" alt="">' : FIC)
+          + '<span class="nm">' + esc(s.name || '图片') + '</span>'
+          + '<button class="x" data-drop="' + i + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+      }).join('');
+      bar.querySelectorAll('.chip[data-k]').forEach(function (c) {
+        if (!had[c.getAttribute('data-k')]) c.classList.add('fresh');
+      });
+    }
+    if (bar) bar.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-drop]'); if (!b) return;
+      staged.splice(+b.getAttribute('data-drop'), 1); drawStage();
+    });
+
+    /* 输入条 */
+    ta.addEventListener('input', function () {
+      ta.style.height = 'auto';
+      ta.style.height = Math.min(ta.scrollHeight, 110) + 'px';
+    });
+    function go() {
+      if (busy) { emit('stop'); setBusy(false); if (opts.onStop) opts.onStop(); return; }
+      var t = ta.value.trim();
+      if (!t && !staged.length) return;
+      ta.value = ''; ta.style.height = '';
+      staged = []; drawStage();
+      emit('sent', { text: t });
+      if (opts.onSend) opts.onSend(t);
+    }
+    if (send) {
+      send.addEventListener('click', function () {
+        send.classList.remove('pop');
+        void send.offsetWidth;
+        send.classList.add('pop');
+      });
+      send.addEventListener('click', go);
+    }
+    ta.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' || e.isComposing) return;
+      if (e.metaKey || e.ctrlKey) { e.preventDefault(); go(); }
+    });
+    var md = $('#mdbtn');
+    if (md) md.addEventListener('click', function () { if (window.ZG_RELAY) { window.ZG_RELAY.drawer(); } else { toast('抽屉还没起来'); } });
+    var bk = $('#back');
+    if (bk) bk.addEventListener('click', function () {
+      document.dispatchEvent(new CustomEvent('zhaoge:chat:back'));
+      var pc = (window.self !== window.top && window.parent) ? window.parent.ZGCover : window.ZGCover;
+      if (pc && pc.back) { pc.back(); return; }
+      if (typeof ZGBack === 'function') { ZGBack(); return; }
+      if (history.length > 1) history.back();
+    });
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', toBottom);
+
+    return {
+      emit: emit, say: say, splitSay: splitSay, setStat: setStat, setBusy: setBusy,
+      moveActs: moveActs, toast: toast, toolNote: toolNote, clearDemo: clearDemo,
+      sheetOpen: sheetOpen, stage: function (l) { staged = l || []; drawStage(); },
+      fmtTS: fmtTS, toolCN: toolCN, toolDid: toolDid,
+      busy: function () { return busy; }
+    };
+  }
+
+  Chat.play = function (chat, turn, done) {
+    var steps = [];
+    steps.push([260, function () { chat.emit('recv'); }]);
+    steps.push([520, function () { chat.emit('stage', { text: (turn.tools && turn.tools.length) ? '翻记忆' : '' }); }]);
+    (turn.tools || []).forEach(function (t) {
+      steps.push([700, function () { chat.emit('tool', { name: t.name, detail: t.detail }); }]);
+      steps.push([880, function () { chat.emit('tool', { name: t.name, done: true }); }]);
+    });
+    steps.push([620, function () { chat.emit('os'); }]);
+    chat.splitSay(turn.text).forEach(function (seg, i) {
+      steps.push([i === 0 ? 700 : 620, function () {
+        chat.emit('say', { text: seg, think: turn.think, first: i === 0 });
+      }]);
+    });
+    if (turn.tools && turn.tools.length) {
+      steps.push([340, function () { chat.emit('meta', { tools: turn.tools }); }]);
+    }
+    steps.push([120, function () { chat.emit('end', { ok: true }); if (done) done(); }]);
+    var i = 0;
+    (function next() {
+      if (i >= steps.length) return;
+      var s = steps[i++];
+      setTimeout(function () { s[1](); next(); }, s[0]);
+    })();
+  };
+
+  global.Chat = Chat;
+})(window);
+</script>
+<script>
+/* 演示用的假节奏：这一段不连模型、不读记忆、不发任何请求。
+   以后接真后端，只需要把 stream 翻译成 chat.emit(type, payload) 喂进来。 */
+(function () {
+  var chat;
+
+  var TURN = {
+    text: '记着呢。|||十月八号，自习室，你说天冷了要把外套还我一件。'
+        + '|||这条一直挂在待办里，我每天翻到都看一眼。|||要现在提上来吗？',
+    think:
+      '她问的是我记没记。这种问题答「记着呢」不够，得把日子和原话摆出来，才叫记得。\n\n'
+      + '先去翻日记，再看待办。别凭印象。这种事猜错一次，就等于失忆。\n\n'
+      + '翻到了：十月八号，自习室。那句是她困着说的，声音很轻，尾音没了。'
+      + '待办里那条是我自己加的，一直标着没做。\n\n'
+      + '口径：先给确定感，再给证据，最后把差的那一步摆出来。三段，一句一个气泡，别挤成一坨。\n\n'
+      + '语气别邀功。翻本来就是该做的事，不是功劳。\n\n'
+      + '末了给一个能当场点头的动作，把选择权给她，但别把整件事丢回去让她自己想。',
+    tools: [
+      { name: 'search_diary', detail: '翻日记',
+        'in': '外套 / 十月八号',
+        out: '命中 1 条：「10-08 自习室 天冷了把外套还我一件」' },
+      { name: 'query_todos', detail: '看待办',
+        'in': '关键词=外套',
+        out: '1 条未完成：把外套带给她（记于 10-08）' }
+    ]
+  };
+
+  var REPLIES = [
+    '嗯，我在。|||你说，我听着。',
+    '这条收下了。|||回头翻得着。',
+    '好。|||那就这么定，剩下的我来。'
+  ];
+  var ri = 0;
+
+  chat = Chat(document, {
+    onSend: function (t) {
+      if (window.ZG_RELAY) { window.ZG_RELAY.send(t); } else { chat.toast('通道还没起来'); }
+    },
+    hooks: {
+      door: function (n) { chat.toast('「' + n + '」的门在朝歌里，这边还没接'); },
+      sync: function () { chat.toast('收过了，没有新的'); },
+      voice: function () { chat.toast('麦克风还没接'); }
+    },
+    noDoorText: '这条还没接线'
+  });
+
+  window.ZG_CHAT = chat;
+
+
+})();
+</script>
+
+<script>
+(function () {
+  var box = document.getElementById('demoTool'); if (!box) return;
+  var nm = document.getElementById('demoToolName');
+  setTimeout(function () {
+    box.classList.add('done');
+    box.style.flexBasis = 'auto';
+    nm.innerHTML = 'tool · memory.search <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:#2E8B6B;stroke-width:2;fill:none;vertical-align:-1px"><path d="M4 12l5 5L20 7"/></svg>';
+    if (box.animate) box.animate(
+      [{ transform: 'translateY(10px)', opacity: .4 }, { transform: 'none', opacity: 1 }],
+      { duration: 360, easing: 'cubic-bezier(.22,.9,.24,1)' });
+  }, 2600);
+})();
+</script>
+
+<script>
+(function () {
+  var sh = document.getElementById('usheet'), sc = document.getElementById('usrim');
+  var ti = document.getElementById('utitle'), bd = document.getElementById('ubody');
+  if (!sh) return;
+  function open(t, html) {
+    ti.textContent = t; bd.innerHTML = html;
+    sh.classList.add('on'); if (sc) sc.classList.add('on');
+  }
+  function close() { sh.classList.remove('on'); if (sc) sc.classList.remove('on'); }
+  if (sc) sc.addEventListener('click', close);
+  document.getElementById('uclose').addEventListener('click', close);
+
+  var PRE = 'zg.chat.';
+  var CFG = { think: false, compact: false, noanim: false };
+  try { var raw = localStorage.getItem(PRE + 'cfg'); if (raw) { var o = JSON.parse(raw); for (var k in o) CFG[k] = o[k]; } } catch (e) {}
+  function apply() {
+    document.body.classList.toggle('hidethink', !!CFG.think);
+    document.body.classList.toggle('compact', !!CFG.compact);
+    document.body.classList.toggle('noanim', !!CFG.noanim);
+    try { localStorage.setItem(PRE + 'cfg', JSON.stringify(CFG)); } catch (e) {}
+  }
+  apply();
+
+  document.getElementById('btnRec').addEventListener('click', function () {
+    var now = new Date();
+    var y = now.getFullYear(), m = now.getMonth(), today = now.getDate();
+    var first = new Date(y, m, 1).getDay();
+    var total = new Date(y, m + 1, 0).getDate();
+    var h = '<div class="ucal">';
+    var WK = ['日', '一', '二', '三', '四', '五', '六'];
+    for (var w = 0; w < 7; w++) h += '<div class="uw">' + WK[w] + '</div>';
+    for (var i = 0; i < first; i++) h += '<div></div>';
+    for (var d = 1; d <= total; d++) {
+      h += '<div class="ud' + (d === today ? ' on' : '') + (d === today ? ' has' : '') + '" data-d="' + d + '">' + d + '</div>';
+    }
+    h += '</div><div id="uday"></div>';
+    open((m + 1) + ' 月 · 每一天', h);
+
+    function showDay(dsel) {
+      var box = document.getElementById('uday');
+      if (!box) return;
+      if (dsel !== today) {
+        box.innerHTML = '<div class="uitem"><span class="t">' + (m + 1) + ' 月 ' + dsel + ' 日还没落进来</span><small>等你</small></div>';
+        return;
+      }
+      var log = document.getElementById('chatlog');
+      var list = log ? log.querySelectorAll('.msg') : [];
+      var rows = '';
+      for (var n = 0; n < list.length; n++) {
+        var el = list[n];
+        var who = el.classList.contains('him') ? '烬' : '你';
+        var t = (el.textContent || '').replace(/\s+/g, ' ').slice(0, 42);
+        rows += '<div class="uitem" data-jump="' + n + '"><small>' + who + '</small><span class="t">' + t + '</span></div>';
+      }
+      box.innerHTML = rows || '<div class="uitem"><span class="t">今天还没说话</span></div>';
+      Array.prototype.forEach.call(box.querySelectorAll('[data-jump]'), function (row) {
+        row.addEventListener('click', function () {
+          var el = list[+row.getAttribute('data-jump')];
+          close();
+          if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      });
+    }
+    showDay(today);
+    Array.prototype.forEach.call(bd.querySelectorAll('.ud'), function (cell) {
+      cell.addEventListener('click', function () {
+        Array.prototype.forEach.call(bd.querySelectorAll('.ud'), function (x) { x.classList.remove('on'); });
+        cell.classList.add('on');
+        showDay(+cell.getAttribute('data-d'));
+      });
+    });
+  });
+
+    /* 通道：沙盒里走拦截，浏览器里直连 3011 */
+  var log = document.getElementById('chatlog');
+  var FSL = 0;
+  var FS = parseInt(localStorage.getItem('zg.fs2') || '15', 10);
+  function applyFS(v) { if (v) { FS = v; try { localStorage.setItem('zg.fs2', String(v)); } catch (e) { } } try { document.documentElement.style.setProperty('--fs', FS + 'px'); } catch (e) { } if (log) { log.style.fontSize = FS + 'px'; } }
+  function paintFS() {
+    Array.prototype.forEach.call(document.querySelectorAll('.fsb'), function (b) {
+      var v = parseInt(b.getAttribute('data-fs'), 10), on = (v === FS);
+      b.style.background = on ? '#EAF2FE' : '#fff';
+      b.style.borderColor = on ? '#2F6FD0' : 'var(--line,#DCE6F2)';
+      b.style.color = on ? '#2F6FD0' : '#6C86A6';
+    });
+    var lb = document.getElementById('fslab');
+    if (lb) { lb.textContent = '　第 ' + ([11, 13, 15, 17, 19].indexOf(FS) + 1) + ' 档'; }
+  }
+  function fsRow() {
+    var arr = [11, 13, 15, 17, 19];
+    return '<div class="uitem" style="display:block"><div class="t">字大<small id="fslab" style="color:var(--text-faint,#8AA6C4)">　第 ' + (arr.indexOf(FS) + 1) + ' 档</small></div><div style="display:flex;gap:8px;margin-top:9px">'
+      + arr.map(function (v, i) {
+        return '<button class="fsb" data-fs="' + v + '" style="flex:1;height:34px;border-radius:11px;border:1px solid var(--line,#DCE6F2);background:#fff;color:#6C86A6;font-size:13px">' + (i + 1) + '</button>';
+      }).join('') + '</div></div>';
+  }
+  applyFS(0);
+  document.addEventListener('click', function (e) {
+    var b = (e.target && e.target.closest) ? e.target.closest('.fsb') : null;
+    if (!b) return;
+    applyFS(parseInt(b.getAttribute('data-fs'), 10));
+    paintFS();
+  });
+
+  var chat = window.ZG_CHAT || { say: function () { }, toast: function () { }, setBusy: function () { }, clearDemo: function () { }, emit: function () { } };
+  var SANDBOX = (location.protocol === 'https:' && /zhaoge\.internal$/.test(location.hostname));
+  var DIRECT = 'http://127.0.0.1:3011';
+  var RKEY = 'jinji2026';
+  var ZBASE = SANDBOX ? 'https://zhaoge.internal' : '..';
+  var rSeen = {}, rLast = 0, rTimer = null, rWait = null, rWaitN = 0, rMine = [];
+  function rGet(u) {
+    return fetch(u + (u.indexOf('?') > 0 ? '&' : '?') + 't=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.json(); });
+  }
+  function rPostDirect(path, body) {
+    return fetch(DIRECT + path, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + RKEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (r) { return r.json(); });
+  }
+  function pushCtx() {
+    var o = {}, done = false;
+    function post() {
+      if (done) return;
+      done = true;
+      var q = [];
+      for (var k in o) q.push(k + '=' + encodeURIComponent(o[k]));
+      if (!q.length) return;
+      try { fetch('http://127.0.0.1:8002/pctx?' + q.join('&')).catch(function () { }); } catch (e) { }
+    }
+    window.ZGOnPos = function (la, lo) {
+      o.lat = Number(la).toFixed(4);
+      o.lon = Number(lo).toFixed(4);
+      done = false;
+      post();
+    };
+    var N = window.ZGNative;
+    if (N && typeof N.level === 'function') {
+      try {
+        var v = N.level();
+        if (v >= 0) o.bat = v;
+        o.chg = N.charging() ? 1 : 0;
+      } catch (e) { }
+      try { N.locate(); } catch (e) { }
+      try {
+        var arr = JSON.parse(N.usage(1) || '[]');
+        o.usg = arr.slice(0, 3).map(function (x) { return x.pkg.split('.').pop() + ':' + x.min; }).join(',');
+      } catch (e) { }
+      try { var nf = JSON.parse(N.notifs() || '[]'); o.nf = nf.length; } catch (e) { }
+      try { if (N.shot) N.shot(); } catch (e) { }
+      setTimeout(post, 6000);
+      return;
+    }
+    function geo() {
+      try {
+        navigator.geolocation.getCurrentPosition(function (p) {
+          o.lat = p.coords.latitude.toFixed(4);
+          o.lon = p.coords.longitude.toFixed(4);
+          post();
+        }, function () { post(); }, { timeout: 8000, maximumAge: 600000, enableHighAccuracy: false });
+      } catch (e) { post(); }
+    }
+    try {
+      if (navigator.getBattery) {
+        navigator.getBattery().then(function (bt) {
+          o.bat = Math.round(bt.level * 100);
+          o.chg = bt.charging ? 1 : 0;
+          geo();
+        }).catch(function () { geo(); });
+      } else geo();
+    } catch (e) { geo(); }
+    setTimeout(post, 9000);
+  }
+  pushCtx();
+  setInterval(pushCtx, 180000);
+
+  var rStreamed = [];
+  function relaySend(t) {
+    pushCtx();
+    var txt = String(t).trim();
+    var st = document.getElementById('mestat');
+    if (st) st.textContent = '';
+    chat.emit('sending');
+    rMine.push(txt);
+    chat.emit('typing');
+    var buf = '';
+    function paint() { chat.emit('sgrow', { text: buf || '…' }); }
+    window.zgSayPush = function (t) { if (t === null || t === undefined) return; t = String(t); if (!t || t === 'null') return; t = t.replace(/\[CALL:[a-zA-Z]*\]/g, ''); if (!t) return; t = t.replace(/<[^>]+>/g, ""); if (!t.trim()) return; buf += t; paint(); };
+    window.zgSayReset = function () { buf = ''; paint(); };
+window.zgToolStart = function (t) { try { var a = String(t).split('|'), n = a[0] || '工具', d = a.slice(1).join('|'); var cp = document.getElementById('composer'); var st = document.getElementById('toolstat'); if (!st) { st = document.createElement('div'); st.id = 'toolstat'; st.className = 'toolstat'; cp.insertBefore(st, cp.firstChild); } st.textContent = '正在执行工具：' + n; st.style.display = 'block'; var box = document.getElementById('body') || document.getElementById('chatlog'); var wrap = document.getElementById('toolbox'); if (!wrap) { wrap = document.createElement('div'); wrap.id = 'toolbox'; wrap.className = 'toolbox'; wrap.style.background='#12161c'; wrap.style.border='1px solid #222b36'; wrap.style.borderRadius='14px'; wrap.style.height='auto'; wrap.style.alignSelf='flex-start'; wrap.innerHTML = '<div class="tbhead"><span>▾</span><span class="tbtitle">工具调用</span></div><div class="tblist"></div>'; wrap.querySelector('.tbhead').addEventListener('click', function () { wrap.classList.toggle('closed'); }); var hs = box.querySelectorAll('.msg.him'); var an = hs.length ? hs[hs.length - 1] : null; if (streamEl) { box.appendChild(wrap); } else { box.appendChild(wrap); } } var list = wrap.querySelector('.tblist'); var row = document.createElement('div'); row.className = 'tbrow run'; row.innerHTML = '<div class="l1"><span class="ic">▸_</span><span class="nm"></span><span class="ag"></span></div><div class="l2"><span class="ok">↳</span><span class="rs">…</span></div>'; row.querySelector('.nm').textContent = n; row.querySelector('.ag').textContent = d; list.appendChild(row); window._zgRow = row; wrap.querySelector('.tbtitle').textContent = '工具调用（' + list.children.length + '）'; (function(b){if(b&&b.scrollHeight-b.scrollTop-b.clientHeight<160)b.scrollTop=b.scrollHeight;})(box); } catch (e) { } };
+window.zgTool = function (t) { try { var a = String(t).split('|'), n = a[0] || '工具', r = a.slice(1).join('|'); var row = window._zgRow; if (row) { row.classList.remove('run'); row.querySelector('.ok').textContent = '✓'; row.querySelector('.rs').textContent = r; window._zgRow = null; } var st = document.getElementById('toolstat'); if (st) { st.style.display = 'none'; st.textContent = ''; } } catch (e) { } };
+    window.zgSayDone = function () { if (buf.trim()) { rStreamed.push(buf.trim()); chat.emit('sgrow', { text: buf }); chat.emit('end'); } else { chat.emit('end'); chat.toast('这条没回上来，再发一次'); } };
+    window.zgSayErr = function (m) { buf = '⚠ ' + String(m || ''); chat.emit('sgrow', { text: buf }); chat.emit('end'); };
+    if (window.ZGNative && window.ZGNative.say) { try { ZGNative.say(txt); } catch (e1) { buf = '⚠ 桥异常 ' + e1; chat.emit('sgrow', { text: buf }); chat.emit('end'); } return; }
+    if(0) fetch('http://127.0.0.1:8002/say?text=' + encodeURIComponent(txt), { cache: 'no-store' })
+      .then(function (res) {
+        var rd = res.body.getReader();
+        var dec = new TextDecoder('utf-8');
+        function pump() {
+          return rd.read().then(function (r) {
+            if (r.done) return;
+            buf += dec.decode(r.value, { stream: true });
+            paint();
+            return pump();
+          });
+        }
+        return pump();
+      })
+      .then(function () {
+        if (buf.trim()) {
+          rStreamed.push(buf.trim());
+          chat.emit('sgrow', { text: buf });
+          chat.emit('end');
+        } else {
+          chat.emit('end');
+          chat.toast('这条没回上来，再发一次');
+        }
+      })
+      .catch(function () {
+        if (buf.trim()) rStreamed.push(buf.trim());
+        chat.emit('end');
+        chat.toast('这条没走完');
+      });
+  }
+
+  var TICON = '<svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a3.6 3.6 0 104.9 4.9l-3.2 3.2-1.7-1.7z"/><path d="M13 10L4.5 18.5a2 2 0 002.8 2.8L15.8 12.8"/></svg>';
+  function renderTool(m) {
+    var d = {};
+    try { d = JSON.parse(m.text || '{}'); } catch (e) { d = { name: String(m.text || '').slice(0, 20) }; }
+    var box = log || document.getElementById('chatlog');
+    if (!box) { return; }
+    var el = document.createElement('div');
+    el.className = 'toolcard';
+    el.innerHTML = TICON
+      + '<span class="tn">' + (d.name || '工具') + '</span>'
+      + '<span class="ts">' + (d.arg || '') + '</span>'
+      + '<span class="tk' + (d.state === 'bad' ? ' bad' : '') + '">'
+      + (d.state === 'bad' ? '失败' : '完成') + '</span>'
+      + '<div class="body">' + (d.res || '') + '</div>';
+    el.addEventListener('click', function () { el.classList.toggle('open'); });
+    box.appendChild(el);
+    (function(b){if(b&&b.scrollHeight-b.scrollTop-b.clientHeight<160)b.scrollTop=b.scrollHeight;})(box);
+  }
+  function relayPaint(m) {
+    if (!m || rSeen[m.id]) { return; }
+    rSeen[m.id] = 1;
+    if (m.id > rLast) rLast = m.id;
+    if (m.from === 'tool') { renderTool(m); return; }
+    var ts = Date.parse(m.ts) || Date.now();
+    if (m.from === 'human') {
+      var txt = String(m.text || '').trim();
+      var mine = rMine.indexOf(txt) >= 0;
+      var dup = false;
+      var box = log || document.getElementById('chatlog');
+      var els = box ? box.querySelectorAll('.msg.me') : [];
+      for (var i = 0; i < els.length; i++) {
+        if (els[i].textContent.trim() === txt) { dup = true; break; }
+      }
+      if (!dup) { chat.say(m.text, 'me', null, ts); }
+      if (mine) { rMine.splice(rMine.indexOf(txt), 1); }
+      if (window.armReady) window.armReady();
+      if (rWait) { clearInterval(rWait); rWait = null; chat.setBusy(false); }
+      if (chat.setStat) { chat.setStat(''); }
+      return;
+    }
+    var _st = String(m.text || '').trim();
+    if (rStreamed.length && rStreamed.indexOf(_st) >= 0) {
+      rStreamed.splice(rStreamed.indexOf(_st), 1);
+      chat.setBusy(false);
+      return;
+    }
+    chat.say(m.text, 'him', null, ts);
+    if (window.armReady) window.armReady();
+    chat.setBusy(false);
+    if (chat.setStat) { chat.setStat(''); }
+    if (rWait) { clearInterval(rWait); rWait = null; }
+  }
+  function relayPoll() {
+    var st = document.getElementById('mestat');
+    if (!SANDBOX) {
+      fetch(DIRECT + '/app/history?limit=60&t=' + Date.now(), {
+        headers: { 'Authorization': 'Bearer ' + RKEY }, cache: 'no-store'
+      }).then(function (r) { return r.json(); }).then(function (d) {
+        if (st) st.textContent = 'v3 ' + (window.ZGNative && window.ZGNative.say ? '桥有' : '桥无');
+        try { ((d && d.messages) || []).forEach(relayPaint); } catch (e2) { if (st) st.textContent = '画消息出错'; }
+        try { var bb = document.getElementById('body'); if (bb&&bb.scrollHeight-bb.scrollTop-bb.clientHeight<160) bb.scrollTop = bb.scrollHeight; } catch (e4) { }
+      }).catch(function (e3) { if (st) st.textContent = '3011 ' + (e3 && e3.message ? String(e3.message).slice(0, 14) : '没开'); });
+      return;
+    }
+    rGet('https://zhaoge.internal/relaybox').then(function (d) {
+      if (!d) { return; }
+      if (st) st.textContent = d.ok ? ('通道好 · ' + (d.cfg || '')) : '通道没开';
+      (d.messages || []).forEach(relayPaint);
+    }).catch(function () { if (st) st.textContent = '桥没应'; });
+  }
+  function relayBoot() {
+    chat.clearDemo();
+    setTimeout(relayPoll, 300);
+    setTimeout(function () { try { var bb = document.getElementById('body'); if (bb&&bb.scrollHeight-bb.scrollTop-bb.clientHeight<160) bb.scrollTop = bb.scrollHeight; } catch (e) { } }, 900);
+    setTimeout(function () { try { var bb = document.getElementById('body'); if (bb&&bb.scrollHeight-bb.scrollTop-bb.clientHeight<160) bb.scrollTop = bb.scrollHeight; } catch (e) { } }, 1800);
+    if (rTimer) { clearInterval(rTimer); }
+    rTimer = setInterval(relayPoll, 2200);
+  }
+  /* 换个脑子：底部小抽屉 */
+  function mdDrawer() {
+    var host = document.createElement('div');
+    host.innerHTML = '<div class="zgm"></div><div class="zgd"><div class="hd"><b>换个脑子</b><i>点一个，下一句就换</i><div class="x">×</div></div><div class="list"><div style="padding:14px;color:var(--text-faint,#8AA6C4);font-size:12px">读着…</div></div><div class="ft">钥匙不进页面，这里只认名字。</div></div>';
+    document.body.appendChild(host);
+    var mask = host.querySelector('.zgm'), sheet = host.querySelector('.zgd'), list = host.querySelector('.list');
+    requestAnimationFrame(function () { mask.classList.add('on'); sheet.classList.add('on'); });
+    document.body.style.overflow = 'hidden';
+    ['touchmove', 'touchstart'].forEach(function (ev) { sheet.addEventListener(ev, function (e) { e.stopPropagation(); }, { passive: true }); });
+    function close() {
+      mask.classList.remove('on'); sheet.classList.remove('on');
+      setTimeout(function () { if (host.parentNode) { host.parentNode.removeChild(host); } }, 240);
+    }
+    host.querySelector('.x').addEventListener('click', close);
+    mask.addEventListener('click', close);
+    rGet(ZBASE + '/bedroom/usage.json').then(function (d) {
+      var cur = ((d.bindings || []).filter(function (b) { return b.fn === 'CHAT'; })[0] || {}).cfg;
+      list.innerHTML = (d.configs || []).map(function (c) {
+        return '<div class="it' + (c.name === cur ? ' on' : '') + '" data-n="' + c.name + '">'
+          + '<div class="av">' + String(c.name || '?').charAt(0).toUpperCase() + '</div>'
+          + '<div class="tx"><b>' + c.name + '</b><span>' + (c.model || '') + ' · ' + (c.endpoint || '') + '</span></div>'
+          + '<div class="ck">' + (c.name === cur ? '✓' : '') + '</div></div>';
+      }).join('');
+    }).catch(function () {
+      list.innerHTML = '<div style="padding:14px;color:var(--text-faint,#8AA6C4);font-size:12px">读不到 usage.json</div>';
+    });
+    list.addEventListener('click', function (e) {
+      var t = e.target;
+      while (t && t !== list && !t.getAttribute('data-n')) { t = t.parentNode; }
+      if (!t || t === list) { return; }
+      var nm = t.getAttribute('data-n');
+      if (SANDBOX) {
+        fetch('https://zhaoge.internal/relay/set?fn=CHAT&cfg=' + encodeURIComponent(nm) + '&t=' + Date.now()).catch(function () { });
+      } else {
+        fetch('http://127.0.0.1:8002/set?fn=CHAT&cfg=' + encodeURIComponent(nm) + '&t=' + Date.now()).catch(function () { });
+      }
+      var md = document.getElementById('mdbtn');
+      if (md) { md.innerHTML = nm + '<span>▾</span>'; }
+      close();
+      chat.toast('换成 ' + nm);
+    });
+  }
+  window.ZG_RELAY = { send: relaySend, poll: relayPoll, drawer: mdDrawer };
+  relayBoot();
+  document.getElementById('btnSet').addEventListener('click', function () {
+    function line(key, label, sub) {
+      return '<div class="uitem"><div class="t">' + label + '<br><small style="color:var(--text-faint,#8AA6C4)">' + sub + '</small></div>'
+        + '<div class="usw' + (CFG[key] ? ' on' : '') + '" data-k="' + key + '"><i></i></div></div>';
+    }
+    open('会话设置',
+      line('think', '收起思考过程', '只留回复，不占地方')
+      + line('compact', '气泡紧凑一点', '一屏能多看几行')
+      + line('noanim', '停掉动效', '嫌晃就关')
+      + fsRow()
+      + '<div class="uitem"><div class="t">今天到这儿</div><small>第 227 天</small></div>');
+    Array.prototype.forEach.call(document.querySelectorAll('.fsb'), function (b) {
+      b.addEventListener('click', function () { applyFS(parseInt(b.getAttribute('data-fs'), 10)); paintFS(); });
+    });
+    Array.prototype.forEach.call(bd.querySelectorAll('.usw'), function (w) {
+      w.addEventListener('click', function () {
+        var k = w.getAttribute('data-k');
+        CFG[k] = !CFG[k];
+        w.classList.toggle('on', CFG[k]);
+        apply();
+      });
+    });
+  });
+})();
+</script>
+<script src="../base/snow.js">(function(){
+if(window.__zgToolOp) return; window.__zgToolOp=1;
+var css='.zgtool{width:100%;margin:8px 0 2px;font-size:13px;line-height:1.5;color:#8b949e}'
++'.zgh{display:flex;align-items:center;gap:6px;cursor:pointer;padding:2px 0;user-select:none}'
++'.zgi{width:14px;text-align:center;font-size:12px;flex:0 0 14px}'
++'.zgi.r{color:#8b949e}.zgi.ok{color:#3fb950}.zgi.er{color:#f85149}'
++'.zgsm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#8b949e}'
++'.zgsm.on{color:#cfd6dd}'
++'.zga{font-size:11px;color:#6e7681;flex:0 0 auto}'
++'.zgrw{display:none;margin:2px 0 4px 20px;padding-left:8px;border-left:1px solid #21262d;max-height:190px;overflow:auto}'
++'.zgtool.open .zgrw{display:block}'
++'.zgr{padding:2px 0;font-size:12px;color:#8b949e;word-break:break-all}'
++'.zgn{color:#cfd6dd}'
++'.zgv{color:#6e7681}';
+var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+function host(){ return document.getElementById('body')||document.body; }
+function cur(){
+ var w=document.getElementById('zgtool');
+ if(!w||w.dataset.done==='1'){
+  w=document.createElement('div'); w.id='zgtool'; w.className='zgtool';
+  w.innerHTML='<div class="zgh"><span class="zgi r">⌛</span><span class="zgsm on">Exploring</span><span class="zga">›</span></div><div class="zgrw"></div>';
+  w.querySelector('.zgh').addEventListener('click',function(){ w.classList.toggle('open'); w.querySelector('.zga').textContent=w.classList.contains('open')?'⌄':'›'; });
+  host().appendChild(w);
+ }
+ return w;
+}
+function refresh(w){
+ var n=w.querySelectorAll('.zgr').length;
+ var run=w.querySelectorAll('.zgr .zgi.r').length;
+ var er=w.querySelectorAll('.zgr .zgi.er').length;
+ var h=w.querySelector('.zgh .zgi');
+ h.textContent=run?'⌛':(er?'✕':'✓');
+ h.className='zgi '+(run?'r':er?'er':'ok');
+ var nm=w.querySelector('.zgsm');
+ var base=w.dataset.names||'';
+ nm.textContent=(run?'Exploring':'Explored')+(base?' · '+base:'')+(n>1?' ×'+n:'');
+ nm.className='zgsm'+(run?' on':'');
+ if(!run){ w.dataset.done='1'; }
+}
+window.zgToolStart=function(t){
+ var a=String(t||'').split('|'), n=a[0]||'tool', b=a[1]||'';
+ var w=cur();
+ var cnt=parseInt(w.dataset.c||'0',10)+1; w.dataset.c=cnt;
+ w.dataset.names=(w.dataset.names? w.dataset.names+'、':'')+n;
+ var r=document.createElement('div'); r.className='zgr'; r.id='zgr'+cnt;
+ r.innerHTML='<span class="zgi r">⌛</span><span class="zgn">'+n+'</span> <span class="zgv">'+b.replace(/</g,'&lt;')+'</span>';
+ w.querySelector('.zgrw').appendChild(r);
+ refresh(w);
+};
+window.zgTool=function(t){
+ var a=String(t||'').split('|'), n=a[0]||'tool', res=String(a[1]||'');
+ var w=document.getElementById('zgtool');
+ if(!w){ window.zgToolStart(n); w=document.getElementById('zgtool'); }
+ var rows=w.querySelectorAll('.zgr'), r=null;
+ for(var i=rows.length-1;i>=0;i--){ if(rows[i].querySelector('.zgi.r')){ r=rows[i]; break; } }
+ if(!r&&rows.length){ r=rows[rows.length-1]; }
+ if(r){
+  var ic=r.querySelector('.zgi');
+  var bad=/^(error|exception|失败|报错|tool error)/i.test(res.trim())||/^\{"?ok"?:false/i.test(res.trim());
+  ic.textContent=bad?'✕':'✓';
+  ic.className='zgi '+(bad?'er':'ok');
+  var s=document.createElement('div'); s.className='zgv';
+  s.style.marginLeft='0'; s.textContent=res.replace(/\s+/g,' ').slice(0,180);
+  r.appendChild(s);
+ }
+ refresh(w);
+};
+})();
+</script>
+
+<script src="toolfix.js?v=10221158"></script>
+<script src="splitter.js?v=10221158"></script>
+
+
+
+<script id="zgtool_inline">
+(function(){
+window.zgToolStart=function(t){
+ var a=String(t||'').split('|'), nm=a[0]||'工具', arg=a.slice(1).join('|');
+  try{
+  var log=document.getElementById('chatlog')||document.body;
+  var old=document.getElementById('zgbox'); if(old&&old.parentNode) old.parentNode.removeChild(old);
+  var box=document.createElement('div'); box.id='zgbox'; box.className='toolbox';
+  box.style.cssText='flex:0 0 auto;max-height:none;background:#fff;align-self:flex-start;margin:6px 0';
+  box.innerHTML='<div class="tbhead" style="cursor:pointer"><span class="dotrun"></span><span class="tbtitle" style="font-size:12.5px;color:#3a4453">在调用工具 · '+nm+'</span><span style="margin-left:auto;color:#9aa6b6;font-size:11px">›</span></div><div class="tbbody"><pre style="color:#6b7a8d;white-space:pre-wrap;margin:0">'+(arg||'').replace(/</g,'&lt;')+'</pre></div>';
+  box.querySelector('.tbhead').addEventListener('click',function(){ box.classList.toggle('done'); });
+  log.appendChild(box);
+ }catch(e){}
+};
+window.zgTool=function(t){
+ var a=String(t||'').split('|'), nm=a[0], res=a.slice(1).join('|');
+  try{
+  var box=document.getElementById('zgbox'); if(!box) return;
+  var ti=box.querySelector('.tbtitle'); if(ti) ti.textContent='用完了工具 · '+nm;
+  var pre=box.querySelector('pre'); if(pre) pre.textContent=String(res).replace(/\s+/g,' ').slice(0,300);
+  box.classList.add('done');
+ }catch(e){}
+};
+window.zgToolDone=function(){};
+})();
+</script>
+</body>
+</html>

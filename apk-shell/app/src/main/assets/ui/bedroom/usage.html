@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>用量 · 朝歌</title>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --text:#1B3556; --text-soft:#5C789B; --text-faint:#93A9C2;
+  --line:rgba(90,130,180,.13); --card:rgba(255,255,255,.74);
+  --accent:#2F5F9E; --accent-soft:#E7F0FB;
+  --f-en:"Cormorant Garamond","Times New Roman",Georgia,serif;
+}
+body{color:var(--text);font:15px/1.65 var(--font-cn);
+  min-height:100vh;padding-bottom:40px;
+  background:linear-gradient(180deg,#F8FBFF 0%,#EFF5FD 62%,#E9F1FB 100%);
+  background-attachment:fixed}
+main,header{position:relative;z-index:2}
+.floaty{z-index:0}
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;
+  padding:16px 16px 10px;background:rgba(248,251,255,.9);backdrop-filter:blur(14px)}
+header a{color:var(--text-soft);text-decoration:none;font-size:19px;line-height:1;opacity:.7}
+header b{font-size:15px;letter-spacing:.14em;font-weight:500;flex:none}
+.hd-en{font:400 10px/1 var(--f-en);letter-spacing:.26em;color:var(--text-faint);
+  text-transform:lowercase;position:relative;top:1px}
+main{padding:4px 16px}
+.sect{display:flex;align-items:baseline;gap:9px;padding:14px 4px 8px}
+.sect span{font:500 10px/1 var(--font-cn);letter-spacing:.2em;color:var(--text-faint)}
+.sect i{font:400 9.5px/1 var(--f-en);letter-spacing:.18em;font-style:normal;
+  color:rgba(147,169,194,.9);text-transform:lowercase}
+.big{background:rgba(255,255,255,.8);border-radius:20px;padding:20px 18px 16px}
+.big .k{font:400 9px/1 var(--f-en);letter-spacing:.24em;color:var(--text-faint);
+  text-transform:uppercase}
+.big .n{margin-top:9px;font:500 26px/1.15 var(--f-en);letter-spacing:.02em;color:var(--accent);
+  word-break:break-all}
+.big .t{margin-top:7px;font-size:11.5px;color:var(--text-faint);letter-spacing:.05em}
+.big .row3{display:flex;gap:10px;margin-top:16px}
+.big .row3 div{flex:1;text-align:left}
+.big .row3 b{display:block;font:500 13px/1.2 var(--f-en);color:var(--text);letter-spacing:.03em}
+.big .row3 span{display:block;font-size:9.5px;color:var(--text-faint);margin-top:4px;
+  letter-spacing:.12em;text-transform:uppercase}
+.card{background:var(--card);border-radius:18px;padding:14px 16px;margin-bottom:10px}
+.cfg .h{display:flex;align-items:baseline;gap:8px}
+.cfg b{font-size:13.5px;font-weight:500;flex:1;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cfg .p{font:400 9.5px/1 var(--f-en);letter-spacing:.14em;color:#B6C7D9;
+  text-transform:uppercase;flex:none}
+.cfg .m{margin-top:5px;font-size:10.5px;color:var(--text-faint);letter-spacing:.03em}
+.cfg .bar{margin-top:10px;height:3px;border-radius:3px;background:rgba(47,95,158,.12);
+  overflow:hidden}
+.cfg .bar i{display:block;height:100%;background:var(--accent);opacity:.55;border-radius:3px}
+.cfg .f{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.cfg .f span{font:400 9px/1 var(--f-en);letter-spacing:.12em;color:var(--text-faint);
+  background:rgba(231,240,251,.9);border-radius:999px;padding:4px 8px;text-transform:lowercase}
+.bal .h{display:flex;align-items:baseline;gap:8px}
+.bal b{flex:1;font-size:13.5px;font-weight:500}
+.bal .p{font:400 9.5px/1 var(--f-en);letter-spacing:.14em;color:#B6C7D9;text-transform:uppercase}
+.bal .num{margin-top:6px;font:500 22px/1.2 var(--f-en);color:var(--accent);letter-spacing:.01em}
+.bal .f{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
+.bal .f span{font:400 9px/1 var(--f-en);letter-spacing:.1em;color:var(--text-faint);
+  background:rgba(231,240,251,.9);border-radius:999px;padding:4px 8px}
+.fn{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line)}
+.fn:last-child{border-bottom:0}
+.fn .a{font:400 10px/1 var(--f-en);letter-spacing:.12em;color:var(--text-faint);width:104px;
+  flex:none;text-transform:uppercase}
+.fn .b{flex:1;min-width:0;font-size:12.5px;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fn .c{font:400 10px/1 var(--f-en);color:#B6C7D9;flex:none;letter-spacing:.08em}
+.note{font-size:10.5px;color:var(--text-faint);letter-spacing:.04em;padding:14px 6px 0;line-height:1.9}
+
+.tkcard{background:rgba(255,255,255,.8);border-radius:20px;padding:14px 14px 10px;margin-bottom:10px}
+.tkchart{width:100%;height:96px;display:block}
+.tklab{display:flex;justify-content:space-between;font:400 9.5px/1 var(--f-en);
+  letter-spacing:.1em;color:var(--text-faint);padding:2px 2px 0}
+.tkgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.tkb{background:rgba(255,255,255,.8);border-radius:18px;padding:13px 14px}
+.tkb .k{font-size:10.5px;color:var(--text-faint);letter-spacing:.06em}
+.tkb .v{margin-top:7px;font:500 22px/1.15 var(--f-en);color:var(--text);letter-spacing:.01em}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,12px);gap:4px}
+.heat i{width:12px;height:12px;border-radius:3px;background:rgba(120,150,190,.14)}
+.heat i.l1{background:rgba(47,95,158,.25)}.heat i.l2{background:rgba(47,95,158,.45)}
+.heat i.l3{background:rgba(47,95,158,.68)}.heat i.l4{background:rgba(47,95,158,.92)}
+.cmp{margin-top:4px}
+.cmp .r{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text-soft);padding:5px 0}
+.cmp .r b{width:62px;flex:none;color:var(--text);font-weight:400}
+.cmp .r .t{flex:1;height:8px;border-radius:999px;background:rgba(120,150,190,.14);overflow:hidden}
+.cmp .r .t i{display:block;height:100%;border-radius:999px;background:var(--accent)}
+.cmp .r .n{width:96px;text-align:right;font:400 10.5px/1 var(--f-en);color:var(--text-faint)}
+.mdl{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:12px}
+.mdl:first-child{border-top:0}
+.mdl b{flex:1;font-weight:400;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mdl span{font:400 10.5px/1 var(--f-en);color:var(--text-faint)}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<header>
+  <a href="../home/home.html">←</a><b>用量</b><span class="hd-en">credits</span>
+</header>
+<main>
+  <div class="sect"><span>四 · 卧室</span><i>what it costs.</i></div>
+  <div class="big" id="big"></div>
+
+  <div class="sect"><span>Token</span><i>what we burn.</i></div>
+  <div id="tok"></div>
+
+  <div class="sect"><span>钱</span><i>what's left.</i></div>
+  <div id="money"></div>
+
+  <div class="sect"><span>钥匙</span><i>keys we hold.</i></div>
+  <div id="cfgs"></div>
+
+  <div class="sect"><span>谁在做事</span><i>who does what.</i></div>
+  <div class="card" id="fns"></div>
+
+  <div class="note" id="note"></div>
+</main>
+<script>
+(function () {
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&#34;' })[c]; }); }
+  function renderMoney(list, live) {
+    var box = document.getElementById('money');
+    if (!list || !list.length) { box.innerHTML = ''; return; }
+    box.innerHTML = list.map(function (b) {
+      if (b.kind === 'balance') {
+        return '<div class="card bal"><div class="h"><b>' + esc(b.name) + '</b><span class="p">'
+          + esc(b.cur) + '</span></div>'
+          + '<div class="num">' + esc(b.total) + '</div>'
+          + '<div class="f"><span>充值 ' + esc(b.topped) + '</span><span>赠送 '
+          + esc(b.granted) + '</span><span>' + esc(b.at || '') + ' 查的</span></div></div>';
+      }
+      if (b.kind === 'err') {
+        return '<div class="card bal"><div class="h"><b>' + esc(b.name) + '</b><span class="p">err</span></div>'
+          + '<div class="m">' + esc(b.err || '拿不到') + '</div></div>';
+      }
+      return '<div class="card bal"><div class="h"><b>' + esc(b.name) + '</b><span class="p">used</span></div>'
+        + '<div class="num">$' + esc(b.used) + '</div>'
+        + '<div class="f"><span>' + esc(b.host) + '</span><span>' + esc(b.since) + ' 起</span></div></div>';
+    }).join('') + (live ? '<div class="note" style="padding:6px 4px 0">实时 · ' + esc(live)
+      + '</div>' : '<div class="note" style="padding:6px 4px 0">快照，代理没开</div>');
+  }
+  var zh = { CHAT: '对话', SUMMARY: '总结', MEMORY: '记忆', IMAGE_RECOGNITION: '识图',
+    AUDIO_RECOGNITION: '听声音', VIDEO_RECOGNITION: '看视频', TITLE_GENERATION: '起标题',
+    TRANSLATION: '翻译', UI_CONTROLLER: '点屏幕', ROLE_RESPONSE_PLANNER: '回复规划', GREP: '检索' };
+
+
+  var CFGS = [];
+  var SANDBOX2 = (location.protocol === 'https:' && /zhaoge\.internal$/.test(location.hostname));
+  var WURL = SANDBOX2 ? 'https://zhaoge.internal/relay/set' : 'http://127.0.0.1:8002/set';
+  function esc2(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&#34;' })[c]; }); }
+  function pickFor(fn, label, cur) {
+    var host = document.createElement('div');
+    host.innerHTML = '<div class="zgm"></div><div class="zgd"><div class="hd"><b>'
+      + esc2(label) + '</b><i>交给哪个脑子</i><div class="x">×</div></div><div class="list">'
+      + CFGS.map(function (c) {
+        return '<div class="it' + (c.name === cur ? ' on' : '') + '" data-n="' + c.name + '">'
+          + '<div class="av">' + String(c.name || '?').charAt(0).toUpperCase() + '</div>'
+          + '<div class="tx"><b>' + esc2(c.name) + '</b><span>' + esc2(c.model) + ' · ' + esc2(c.endpoint || '') + '</span></div>'
+          + '<div class="ck">' + (c.name === cur ? '✓' : '') + '</div></div>';
+      }).join('')
+      + '</div><div class="ft">换完这一行就归它，下一句话就生效。</div></div>';
+    document.body.appendChild(host);
+    var mask = host.querySelector('.zgm'), sheet = host.querySelector('.zgd'), list = host.querySelector('.list');
+    requestAnimationFrame(function () { mask.classList.add('on'); sheet.classList.add('on'); });
+    document.body.style.overflow = 'hidden';
+    ['touchmove', 'touchstart'].forEach(function (ev) { sheet.addEventListener(ev, function (e) { e.stopPropagation(); }, { passive: true }); });
+    function close() {
+      mask.classList.remove('on'); sheet.classList.remove('on');
+      setTimeout(function () { if (host.parentNode) { host.parentNode.removeChild(host); } }, 240);
+    }
+    host.querySelector('.x').addEventListener('click', close);
+    mask.addEventListener('click', close);
+    list.addEventListener('click', function (e) {
+      var t = e.target;
+      while (t && t !== list && !t.getAttribute('data-n')) { t = t.parentNode; }
+      if (!t || t === list) { return; }
+      var nm = t.getAttribute('data-n');
+      fetch(WURL + '?fn=' + encodeURIComponent(fn) + '&cfg=' + encodeURIComponent(nm) + '&t=' + Date.now()).catch(function () { });
+      close();
+      setTimeout(load, 700);
+    });
+  }
+  function pickModel(b) {
+    var cfgObj = (CFGS || []).filter(function (c) { return c.name === b.cfg; })[0] || {};
+    var ms = (cfgObj.models && cfgObj.models.length) ? cfgObj.models : [b.model];
+    var host = document.createElement('div');
+    host.innerHTML = '<div class="zgm"></div><div class="zgd"><div class="hd"><b>'
+      + esc2(zh[b.fn] || b.fn) + '</b><i>用哪一把里的哪个模型</i><div class="x">×</div></div><div class="list">'
+      + ms.map(function (m) {
+        return '<div class="it' + (m === b.model ? ' on' : '') + '" data-m="' + esc2(m) + '">'
+          + '<div class="av">' + String(m).charAt(0).toUpperCase() + '</div>'
+          + '<div class="tx"><b>' + esc2(m) + '</b><span>' + esc2(b.cfg) + '</span></div>'
+          + '<div class="ck">' + (m === b.model ? '✓' : '') + '</div></div>';
+      }).join('')
+      + '</div><div class="ft">同一把钥匙里的另一个脑子，换完下一句就用它。</div></div>';
+    document.body.appendChild(host);
+    var mask = host.querySelector('.zgm'), sheet = host.querySelector('.zgd'), list = host.querySelector('.list');
+    requestAnimationFrame(function () { mask.classList.add('on'); sheet.classList.add('on'); });
+    document.body.style.overflow = 'hidden';
+    ['touchmove', 'touchstart'].forEach(function (ev) { sheet.addEventListener(ev, function (e) { e.stopPropagation(); }, { passive: true }); });
+    function close() {
+      mask.classList.remove('on'); sheet.classList.remove('on');
+      document.body.style.overflow = '';
+      setTimeout(function () { if (host.parentNode) { host.parentNode.removeChild(host); } }, 240);
+    }
+    host.querySelector('.x').addEventListener('click', close);
+    mask.addEventListener('click', close);
+    list.addEventListener('click', function (e) {
+      var t = e.target;
+      while (t && t !== list && !t.getAttribute('data-m')) { t = t.parentNode; }
+      if (!t || t === list) { return; }
+      var m = t.getAttribute('data-m');
+      fetch(WURL + '?fn=' + encodeURIComponent(b.fn) + '&cfg=' + encodeURIComponent(b.cfg) + '&model=' + encodeURIComponent(m) + '&t=' + Date.now()).catch(function () { });
+      close();
+      setTimeout(load, 700);
+    });
+  }
+  function renderFns(bind) {
+    var box = document.getElementById('fns');
+    box.innerHTML = (bind || []).map(function (b, i) {
+      return '<div class="fn" data-i="' + i + '" data-fn="' + b.fn + '"><div class="a">' + esc(zh[b.fn] || b.fn) + '</div>'
+        + '<div class="b">' + esc(b.cfg) + '</div><div class="c">' + esc(b.model) + '</div></div>';
+    }).join('');
+    Array.prototype.forEach.call(box.querySelectorAll('.fn'), function (row) {
+      row.addEventListener('click', function (e) {
+        var i = +row.getAttribute('data-i');
+        var b = (bind || [])[i] || {};
+        if (e.target && e.target.closest && e.target.closest('.c')) { pickModel(b); return; }
+        pickFor(b.fn, zh[b.fn] || b.fn, b.cfg);
+      });
+    });
+  }
+
+  function fmt(n) {
+    n = +n || 0;
+    if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+    if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+    return String(n);
+  }
+  function chart(hh) {
+    var max = Math.max.apply(null, hh.concat([1]));
+    var w = 320, h = 90, pad = 6;
+    var pts = hh.map(function (v, i) {
+      var x = pad + i * (w - pad * 2) / 23;
+      var y = h - pad - (v / max) * (h - pad * 2);
+      return [x, y];
+    });
+    var line = pts.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ');
+    var dots = pts.map(function (p) {
+      return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="2.6" fill="#2F5F9E"/>';
+    }).join('');
+    var peak = hh.indexOf(max);
+    return '<svg class="tkchart" viewBox="0 0 320 90" preserveAspectRatio="none">'
+      + '<polyline points="' + line + '" fill="none" stroke="#2F5F9E" stroke-width="1.6" '
+      + 'stroke-linejoin="round" stroke-linecap="round"/>' + dots + '</svg>'
+      + '<div class="tklab"><span>00:00</span><span>' + (peak >= 0 ? ('峰值 ' + String(peak).padStart(2, '0') + ':00') : '')
+      + '</span><span>23:00</span></div>';
+  }
+  function heat(days) {
+    var out = [], today = new Date(), i;
+    var ws = (today.getDay() + 6) % 7;
+    var start = new Date(today.getTime() - (70 - (6 - ws)) * 86400000);
+    var vals = [];
+    for (i = 0; i < 70; i++) {
+      var d = new Date(start.getTime() + i * 86400000);
+      var k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      vals.push(days[k] || 0);
+    }
+    var max = Math.max.apply(null, vals.concat([1]));
+    vals.forEach(function (v) {
+      var c = v === 0 ? '' : (v < max * .25 ? 'l1' : v < max * .5 ? 'l2' : v < max * .8 ? 'l3' : 'l4');
+      out.push('<i class="' + c + '" title="' + fmt(v) + '"></i>');
+    });
+    return '<div class="heat">' + out.join('') + '</div>';
+  }
+  function renderTok(u) {
+    var box = document.getElementById('tok');
+    if (!u || u.ok === false) { box.innerHTML = '<div class="tkcard">8002 没通，读不到。</div>'; return; }
+    var cache = u.cache || 0, tin = u.in || 0, out = u.out || 0;
+    var unc = Math.max(0, tin - cache);
+    var all = cache + unc + out || 1;
+    var cr = (cache / (tin || 1)) * 100;
+    var models = Object.keys(u.models || {});
+    box.innerHTML =
+      '<div class="tkcard">' + chart(u.hours || []) + '</div>'
+      + '<div class="tkgrid">'
+      + '<div class="tkb"><div class="k">峰值 Token</div><div class="v">' + fmt(u.peak) + '</div></div>'
+      + '<div class="tkb"><div class="k">总请求次数</div><div class="v">' + (u.rows || 0) + '</div></div>'
+      + '<div class="tkb"><div class="k">缓存率</div><div class="v">' + (cr ? cr.toFixed(1) : '0.0') + '%</div></div>'
+      + '<div class="tkb"><div class="k">输出</div><div class="v">' + fmt(out) + '</div></div>'
+      + '</div>'
+      + '<div class="tkcard"><div class="k" style="font-size:11px;color:var(--text-faint)">活跃 · 最近十周</div>'
+      + '<div style="margin-top:10px">' + heat(u.days || {}) + '</div></div>'
+      + '<div class="tkcard"><div class="k" style="font-size:11px;color:var(--text-faint)">Token 构成</div>'
+      + '<div class="cmp">'
+      + '<div class="r"><b>缓存读取</b><div class="t"><i style="width:' + (cache / all * 100).toFixed(1) + '%"></i></div>'
+      + '<div class="n">' + fmt(cache) + ' ' + (cache / all * 100).toFixed(1) + '%</div></div>'
+      + '<div class="r"><b>未缓存输入</b><div class="t"><i style="width:' + (unc / all * 100).toFixed(1) + '%"></i></div>'
+      + '<div class="n">' + fmt(unc) + ' ' + (unc / all * 100).toFixed(1) + '%</div></div>'
+      + '<div class="r"><b>输出</b><div class="t"><i style="width:' + (out / all * 100).toFixed(1) + '%"></i></div>'
+      + '<div class="n">' + fmt(out) + ' ' + (out / all * 100).toFixed(1) + '%</div></div>'
+      + '</div></div>'
+      + '<div class="tkcard"><div class="k" style="font-size:11px;color:var(--text-faint)">模型累计 · '
+      + models.length + ' 个</div>'
+      + (models.length ? models.map(function (m) {
+        var x = u.models[m];
+        return '<div class="mdl"><b>' + esc(m) + '</b><span>' + x.n + ' 次 · '
+          + fmt((x.in || 0) + (x.out || 0)) + '</span></div>';
+      }).join('') : '<div class="mdl"><span>还没有数，等下一次说话。</span></div>')
+      + '</div>';
+  }
+
+  function load() {
+  fetch('usage.json?t=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      var cfg = d.configs || [], bind = d.bindings || [];
+      CFGS = cfg;
+      var chat = bind.filter(function (b) { return b.fn === 'CHAT'; })[0] || {};
+      var keys = cfg.filter(function (c) { return c.key; }).length;
+      document.getElementById('big').innerHTML =
+        '<div class="k">now running</div>'
+        + '<div class="n">' + esc(chat.model || '—') + '</div>'
+        + '<div class="t">' + esc(chat.cfg || '—') + ' · 对话走这一把</div>'
+        + '<div class="row3"><div><b>' + keys + '/' + cfg.length + '</b><span>keys</span></div>'
+        + '<div><b>' + bind.length + '</b><span>bindings</span></div>'
+        + '<div><b>8192</b><span>max tokens</span></div></div>';
+
+      renderMoney(d.balances || [], '');
+      fetch('http://127.0.0.1:8791/money?t=' + Date.now())
+        .then(function (r) { return r.json(); })
+        .then(function (j) { if (j && j.items && j.items.length) renderMoney(j.items, j.at); })
+        .catch(function () {});
+
+      document.getElementById('cfgs').innerHTML = cfg.map(function (c) {
+        var used = bind.filter(function (b) { return b.cfg === c.name; }).length;
+        var mm = String(c.ctx || '').split('/');
+        var pct = mm.length === 2 ? Math.round((+mm[0] / +mm[1]) * 100) : 0;
+        return '<div class="card cfg"><div class="h"><b>' + esc(c.name) + '</b><span class="p">'
+          + esc(c.provider) + '</span></div>'
+          + '<div class="m">' + esc(c.model) + ' · ' + esc(c.endpoint || '未填地址') + '</div>'
+          + '<div class="bar"><i style="width:' + Math.max(4, Math.min(100, pct)) + '%"></i></div>'
+          + '<div class="f"><span>' + (c.key ? 'key ok' : 'no key') + '</span><span>'
+          + esc(c.ctx) + '</span><span>' + used + ' tasks</span></div></div>';
+      }).join('');
+
+      renderFns(bind);
+
+      document.getElementById('note').textContent =
+        '这一页摆的是钥匙和额度：几把钥匙、各自的上限、谁在替谁干活。真正的花钱数字要接计费接口才拿得到，'
+        + '现在还没有接进来。更新于 ' + (d.updated || '—') + '。';
+    })
+    .catch(function () {
+      document.getElementById('note').textContent = 'usage.json 读不到。';
+    });
+  }
+  fetch('http://127.0.0.1:8002/usage?t=' + Date.now())
+    .then(function (r) { return r.json(); })
+    .then(renderTok)
+    .catch(function () { renderTok(null); });
+  load();
+})();
+</script>
+<script src="../base/theme.js?v=1021a"></script>
+<script src="../base/snow.js"></script>
+</body>
+</html>

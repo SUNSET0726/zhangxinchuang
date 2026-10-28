@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#EDF5FC">
+<title>朝歌 · 双方信件</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#EDF5FC; --text:#1B3556; --text-soft:#4A6B93; --text-faint:#8199B6;
+  --hairline:rgba(44,86,140,.16); --accent:#1f4a8f;
+  --card-bg:rgba(255,255,255,.58); --card-line:rgba(255,255,255,.9);
+  --card-shadow:0 10px 28px rgba(30,64,120,.07);
+  --pad:clamp(14px,4vw,24px);
+  --font-cn:system-ui,"HONOR Sans","HarmonyOS Sans SC","PingFang SC","Noto Sans SC",sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-cn);
+  overscroll-behavior:none}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(180deg,rgba(237,245,252,.62) 0%,rgba(237,245,252,.24) 30%,rgba(237,245,252,.10) 66%,rgba(237,245,252,.52) 100%),
+    url('../../resources/img/tidal/chat-light.webp');
+  background-size:cover,cover;background-position:center,center;background-repeat:no-repeat,no-repeat}
+.app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+.hd{flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:calc(env(safe-area-inset-top) + 14px) var(--pad) 6px}
+.back{width:34px;height:34px;flex:none;border:1px solid var(--card-line);border-radius:50%;
+  background:rgba(255,255,255,.7);color:var(--text);display:grid;place-items:center;cursor:pointer}
+.back svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none;
+  stroke-linecap:round;stroke-linejoin:round}
+.ttl{flex:1;min-width:0}
+.ttl h1{font:600 clamp(15px,4vw,17px)/1.3 var(--font-cn);letter-spacing:.06em}
+.ttl em{display:block;margin-top:3px;font:400 clamp(8.5px,2.2vw,10px)/1.3 "Cormorant Garamond",Georgia,serif;
+  letter-spacing:.08em;color:var(--text-faint);font-style:normal}
+.segs{display:flex;gap:7px;padding:2px var(--pad) 10px;flex:0 0 auto}
+.seg{border:1px solid var(--card-line);background:rgba(255,255,255,.62);color:var(--text-soft);
+  border-radius:999px;padding:6px 12px;font:400 10.5px/1 var(--font-cn);letter-spacing:.04em;cursor:pointer;
+  transition:background 150ms var(--ease),color 150ms var(--ease)}
+.seg.on{background:var(--accent);border-color:transparent;color:#fff}
+.list{flex:1;overflow-y:auto;padding:6px var(--pad) calc(env(safe-area-inset-bottom) + 20px)}
+.list::-webkit-scrollbar{display:none}
+.stat{margin:2px 0 10px;font:400 9.5px/1 var(--font-cn);letter-spacing:.2em;color:var(--text-faint)}
+.l{background:var(--card-bg);border:1px solid var(--card-line);border-radius:16px;
+  box-shadow:var(--card-shadow);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  padding:14px 15px;margin-bottom:10px;cursor:pointer;
+  transition:transform 150ms var(--ease)}
+.l:active{transform:scale(.985)}
+.l .row{display:flex;align-items:baseline;gap:8px}
+.l .day{font:400 9.5px/1 "Cormorant Garamond",Georgia,serif;letter-spacing:.1em;color:var(--text-faint)}
+.l .who{font:400 9px/1 var(--font-cn);color:var(--accent);opacity:.78}
+.l h2{margin-top:6px;font:600 clamp(13px,3.3vw,14.5px)/1.45 var(--font-cn)}
+.l p{margin-top:7px;font:400 clamp(10.5px,2.7vw,11.5px)/1.85 var(--font-cn);color:var(--text-soft);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}
+.l.open p{-webkit-line-clamp:unset;display:block}
+.l .more{margin-top:8px;font:400 9px/1 var(--font-cn);letter-spacing:.16em;color:var(--text-faint)}
+.l.reply{border-left:2px solid rgba(31,74,143,.35)}
+.empty{padding:30px 0;text-align:center;font:400 11px/1.8 var(--font-cn);color:var(--text-faint)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,10px);z-index:9;
+  padding:8px 15px;border-radius:999px;background:rgba(27,53,86,.9);color:#f2f7ff;
+  font:400 11.5px/1 var(--font-cn);opacity:0;pointer-events:none;transition:.22s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<div class="app">
+  <header class="hd">
+    <button class="back" id="back" aria-label="返回">
+      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="ttl">
+      <h1>双方信件</h1>
+      <em>letters we kept.</em>
+    </div>
+  </header>
+  <div class="segs">
+    <button class="seg on" data-f="all">全部</button>
+    <button class="seg" data-f="ta">烬先生写的</button>
+    <button class="seg" data-f="me">你写的</button>
+  </div>
+  <main class="list" id="list">
+    <div class="stat" id="stat">…</div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var list = $('#list'), stat = $('#stat');
+  var tEl = $('#toast'), tT = null;
+  function toast(m) {
+    tEl.textContent = m; tEl.classList.add('on');
+    clearTimeout(tT); tT = setTimeout(function () { tEl.classList.remove('on'); }, 1600);
+  }
+  $('#back').addEventListener('click', function () { ZGBack(); });
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+  function who(a) { return a === 'ta' ? '烬先生写给你' : '你写给烬先生'; }
+
+  fetch('../../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+    .then(function (d) {
+      var ls = (d.letters || []).slice().sort(function (a, b) {
+        return (b.day + (b.createdAt || '')).localeCompare(a.day + (a.createdAt || ''));
+      });
+      var unread = ls.filter(function (x) { return x.author !== 'ta'; }).length;
+      stat.textContent = ls.length + ' 封 · 你写了 ' + unread + ' 封 · 烬先生写了 ' + (ls.length - unread) + ' 封';
+      function paint(f) {
+        var sub = f === 'ta' ? ls.filter(function (x) { return x.author === 'ta'; })
+          : f === 'me' ? ls.filter(function (x) { return x.author !== 'ta'; }) : ls;
+        var keep = list.querySelector('.stat');
+        list.querySelectorAll('.l, .empty').forEach(function (n) { n.remove(); });
+        if (!sub.length) { list.insertAdjacentHTML('beforeend', '<div class="empty">这一栏是空的。</div>'); return; }
+        list.insertAdjacentHTML('beforeend', sub.map(function (x) {
+          return '<article class="l' + (x.replyTo ? ' reply' : '') + '">'
+            + '<div class="row"><span class="day">' + esc(x.day) + (x.createdAt ? ' · ' + esc(x.createdAt) : '') + '</span>'
+            + '<span class="who">' + who(x.author) + '</span></div>'
+            + '<h2>' + esc(x.title || '（没写标题）') + '</h2>'
+            + '<p>' + esc(x.content || '') + '</p>'
+            + '<div class="more">点一下展开</div></article>';
+        }).join(''));
+        list.querySelectorAll('.l').forEach(function (el) {
+          el.addEventListener('click', function () {
+            el.classList.toggle('open');
+            var m = el.querySelector('.more');
+            m.textContent = el.classList.contains('open') ? '再点一下收回去' : '点一下展开';
+          });
+        });
+      }
+      document.querySelectorAll('.seg').forEach(function (b) {
+        b.addEventListener('click', function () {
+          document.querySelectorAll('.seg').forEach(function (o) { o.classList.remove('on'); });
+          b.classList.add('on');
+          paint(b.getAttribute('data-f'));
+          list.scrollTop = 0;
+        });
+      });
+      paint('all');
+    })
+    .catch(function () { stat.textContent = ''; toast('data.json 读不到了'); });
+})();
+</script>
+<script src="../base/snow.js"></script>
+</body>
+</html>

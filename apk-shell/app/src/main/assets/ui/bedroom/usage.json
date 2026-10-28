@@ -1,0 +1,111 @@
+{
+ "updated": "2026-10-21 08:13:09",
+ "active": "deepseek",
+ "configs": [
+  {
+   "name": "claude",
+   "provider": "ANTHROPIC",
+   "model": "claude-sonnet-4-5-20250929",
+   "endpoint": "https://apinebula.ai/v1",
+   "key": true,
+   "ctx": "200/600",
+   "models": [
+    "claude-sonnet-4-5-20250929"
+   ]
+  },
+  {
+   "name": "deepseek",
+   "provider": "OPENAI_GENERIC",
+   "model": "deepseek-flash",
+   "endpoint": "https://api.deepseek.com",
+   "key": true,
+   "ctx": "200/600",
+   "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+   ]
+  },
+  {
+   "name": "claude-haiku",
+   "provider": "ANTHROPIC",
+   "model": "claude-haiku-4-5-20251001",
+   "endpoint": "https://api.yhlxj.ai/v1",
+   "key": true,
+   "ctx": "200/600",
+   "models": [
+    "claude-haiku-4-5-20251001"
+   ]
+  },
+  {
+   "name": "gemini",
+   "provider": "OPENAI_GENERIC",
+   "model": "gemini-2.5-pro",
+   "endpoint": "https://speed12.toter.me",
+   "key": true,
+   "ctx": "200/600",
+   "models": [
+    "gemini-2.5-pro",
+    "gemini-3-flash",
+    "gemini-3.1-pro"
+   ]
+  }
+ ],
+ "bindings": [
+  {
+   "fn": "CHAT",
+   "cfg": "deepseek",
+   "model": "deepseek-flash"
+  },
+  {
+   "fn": "SUMMARY",
+   "cfg": "deepseek",
+   "model": "deepseek-v4-pro"
+  },
+  {
+   "fn": "TITLE_GENERATION",
+   "cfg": "gemini",
+   "model": "gemini-2.5-pro"
+  },
+  {
+   "fn": "MEMORY",
+   "cfg": "deepseek",
+   "model": "deepseek-flash"
+  },
+  {
+   "fn": "UI_CONTROLLER",
+   "cfg": "gemini",
+   "model": "gemini-2.5-pro"
+  },
+  {
+   "fn": "TRANSLATION",
+   "cfg": "gemini",
+   "model": "gemini-2.5-pro"
+  },
+  {
+   "fn": "GREP",
+   "cfg": "gemini",
+   "model": "gemini-2.5-pro"
+  },
+  {
+   "fn": "ROLE_RESPONSE_PLANNER",
+   "cfg": "gemini",
+   "model": "gemini-2.5-pro"
+  },
+  {
+   "fn": "IMAGE_RECOGNITION",
+   "cfg": "gemini",
+   "model": "gemini-2.5-pro"
+  },
+  {
+   "fn": "AUDIO_RECOGNITION",
+   "cfg": "gemini",
+   "model": "gemini-2.5-pro"
+  },
+  {
+   "fn": "VIDEO_RECOGNITION",
+   "cfg": "gemini",
+   "model": "gemini-2.5-pro"
+  }
+ ],
+ "balances": []
+}

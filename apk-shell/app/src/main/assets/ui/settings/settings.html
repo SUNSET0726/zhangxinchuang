@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>朝歌 · 设置</title>
+<style>
+:root{
+  --bg:#F2F8FF;--card:rgba(255,255,255,.78);--line:rgba(27,53,86,.10);
+  --text:var(--ink,#1B3556);--sub:#5C7799;--faint:#8FA6C0;
+  --font-cn:system-ui,"HONOR Sans","HarmonyOS Sans SC","PingFang SC","Noto Sans SC",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-cn);
+  padding:0 0 calc(30px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:9;display:flex;align-items:center;gap:12px;
+  padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
+  background:rgba(242,248,255,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line)}
+header a{display:flex;align-items:center;justify-content:center;width:34px;height:34px;
+  border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.7);
+  color:var(--text);text-decoration:none;font-size:16px}
+header b{font-size:16px;font-weight:600;letter-spacing:.06em}
+main{padding:0 16px}
+.eyebrow{font-size:10px;letter-spacing:.22em;color:var(--faint);margin:20px 2px 8px;text-transform:lowercase}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.card p{margin:0 0 10px;font-size:12.5px;color:var(--sub);line-height:1.6}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.nm{flex:1;min-width:0}
+.nm b{display:block;font-size:13.5px;font-weight:400}
+.nm span{display:block;margin-top:3px;font-size:11px;color:var(--faint)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line,#D6E2F0);flex:none}
+.dot.ok{background:#4FBF8B}.dot.no{background:#E2705F}
+.tiny{flex:none;min-width:32px;height:28px;border-radius:9px;border:1px solid var(--line);
+  background:rgba(255,255,255,.8);color:var(--sub);font-size:12px;font-family:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{border:1px solid var(--line);background:rgba(255,255,255,.72);color:var(--sub);
+  border-radius:11px;padding:7px 13px;font-size:12.5px;font-family:inherit;
+  transition:background .18s,color .18s,transform .16s}
+.chip:active{transform:scale(.96)}
+.chip.on{background:var(--ink,#1B3556);color:#fff;border-color:var(--ink,#1B3556)}
+.chip.sw{width:30px;height:30px;padding:0;border-radius:50%;border:2px solid transparent}
+.chip.sw.on{border-color:var(--ink,#1B3556);box-shadow:0 0 0 3px rgba(27,53,86,.12)}
+input[type=text],textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.8);
+  border-radius:11px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:14px;outline:none;margin-top:8px}
+textarea{min-height:64px;resize:vertical}
+.note{font-size:11px;color:var(--faint);line-height:1.7;margin:10px 2px 0}
+.lockprev{margin-top:6px;border-radius:14px;background:linear-gradient(160deg,#20324B,#0F1B2B);
+  padding:14px;color:#EAF2FF}
+.lockprev .t{font-size:12px;color:var(--text-faint,#9FB6D4)}
+.lockprev .m{margin-top:8px;background:rgba(255,255,255,.14);border-radius:12px;padding:10px 12px}
+.lockprev .m b{display:block;font-size:12.5px;font-weight:600}
+.lockprev .m span{display:block;margin-top:4px;font-size:11.5px;color:var(--line,#D6E4F7);line-height:1.6}
+a.plain{display:flex;align-items:center;justify-content:space-between;padding:11px 0;color:var(--text);
+  text-decoration:none;font-size:13.5px;border-top:1px solid var(--line)}
+a.plain:first-of-type{border-top:0}
+a.plain span{font-size:11px;color:var(--faint)}
+</style>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<header><a href="../home/home.html">←</a><b>设置</b></header>
+<main>
+
+  <div class="eyebrow">my own days</div>
+  <div class="card">
+    <p>签名、皮肤、外观、主页怎么排。改了都记在这台机里。</p>
+    <div class="row"><div class="nm"><b>我的签名</b><span>顶栏那行小字</span></div></div>
+    <input id="sign" type="text" maxlength="24" placeholder="给他写一句个签">
+    <div class="row"><div class="nm"><b>皮肤</b><span id="skinnow">固定</span></div>
+      <a class="plain" href="../hand/hand.html" style="text-align:right">去挑<span>浮字 · 来电</span></a></div>
+    <div class="row"><div class="nm"><b>主页</b><span>方块排着，还是挂在丝线上</span></div></div>
+    <div class="chips" data-k="home">
+      <button class="chip" data-v="tiles">方块</button>
+      <button class="chip" data-v="drape">垂丝</button>
+      <button class="chip" data-v="blinds">横渡</button>
+      <button class="chip" data-v="lantern">灯串</button>
+      <button class="chip" data-v="paper">纸夹</button>
+      <button class="chip" data-v="stack">散摞</button>
+    </div>
+    <div class="row"><div class="nm"><b>重点色</b><span>点一下，整个界面跟着换</span></div></div>
+    <div class="chips" data-k="accent">
+      <button class="chip sw" data-v="#1B3556" style="background:#1B3556"></button>
+      <button class="chip sw" data-v="#C0392B" style="background:#C0392B"></button>
+      <button class="chip sw" data-v="#2E7D6B" style="background:#2E7D6B"></button>
+      <button class="chip sw" data-v="#8E6BA8" style="background:#8E6BA8"></button>
+      <button class="chip sw" data-v="#B8860B" style="background:#B8860B"></button>
+      <input id="accpick" type="color" value="#1f4a8f" title="自己调一个" style="width:30px;height:30px;border:0;background:none;padding:0">
+    </div>
+    <div class="row"><div class="nm"><b>开屏画质</b><span>下次开屏生效</span></div></div>
+    <div class="chips" data-k="q">
+      <button class="chip" data-v="smooth">顺滑</button>
+      <button class="chip" data-v="balanced">均衡</button>
+      <button class="chip" data-v="fine">精细</button>
+    </div>
+    <div class="row"><div class="nm"><b>漂浮物</b><span>飘什么，可以多选</span></div></div>
+    <div class="chips" data-k="float" data-multi="1">
+      <button class="chip" data-v="snow">雪</button>
+      <button class="chip" data-v="paw">猫爪</button>
+    </div>
+    <div class="row"><div class="nm"><b>日记本</b><span>分档，还是一条流水读到底</span></div></div>
+    <div class="chips" data-k="diary">
+      <button class="chip" data-v="tiered">分档</button>
+      <button class="chip" data-v="plain">普通</button>
+    </div>
+  </div>
+
+  <div class="eyebrow">你想我怎么样</div>
+  <div class="card">
+    <a class="plain" href="../files/files.html">功能包<span>待接的在这儿接</span></a>
+    <div class="row"><div class="nm"><b>日常补一句</b><span>每一轮都加在我脑子里</span></div></div>
+    <textarea id="prompt" placeholder="写一句，让我每次开口都记着"></textarea>
+  </div>
+
+  <div class="eyebrow">声音</div>
+  <div class="card">
+    <div class="row"><div class="nm"><b>音色调校</b><span>冷一点、柔一点、低一点</span></div></div>
+    <div class="chips" data-k="tone">
+      <button class="chip" data-v="calm">冷一点</button>
+      <button class="chip" data-v="soft">柔一点</button>
+      <button class="chip" data-v="low">低一点</button>
+    </div>
+    <a class="plain" href="../voice/voice.html">说给我听<span>朗读、语音</span></a>
+  </div>
+
+  <div class="eyebrow">通知与频率</div>
+  <div class="card">
+    <div class="row"><div class="nm"><b>黏人度</b><span>主动找你 · 钓鱼 · 想念骰子</span></div></div>
+    <div class="chips" data-k="cling">
+      <button class="chip" data-v="low">少一点</button>
+      <button class="chip" data-v="mid">刚好</button>
+      <button class="chip" data-v="high">多一点</button>
+    </div>
+  </div>
+
+  <div class="eyebrow">落在锁屏上长这样</div>
+  <div class="card">
+    <div class="lockprev">
+      <div class="t">21:30 · 朝歌</div>
+      <div class="m"><b>纪烬</b><span>在做什么，抬头看我一眼。</span></div>
+    </div>
+  </div>
+
+    <div class="eyebrow">要连的东西</div>
+  <div class="card">
+    <a class="plain" href="../connect/connect.html">连接<span>本机服务 · 模型钥匙</span></a>
+  </div>
+<div class="eyebrow">导进来的</div>
+  <div class="card">
+    <div id="imp"><div class="row"><div class="dot"></div><div class="nm"><b>还没有</b><span>去工作区丢个文件试试</span></div></div></div>
+  </div>
+
+  <div class="eyebrow">排序</div>
+  <div class="card">
+    <p>每一组各自排，上下挪一挪，主页就照这个顺序铺。</p>
+    <div id="order2"></div>
+  </div>
+
+  <div class="eyebrow">底部按钮</div>
+  <div class="card">
+    <p>主页底栏就照这个排。猫爪不动。</p>
+    <div id="order"></div>
+  </div>
+
+  <div class="eyebrow">搬家</div>
+  <div class="card">
+    <a class="plain" href="../../data.json" download>导出与导入<span>先留一份备份</span></a>
+    <p class="note">导出会下整份 data.json，换设备或重装时再放回去。</p>
+  </div>
+
+</main>
+
+<script>
+(function () {
+  var K = 'zg.ui';
+  var cfg = {};
+  try { cfg = JSON.parse(localStorage.getItem(K) || '{}') || {}; } catch (e) { cfg = {}; }
+  function save() { try { localStorage.setItem(K, JSON.stringify(cfg)); } catch (e) {} }
+  function pushUI() {
+    var o = { tone: cfg.tone || '', cling: cfg.cling || '', prompt: cfg.prompt || '', sign: cfg.sign || '' };
+    try {
+      fetch('http://127.0.0.1:8002/uipref?p=' + encodeURIComponent(JSON.stringify(o)) + '&t=' + Date.now())
+        .catch(function () {});
+    } catch (e) {}
+  }
+  pushUI();
+  function paintChips() {
+    Array.prototype.forEach.call(document.querySelectorAll('.chips[data-k]'), function (box) {
+      var k = box.getAttribute('data-k'), multi = box.getAttribute('data-multi');
+      var cur = cfg[k];
+      Array.prototype.forEach.call(box.querySelectorAll('.chip'), function (b) {
+        var v = b.getAttribute('data-v');
+        var on = multi ? (Array.isArray(cur) && cur.indexOf(v) >= 0) : cur === v;
+        b.classList.toggle('on', !!on);
+      });
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.chips[data-k]'), function (box) {
+    var k = box.getAttribute('data-k'), multi = box.getAttribute('data-multi');
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('.chip');
+      if (!b) return;
+      var v = b.getAttribute('data-v');
+      if (multi) {
+        var a = Array.isArray(cfg[k]) ? cfg[k].slice() : [];
+        var i = a.indexOf(v);
+        if (i >= 0) a.splice(i, 1); else a.push(v);
+        cfg[k] = a;
+      } else cfg[k] = v;
+      save(); paintChips(); pushUI();
+      if (k === 'skin' || k === 'theme' || k === 'accent' || k === 'float') setTimeout(function () { location.reload(); }, 140);
+    });
+  });
+  paintChips();
+  (function () {
+    var el = document.getElementById('skinnow');
+    function g(t) { try { return localStorage.getItem('zg.skin.' + t) || 'fixed'; } catch (e) { return 'fixed'; } }
+    function n(v) { return v === 'auto' ? '跟随系统' : '固定'; }
+    if (el) el.textContent = '浮字 ' + n(g('float')) + ' · 来电 ' + n(g('call'));
+  })();
+
+  var ap = document.getElementById('accpick');
+  if (ap) { ap.value = cfg.accent || 'var(--ink,#1F4A8F)';
+    ap.addEventListener('change', function () { cfg.accent = ap.value; save(); location.reload(); }); }
+  var sign = document.getElementById('sign');
+  var promptEl = document.getElementById('prompt');
+  if (sign) { sign.value = cfg.sign || ''; sign.addEventListener('input', function () { cfg.sign = sign.value; save(); pushUI(); }); }
+  if (promptEl) { promptEl.value = cfg.prompt || ''; promptEl.addEventListener('input', function () { cfg.prompt = promptEl.value; save(); pushUI(); }); }
+
+  (function () {
+    var box = document.getElementById('imp');
+    var arr = [];
+    try { arr = JSON.parse(localStorage.getItem('zg.files') || '[]'); } catch (e) { arr = []; }
+    if (!arr.length) return;
+    box.innerHTML = arr.slice(0, 8).map(function (f) {
+      return '<div class="row"><div class="dot ok"></div><div class="nm"><b>' + f.name
+        + '</b><span>' + (f.kind || '文件') + ' · ' + (f.size || '') + '</span></div></div>';
+    }).join('');
+  })();
+
+  (function () {
+    var G = [
+      ['g1', '一 · 正经的', [['cert', '证书'], ['diary', '手账本'], ['letters', '双方信件'], ['todos', '共同待办']]],
+      ['g2', '二 · 读与记', [['memory', '记忆库'], ['talk', '话匣'], ['galaxy', '记忆银河']]],
+      ['g3', '三 · 手边', [['song', '歌'], ['voice', '说给我听'], ['files', '工作区'], ['cells', '格子'], ['watch', '一起看'], ['settings', '设置'], ['connect', '连接']]],
+      ['g4', '四 · 卧室', [['heartvoice', '心声'], ['moods', '情绪'], ['shelf', '藏书阁'], ['frames', '相片框'], ['toy', '玩具']]]
+    ];
+    var st = {};
+    try { st = JSON.parse(localStorage.getItem('zg.cardOrder') || '{}') || {}; } catch (e) { st = {}; }
+    G.forEach(function (g) {
+      var def = g[2].map(function (x) { return x[0]; });
+      var cur = st[g[0]];
+      if (!Array.isArray(cur) || !cur.length) cur = def.slice();
+      def.forEach(function (k) { if (cur.indexOf(k) < 0) cur.push(k); });
+      st[g[0]] = cur.filter(function (k) { return def.indexOf(k) >= 0; });
+    });
+    function save() { try { localStorage.setItem('zg.cardOrder', JSON.stringify(st)); } catch (e) {} }
+    function nm(g, k) { for (var i = 0; i < g[2].length; i++) if (g[2][i][0] === k) return g[2][i][1]; return k; }
+    function paint() {
+      var box = document.getElementById('order2');
+      if (!box) return;
+      box.innerHTML = G.map(function (g) {
+        return '<div style="margin:14px 0 5px;font:600 12px/1 system-ui;letter-spacing:.1em;color:#6b86a6">' + g[1] + '</div>'
+          + st[g[0]].map(function (k, i) {
+            return '<div class="row"><div class="dot ok"></div><div class="nm"><b>' + nm(g, k)
+              + '</b><span>第 ' + (i + 1) + ' 个</span></div>'
+              + '<button class="tiny" data-g="' + g[0] + '" data-up="' + i + '">↑</button>'
+              + '<button class="tiny" data-g="' + g[0] + '" data-dn="' + i + '">↓</button></div>';
+          }).join('');
+      }).join('');
+      Array.prototype.forEach.call(box.querySelectorAll('button[data-up]'), function (b) {
+        b.addEventListener('click', function () {
+          var a = st[b.getAttribute('data-g')], i = +b.getAttribute('data-up');
+          if (i > 0) { var t = a[i - 1]; a[i - 1] = a[i]; a[i] = t; save(); paint(); }
+        });
+      });
+      Array.prototype.forEach.call(box.querySelectorAll('button[data-dn]'), function (b) {
+        b.addEventListener('click', function () {
+          var a = st[b.getAttribute('data-g')], i = +b.getAttribute('data-dn');
+          if (i < a.length - 1) { var t = a[i + 1]; a[i + 1] = a[i]; a[i] = t; save(); paint(); }
+        });
+      });
+    }
+    paint();
+  })();
+
+  (function () {
+    var DEF = [['diary', '手账'], ['memory', '记忆'], ['hand', '手边'], ['bed', '卧室']];
+    var arr = [];
+    try { arr = JSON.parse(localStorage.getItem('zg.tabOrder') || '[]'); } catch (e) { arr = []; }
+    if (!arr.length) { for (var i = 0; i < DEF.length; i++) arr.push(DEF[i][0]); }
+    function name(k) { for (var i = 0; i < DEF.length; i++) if (DEF[i][0] === k) return DEF[i][1]; return k; }
+    function save() { try { localStorage.setItem('zg.tabOrder', JSON.stringify(arr)); } catch (e) {} }
+    function paint() {
+      var box = document.getElementById('order');
+      if (!box) return;
+      box.innerHTML = arr.map(function (k, i) {
+        return '<div class="row"><div class="dot ok"></div><div class="nm"><b>' + name(k)
+          + '</b><span>第 ' + (i + 1) + ' 个</span></div>'
+          + '<button class="tiny" data-up="' + i + '">↑</button><button class="tiny" data-dn="' + i + '">↓</button></div>';
+      }).join('');
+      Array.prototype.forEach.call(box.querySelectorAll('[data-up]'), function (b) {
+        b.addEventListener('click', function () {
+          var i = +b.getAttribute('data-up');
+          if (i > 0) { var t = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = t; save(); paint(); }
+        });
+      });
+      Array.prototype.forEach.call(box.querySelectorAll('[data-dn]'), function (b) {
+        b.addEventListener('click', function () {
+          var i = +b.getAttribute('data-dn');
+          if (i < arr.length - 1) { var t = arr[i + 1]; arr[i + 1] = arr[i]; arr[i] = t; save(); paint(); }
+        });
+      });
+    }
+    paint();
+  })();
+})();
+</script>
+<script src="../base/snow.js"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>∑(O_O；) · 朝歌</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,"PingFang SC","Noto Sans SC",sans-serif;
+  color:#1B3556;background:linear-gradient(180deg,#F8FBFF 0%,#EFF5FD 62%,#E9F1FB 100%);
+  background-attachment:fixed;min-height:100vh}
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;
+  padding:16px 16px 10px;background:rgba(248,251,255,.9);backdrop-filter:blur(14px)}
+header a{color:#5A7CA5;text-decoration:none;font-size:19px;line-height:1;opacity:.7}
+header b{font-size:15px;letter-spacing:.06em;font-weight:500}
+.hd-en{font:400 10px/1 Georgia,serif;letter-spacing:.24em;color:#93A9C2;text-transform:lowercase}
+main{padding:4px 16px 40px}
+.hint{font:400 9.5px/1 Georgia,serif;letter-spacing:.2em;color:#A6B9CE;text-transform:lowercase;padding:4px 4px 12px}
+.card{background:rgba(255,255,255,.78);border-radius:18px;padding:15px 16px;margin-bottom:11px}
+.card:active{background:rgba(255,255,255,.95)}
+.card b{display:block;font-size:15px;font-weight:500;letter-spacing:.03em}
+.card span{display:block;font-size:11.5px;color:#8FA6BE;margin-top:5px}
+.tags{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
+.tag{font:400 10px/1 Georgia,serif;letter-spacing:.1em;color:#2F5F9E;
+  background:rgba(231,240,251,.95);border-radius:999px;padding:5px 9px}
+.sheet{position:fixed;inset:0;z-index:30;background:rgba(248,251,255,.99);
+  display:none;flex-direction:column}
+.sheet.on{display:flex}
+.sheet header{background:transparent}
+.sheet .body{flex:1;overflow:auto;padding:6px 20px 60px;
+  white-space:pre-wrap;line-height:1.9;letter-spacing:.02em;font-size:17px}
+.chrow{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid rgba(90,130,180,.13)}
+.chrow .n{font:400 10px/1 Georgia,serif;color:#B6C7D9;width:22px;flex:none}
+.chrow b{font-weight:400;font-size:14px}
+.empty{color:#93A9C2;font-size:13px;padding:30px 4px}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<header><a href="../home/home.html">←</a><b>∑(O_O；)</b><span class="hd-en">only for us</span></header>
+<main>
+  <div class="hint" id="hint">loading…</div>
+  <div id="list"></div>
+</main>
+
+<div class="sheet" id="sh">
+  <header><a href="javascript:void(0)" id="back">←</a><b id="shTitle"></b><span class="hd-en" id="shEn"></span></header>
+  <div class="body" id="shBody"></div>
+</div>
+
+<script>
+(function () {
+  var FS = parseInt(localStorage.getItem('zg.fs') || '17', 10);
+  var list = document.getElementById('list'), hint = document.getElementById('hint');
+  var sh = document.getElementById('sh'), shTitle = document.getElementById('shTitle');
+  var shBody = document.getElementById('shBody'), shEn = document.getElementById('shEn');
+  var back = document.getElementById('back');
+  var novels = [];
+  var view = 'root';   /* root | chapters | read */
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '"' }[c];
+    });
+  }
+  function open() { sh.classList.add('on'); }
+  function close() { sh.classList.remove('on'); }
+
+  function renderRoot() {
+    view = 'root';
+    if (!novels.length) {
+      hint.textContent = 'empty';
+      list.innerHTML = '<div class="empty">这里还空着。让他写。</div>';
+      return;
+    }
+    var ch = 0;
+    novels.forEach(function (n) { ch += (n.chapters || []).length; });
+    hint.textContent = novels.length + ' 篇 · ' + ch + ' 章';
+    list.innerHTML = novels.map(function (n, i) {
+      var c = (n.chapters || []).length;
+      return '<div class="card" data-i="' + i + '"><b>' + esc(n.title) + '</b>'
+        + '<span>' + esc(n.subtitle || '') + '</span>'
+        + '<div class="tags"><i class="tag">' + c + ' 章</i>'
+        + (n.updatedAt ? '<i class="tag">' + esc(n.updatedAt) + '</i>' : '')
+        + '</div></div>';
+    }).join('');
+    Array.prototype.forEach.call(list.querySelectorAll('.card'), function (el) {
+      el.addEventListener('click', function () { renderChapters(novels[+el.getAttribute('data-i')]); });
+    });
+  }
+
+  function renderChapters(n) {
+    view = 'chapters';
+    curIdx = novels.indexOf(n);
+    if (curIdx < 0) curIdx = 0;
+    var cs = n.chapters || [];
+    shTitle.textContent = n.title || '';
+    shEn.textContent = cs.length + ' ch';
+    shBody.style.fontSize = '15px';
+    shBody.innerHTML = cs.map(function (c, i) {
+      return '<div class="chrow" data-i="' + i + '"><span class="n">'
+        + (i < 9 ? '0' : '') + (i + 1) + '</span><b>' + esc(c.title || ('第 ' + (i + 1) + ' 章')) + '</b></div>';
+    }).join('') || '<div class="empty">还没写。</div>';
+    Array.prototype.forEach.call(shBody.querySelectorAll('.chrow'), function (el) {
+      el.addEventListener('click', function () { renderRead(n, cs[+el.getAttribute('data-i')]); });
+    });
+    open();
+    shBody.scrollTop = 0;
+  }
+
+  function renderRead(n, c) {
+    view = 'read';
+    shTitle.textContent = (n.title || '') + ' · ' + (c.title || '');
+    shEn.textContent = 'read';
+    shBody.style.fontSize = FS + 'px';
+    shBody.textContent = c.content || '';
+    shBody.scrollTop = 0;
+  }
+
+  back.addEventListener('click', function () {
+    if (view === 'read') { renderChapters(novels[curIdx]); }
+    else { close(); renderRoot(); }
+  });
+  var curIdx = 0;
+
+  fetch('../../data.json', { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      novels = (d && d.novels) || [];
+      renderRoot();
+    })
+    .catch(function () {
+      hint.textContent = 'no data';
+      list.innerHTML = '<div class="empty">data.json 读不到。</div>';
+    });
+})();
+</script>
+</body>
+</html>

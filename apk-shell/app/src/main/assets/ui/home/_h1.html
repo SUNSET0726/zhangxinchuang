@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#dce8f9">
+<title>朝歌 · 主页</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --card:#fdfeff; --card2:#e7f0fb;
+  --ink:#1B3556; --sub:#4A6B93; --hint:#8199B6; --line:rgba(44,86,140,.14);
+  --accent:#1f4a8f; --accent-soft:#dbe8fa;
+  --shadow:0 10px 28px rgba(30,64,120,.07);
+  --shadow-lift:0 14px 34px rgba(30,64,120,.08);
+  --r:16px; --card-border:none;
+  /* —— Tidal Echo · PEARL TIDE 换色版 —— 结构照它，色值换我们的蓝 —— */
+  --bg:#EDF5FC; --header-bg:#EDF5FC;
+  --hairline:rgba(44,86,140,.16);
+  --text:#1B3556; --text-soft:#4A6B93; --text-faint:#8199B6;
+  --accent-fg:#ffffff;
+  --card-bg:rgba(255,255,255,.64);
+  --card-line:rgba(255,255,255,.92);
+  --card-shadow:0 10px 28px rgba(30,64,120,.07);
+  --soft-shadow:0 14px 34px rgba(30,64,120,.08);
+  --bubble-radius:clamp(14px,2vw,20px);
+  --composer-bg:#E7F0FA;
+  --field-bg:rgba(255,255,255,.92);
+  --field-line:rgba(120,150,190,.20);
+  --motion-fast:150ms; --motion-normal:260ms;
+  --ease-soft:cubic-bezier(.22,1,.36,1);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+  font-family:var(--font-cn);
+  overscroll-behavior:none}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(180deg, rgba(237,245,252,.58) 0%, rgba(237,245,252,.20) 28%,
+      rgba(237,245,252,.08) 66%, rgba(237,245,252,.48) 100%),
+    url('../../resources/img/tidal/chat-light.webp');
+  background-size:cover,cover;background-position:center,center;background-repeat:no-repeat,no-repeat}
+body::after{content:'PEARL BLUE';position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom) + 58px);
+  z-index:2;font:400 8px/1 -apple-system,sans-serif;letter-spacing:.22em;
+  color:rgba(44,86,140,.34);pointer-events:none}
+svg.i{width:16px;height:16px;stroke:currentColor;stroke-width:1.7;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;display:block}
+.app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+
+/* 顶栏 */
+.hd{display:flex;align-items:center;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top) + 14px) 18px 8px;flex:0 0 auto}
+.clock{display:flex;align-items:baseline;gap:9px}
+.clock b{font:300 46px/1 "Times New Roman",Georgia,serif;letter-spacing:.01em;
+  text-shadow:0 1px 0 rgba(255,255,255,.7)}
+.clock span{font:400 13px/1 var(--font-cn);
+  letter-spacing:.2em;color:#5f7ea7;text-transform:uppercase}
+.ava{width:38px;height:38px;border-radius:50%;object-fit:cover;
+  border:1px solid rgba(255,255,255,.96);box-shadow:0 4px 14px rgba(20,48,100,.16)}
+
+/* 主区 */
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 18px 16px}
+.main::-webkit-scrollbar{display:none}
+
+.hero{margin:6px 0 20px}
+.days{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;border-radius:999px;
+  background:rgba(255,255,255,.66);border:1px solid rgba(255,255,255,.94);
+  font:400 10.5px/1 var(--font-cn);letter-spacing:.14em;
+  color:#46648f;backdrop-filter:blur(14px);box-shadow:0 5px 16px rgba(20,48,100,.07)}
+.days i{width:5px;height:5px;border-radius:50%;background:#54c08a;display:block}
+.say{margin:14px 0 0;font:400 17px/1.75 "Songti SC","Noto Serif SC",serif;
+  color:#1c3b6b;letter-spacing:.02em}
+.say::after{content:'';display:block;width:26px;height:1px;
+  background:rgba(22,51,107,.28);margin-top:14px}
+
+/* 卡片格 */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.card{position:relative;display:flex;flex-direction:column;justify-content:space-between;
+  min-height:104px;padding:14px;border-radius:22px;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.96);
+  background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.66));
+  box-shadow:0 10px 26px rgba(20,48,100,.09),inset 0 1px 0 rgba(255,255,255,.95);
+  color:#16336b;transition:transform .16s ease}
+.card:active{transform:scale(.975)}
+.card .ic{width:30px;height:30px;border-radius:11px;display:flex;align-items:center;
+  justify-content:center;background:linear-gradient(160deg,#e9f0fc,#d9e4f7);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+.card .tt{font:500 13.5px/1.2 var(--font-cn);letter-spacing:.06em}
+.card .sub{margin-top:5px;font:400 10.5px/1.3 var(--font-cn);
+  color:#7590b4;letter-spacing:.02em}
+.card.dark{background:linear-gradient(158deg,#27498d,#16336b);color:#f4f8ff;
+  border-color:rgba(255,255,255,.2);
+  box-shadow:0 14px 30px rgba(20,48,100,.26),inset 0 1px 0 rgba(255,255,255,.22)}
+.card.dark .ic{background:rgba(255,255,255,.16);box-shadow:none;color:#eaf1ff}
+.card.dark .sub{color:#b9cbe6}
+
+/* 底栏 */
+.tabs{flex:0 0 auto;display:flex;align-items:center;justify-content:space-around;
+  padding:8px 10px calc(env(safe-area-inset-bottom) + 8px);
+  background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.84));
+  backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);
+  border-top:1px solid rgba(255,255,255,.9);box-shadow:0 -8px 26px rgba(20,48,100,.05)}
+.tab{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:5px 10px;border-radius:14px;cursor:pointer;color:#7c96b8;
+  font:400 10px/1 var(--font-cn);letter-spacing:.04em}
+.tab svg{width:19px;height:19px;stroke-width:1.6}
+.tab.on{color:#16336b}
+.tab.on svg{stroke-width:1.9}
+.tab:active{background:rgba(255,255,255,.55)}
+
+.toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,10px);z-index:40;
+  padding:9px 16px;border-radius:999px;background:rgba(22,51,107,.9);color:#f2f7ff;
+  font:400 12px/1 var(--font-cn);opacity:0;pointer-events:none;
+  transition:opacity .22s,transform .22s;box-shadow:0 10px 26px rgba(20,48,100,.28)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* 侧边栏 */
+.snmask{position:fixed;inset:0;z-index:59;background:rgba(18,40,80,.26);opacity:0;
+  pointer-events:none;transition:opacity .3s}
+.snmask.on{opacity:1;pointer-events:auto}
+/* 卡片进场 */
+.card{animation:cardin .46s cubic-bezier(.22,.9,.24,1)}
+@keyframes cardin{from{transform:translateY(9px)}to{transform:none}}
+
+/* 三条杠按钮 */
+.menubtn{position:fixed;right:calc(var(--side-pad) + 2px);z-index:41;
+  top:calc(env(safe-area-inset-top) + clamp(10px,2.2vw,20px) + 12px + var(--avatar-size) + 18px);
+  width:44px;height:44px;border-radius:14px;box-sizing:border-box;padding:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  background:rgba(255,255,255,.66);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border:1px solid rgba(27,53,86,.08);box-shadow:0 6px 16px rgba(24,52,102,.06);
+  transition:transform .18s cubic-bezier(.22,.9,.24,1),background .18s}
+.menubtn i{display:block;width:17px;height:1.5px;border-radius:2px;background:#46628a;opacity:.8}
+.menubtn:active{transform:scale(.93);background:rgba(255,255,255,.9)}
+/* ── 抽屉（照连环） ── */
+.snmask{position:fixed;inset:0;background:rgba(20,17,15,.34);z-index:60;opacity:0;
+  pointer-events:none;transition:opacity .24s cubic-bezier(.22,.9,.24,1)}
+.snmask.on{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;bottom:0;left:0;width:286px;max-width:86vw;z-index:61;
+  background:rgba(248,251,255,.98);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  box-shadow:0 18px 44px rgba(20,40,80,.18);
+  transform:translateX(-100%);transition:transform .22s cubic-bezier(.4,0,1,1);
+  display:flex;flex-direction:column;border-radius:0 16px 16px 0;
+}
+.drawer.on{transform:none;transition:transform .3s cubic-bezier(.22,.9,.24,1)}
+.dhead{flex:none;display:flex;align-items:center;gap:10px;
+  padding:calc(14px + env(safe-area-inset-top,0px)) 16px 12px;
+  border-bottom:1px solid rgba(27,53,86,.08)}
+.dhead span{font-size:14px;color:var(--text-faint)}
+.dbody{flex:1;overflow-y:auto;padding:6px 12px calc(20px + env(safe-area-inset-bottom,0px))}
+.dgroup{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);
+  padding:16px 8px 5px;cursor:default}
+.ditem{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;
+  background:transparent;color:var(--text);font-family:inherit;font-size:14px;
+  padding:9px 10px;border-radius:10px;cursor:pointer;text-decoration:none;
+  transition:background .15s,transform .16s cubic-bezier(.22,.9,.24,1)}
+.ditem:active{background:rgba(27,53,86,.06);transform:scale(.99)}
+.ditem small{color:var(--text-faint);font-size:11.5px;margin-left:2px}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<!--BODY-->
+</body>
+</html>

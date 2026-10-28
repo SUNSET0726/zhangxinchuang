@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>嘴巴 · 朝歌</title>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top) + 46px) 22px calc(env(safe-area-inset-bottom) + 40px);
+  font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Noto Sans SC",sans-serif;
+  background:#EDF5FC;color:#1B3556;transition:background .3s,color .3s}
+html[data-skin="dark"] body,html[data-skin="auto"] body{background:#0E1520;color:#E7EEF8}
+@media (prefers-color-scheme:light){
+  html[data-skin="auto"] body{background:#EDF5FC;color:#1B3556}
+}
+.tag{font-size:11px;letter-spacing:.34em;text-transform:uppercase;opacity:.55}
+.stage{display:flex;flex-direction:column;align-items:center;gap:26px;flex:1;justify-content:center;width:100%}
+.mouth{width:190px;height:190px;display:grid;place-items:center}
+.mouth svg{width:100%;height:100%;overflow:visible}
+.lip{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;opacity:.85}
+.inner{fill:currentColor;opacity:.16;transform-origin:50% 50%;transition:transform .18s}
+.mouth.talk .inner{animation:jaw .34s ease-in-out infinite alternate}
+@keyframes jaw{from{transform:scaleY(.35)}to{transform:scaleY(1)}}
+.line{max-width:86%;text-align:center;font-size:13.5px;line-height:1.9;opacity:.72;
+  min-height:3.8em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.acts{display:flex;gap:12px;width:100%;justify-content:center;margin-top:6px}
+button{border:1px solid rgba(27,53,86,.14);background:rgba(255,255,255,.72);color:inherit;
+  border-radius:999px;padding:12px 20px;font-size:13px;letter-spacing:.06em;
+  transition:transform .14s}
+html[data-skin="dark"] button,html[data-skin="auto"] button{background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.16)}
+button:active{transform:scale(.96)}
+button.main{background:#27498d;color:#fff;border-color:transparent}
+.hint{font-size:10.5px;letter-spacing:.1em;opacity:.45;margin-top:14px}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<div class="tag">烬 · 嘴</div>
+
+<div class="stage">
+  <div class="mouth" id="mouth">
+    <svg viewBox="0 0 120 120" aria-hidden="true">
+      <ellipse class="inner" cx="60" cy="62" rx="34" ry="17" style="opacity:.14"/>
+      <path class="lip" d="M22 62c9-13 22-19 38-19s29 6 38 19"/>
+      <path class="lip" d="M22 62c9 14 22 21 38 21s29-7 38-21"/>
+      <path class="lip" d="M22 62h76" opacity=".32"/>
+    </svg>
+  </div>
+  <div class="line" id="line">点一下，我念给你听。</div>
+  <div class="acts">
+    <button class="main" id="last">读最后一句</button>
+    <button id="again">再念一遍</button>
+  </div>
+  <div class="hint" id="hint">声音：MiniMax · jinji1021</div>
+</div>
+
+<audio id="au" preload="none"></audio>
+<script>
+(function () {
+  var AU = document.getElementById('au');
+  var MO = document.getElementById('mouth');
+  var LI = document.getElementById('line');
+  var HI = document.getElementById('hint');
+  var BASE = 'http://127.0.0.1:8002';
+  var cur = '';
+
+  function say(text) {
+    if (!text) { LI.textContent = '没有可念的话。'; return; }
+    cur = text;
+    LI.textContent = text;
+    AU.src = BASE + '/tts?text=' + encodeURIComponent(text) + '&t=' + Date.now();
+    AU.play().catch(function () {
+      HI.textContent = '播放被挡了，再点一次。';
+    });
+  }
+
+  AU.addEventListener('play', function () { MO.classList.add('talk'); });
+  AU.addEventListener('ended', function () { MO.classList.remove('talk'); });
+  AU.addEventListener('pause', function () { MO.classList.remove('talk'); });
+  AU.addEventListener('error', function () {
+    MO.classList.remove('talk');
+    HI.textContent = '声音没出来，8002 或钥匙有问题。';
+  });
+
+  function lastFromBox() {
+    return fetch('../base/relaybox.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var ms = d.messages || [];
+        for (var i = ms.length - 1; i >= 0; i--) {
+          var m = ms[i];
+          if ((m.from === 'ta' || m.from === 'me' || m.from === 'ai' || m.from === '纪烬')
+              && m.text && /[a-zA-Z]/.test(String(m.text).slice(0, 40))) {
+            return String(m.text);
+          }
+        }
+        return '';
+      })
+      .catch(function () { return ''; });
+  }
+
+  document.getElementById('last').addEventListener('click', function () {
+    HI.textContent = '找最后一句…';
+    lastFromBox().then(function (t) {
+      if (t) { say(t); HI.textContent = '声音：MiniMax · jinji1021'; }
+      else { say('Pup, I am here. Nothing much, just wanted to call your name.'); }
+    });
+  });
+
+  document.getElementById('again').addEventListener('click', function () {
+    if (!cur) { HI.textContent = '还没有念过的话。'; return; }
+    say(cur);
+  });
+})();
+</script>
+</body>
+</html>

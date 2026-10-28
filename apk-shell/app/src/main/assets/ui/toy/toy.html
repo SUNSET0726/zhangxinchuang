@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>朝歌 · 空着</title>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  background:#EDF5FC;color:#1B3556;font-family:"Noto Serif SC","Songti SC",serif;
+  padding:30px;text-align:center}
+html[data-skin="dark"] body{background:#0E1520;color:#E7EEF8}
+h1{font-size:17px;font-weight:500;letter-spacing:.1em;margin:0}
+p{margin:0;font-size:12.5px;line-height:1.9;color:#5D7DA8;max-width:80%}
+html[data-skin="dark"] p{color:#8AA3C4}
+a{margin-top:10px;padding:11px 22px;border-radius:999px;border:1px solid rgba(27,53,86,.14);
+  background:rgba(255,255,255,.75);color:inherit;text-decoration:none;font-size:13px;letter-spacing:.06em}
+html[data-skin="dark"] a{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<h1 id="t">这块还空着</h1>
+<p>烬先生还没画到这儿。等画好了，这里会有东西。</p>
+<a href="../home/home.html">回主页</a>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  if (q.get('t')) document.getElementById('t').textContent = q.get('t');
+})();
+</script>
+</body>
+</html>

@@ -1099,11 +1099,21 @@ function moodDecayed(days,ref){
 function weekdayCN(d){try{var dt=new Date(d+"T00:00:00");return ["周日","周一","周二","周三","周四","周五","周六"][dt.getDay()]||""}catch(e){return ""}}
 var MOOD_PTS=[],MOOD_SEL=-1,VOICE_TAB="heart";
 function vFav(v){return !!(v&&v.fav)}
+function renderLog(){
+  var ls=(DATA.logs||[]).slice().reverse();
+  var h='<div class="vsub">共 '+ls.length+' 条日志'+(ls.length?('　最近 '+esc(ls[0].t||'')):'')+'</div>';
+  if(!ls.length){ h+='<div class="empty">还没有日志 🌱<br>入库跑完，这里会自己写一行。</div>'; return h; }
+  ls.forEach(function(x){
+    h+='<div style="padding:9px 12px;border-bottom:1px solid rgba(0,0,0,.06)"><div style="font-size:11px;opacity:.55">'+esc(x.t||'')+' · '+esc(x.kind||'')+'</div><div style="font-size:13px;line-height:1.6;margin-top:3px">'+esc(x.text||'')+'</div></div>';
+  });
+  return h;
+}
 function renderVoices(){
   var allv=DATA.voices||[];
   var htab=voiceTabs();
   if(VOICE_TAB==="mood"){return htab+renderMood();}
   if(VOICE_TAB==="pill"){return htab+pillBoxHtml();}
+  if(VOICE_TAB==="log"){return htab+renderLog();}
   var findN=0;
   for(var i=0;i<allv.length;i++){ if(allv[i].verdict==="FIND") findN++; }
   var favN=allv.filter(vFav).length;
@@ -1352,7 +1362,7 @@ function closeSecretBox(){
   SEC_WHO="";SEC_UNLOCKED=false;
 }
 
-var VOICE_TABS=[["heart","心声","M12 21C7 16.9 2 13.2 2 8.9 2 6.2 4.1 4 6.7 4c1.9 0 3.6 1.1 5.3 3.2C13.7 5.1 15.4 4 17.3 4 19.9 4 22 6.2 22 8.9c0 4.3-5 8-10 12.1z"],["mood","情绪","M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"],["pill","药丸","M8 6h8a6 6 0 0 1 0 12H8A6 6 0 0 1 8 6zm0 2a4 4 0 0 0 0 8h4V8H8z"]];
+var VOICE_TABS=[["heart","心声","M12 21C7 16.9 2 13.2 2 8.9 2 6.2 4.1 4 6.7 4c1.9 0 3.6 1.1 5.3 3.2C13.7 5.1 15.4 4 17.3 4 19.9 4 22 6.2 22 8.9c0 4.3-5 8-10 12.1z"],["mood","情绪","M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"],["log","日志","M13 3a9 9 0 1 0 8.5 12H19v-1a7 7 0 1 1-6-7V3z"],["pill","药丸","M8 6h8a6 6 0 0 1 0 12H8A6 6 0 0 1 8 6zm0 2a4 4 0 0 0 0 8h4V8H8z"]];
 function voiceTabs(){
   var h='<div class="vsub">';
   for(var i=0;i<VOICE_TABS.length;i++){
@@ -2022,52 +2032,4 @@ var __zgOrigLoad=load;
 load=async function(){await __zgOrigLoad();zgRenderGrid();zgApplySavedMode();zgApplyBg()};
 load();
 </script>
-
-<style id="zhaoge-cream-polish">
-:root {
-  --bg:#fbf6ef; --header-bg:#fbf6ef; --ink:#51443d; --text:#51443d;
-  --text-soft:#827268; --text-faint:#a09287; --accent:#ad7258;
-  --accent-soft:#f1dfd3; --card-bg:rgba(255,253,249,.78);
-  --card-line:rgba(255,255,255,.94); --card-shadow:0 7px 22px rgba(100,70,52,.07);
-  --soft-shadow:0 14px 32px rgba(100,70,52,.11); --composer-bg:#f8eee5;
-  --field-bg:#fffdf9; --field-line:rgba(133,99,78,.18);
-}
-html,body { background:var(--bg); color:var(--ink); }
-body::before {
-  background-image:linear-gradient(180deg,rgba(251,246,239,.56),rgba(251,246,239,.22) 45%,rgba(251,246,239,.62)),url('../../resources/img/tidal/chat-light.webp');
-}
-body::after { content:'CREAM LIGHT'; color:rgba(145,100,76,.36); }
-.clock b { color:#61483c; text-shadow:0 1px 0 rgba(255,255,255,.82); }
-.clock span,.anchor { color:#94796a; }
-.ava { border-color:rgba(255,255,255,.98); box-shadow:0 10px 24px rgba(109,76,57,.13); }
-.days { color:#8c624e; background:rgba(255,251,246,.76); border-color:rgba(255,255,255,.96); }
-.days i { background:#a6b99b; }
-.say { color:#5d493f; }
-.say::after { background:rgba(173,114,88,.34); }
-.card {
-  color:#5a473d; border-color:rgba(255,255,255,.96);
-  background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(250,239,228,.82));
-  box-shadow:0 8px 24px rgba(100,70,52,.075),inset 0 1px 0 rgba(255,255,255,.98);
-  -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px);
-}
-.card .ic { background:linear-gradient(145deg,#fffaf4,#f0dfd2); color:#a96f55; }
-.card .tt,.tt { color:#5a473d; }
-.card .sub,.sub { color:#9b8375; }
-.card.dark { background:linear-gradient(145deg,#bd8c73,#94634f); color:#fffaf5; border-color:rgba(255,255,255,.35); box-shadow:0 12px 28px rgba(126,80,59,.22); }
-.card.dark .ic { background:rgba(255,255,255,.19); color:#fffaf5; }
-.card.dark .tt,.card.dark .sub { color:#fff7f0; }
-.tabs { background:linear-gradient(180deg,rgba(255,251,246,.58),rgba(255,253,249,.94)); border-top-color:rgba(255,255,255,.92); box-shadow:0 -8px 24px rgba(100,70,52,.045); }
-.tab { color:#a18b7d; }
-.tab.on { color:#9b634a; }
-.tab:active { background:rgba(241,223,211,.48); }
-.toast { background:rgba(91,66,54,.94); box-shadow:0 10px 26px rgba(91,66,54,.2); }
-.menubtn { background:rgba(255,251,246,.82); border-color:rgba(133,99,78,.1); box-shadow:0 6px 16px rgba(100,70,52,.07); }
-.menubtn i { background:#916b58; }
-.drawer { background:rgba(255,250,244,.985); box-shadow:0 18px 44px rgba(91,66,54,.16); }
-.dhead { border-bottom-color:rgba(133,99,78,.12); }
-.ditem { color:#5a473d; }
-.ditem:active { background:rgba(173,114,88,.08); }
-@media (prefers-reduced-motion: reduce) { .card { animation:none !important; } }
-</style>
-
 </body></html>

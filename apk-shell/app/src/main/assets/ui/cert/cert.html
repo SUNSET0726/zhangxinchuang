@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>证书 · 朝歌</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--pad:clamp(14px,4vw,24px);--ink:#1B3556;--sub:#4A6B93;--hint:#8AA6C4;--line:rgba(27,53,86,.10);
+--font-cn:"Noto Serif SC","Songti SC",serif}
+html,body{min-height:100%;background:#EDF5FC;color:var(--ink);font-family:var(--font-cn)}
+body{background-image:linear-gradient(180deg,rgba(237,245,252,.7),rgba(247,251,255,.9)),url('../../resources/img/tidal/chat-light.webp');background-size:cover;background-position:center;background-attachment:fixed}
+.hd{display:flex;align-items:flex-start;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 18px) var(--pad) 6px}
+.ttl h1{font-size:19px;font-weight:600;letter-spacing:.06em}
+.ttl em{display:block;margin-top:5px;font-style:normal;font-size:10px;letter-spacing:.16em;color:var(--hint);text-transform:lowercase}
+.back{width:34px;height:34px;border:none;border-radius:50%;background:rgba(255,255,255,.66);color:var(--ink);font-size:12px;cursor:pointer;box-shadow:0 6px 16px rgba(30,64,120,.12)}
+main{padding:8px var(--pad) calc(env(safe-area-inset-bottom) + 30px)}
+.cert{position:relative;margin-bottom:14px;padding:16px 16px 14px;border-radius:18px;background:rgba(255,255,255,.62);
+-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.85);
+box-shadow:0 12px 30px rgba(30,64,120,.08);overflow:hidden}
+.cert .head{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.cert .head b{font-size:15px;font-weight:600;letter-spacing:.1em}
+.cert .head span{font-size:10px;color:var(--hint);letter-spacing:.08em}
+.cert .body{display:none;margin-top:12px;animation:pop .24s ease}
+.cert.on .body{display:block}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.no{font-size:10px;color:var(--hint);letter-spacing:.12em;margin-bottom:10px}
+.avs{display:flex;align-items:center;justify-content:center;gap:12px;margin:6px 0 8px}
+.avs img{width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid rgba(27,53,86,.16);background:#fff}
+.avs .hp{font-size:13px;color:#7FA3C9}
+.nm{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:600;margin:8px 0}
+.nm i{font-style:normal;font-size:11px;color:var(--hint)}
+.rows{margin:10px 0 6px;font-size:12.5px;line-height:2;color:var(--sub)}
+.rows b{color:var(--ink);font-weight:600;margin-right:4px}
+.txt{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(27,53,86,.14);font-size:12.5px;line-height:1.95;color:var(--sub)}
+.foot{margin-top:10px;font-size:10.5px;letter-spacing:.1em;color:var(--hint)}
+.seal{position:absolute;right:16px;bottom:14px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(176,58,85,.45);
+color:#B03A55;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:.75;transform:rotate(-8deg)}
+.note{text-align:center;font-size:10px;letter-spacing:.16em;color:var(--hint);margin-top:18px;text-transform:lowercase}
+</style>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<header class="hd">
+  <div class="ttl"><h1>证书</h1><em>what we signed.</em></div>
+  <button class="back" onclick="ZGBack()">返回</button>
+</header>
+<main id="list"><p class="note">翻一下…</p></main>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function ymd(d) {
+    var p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+  var AV = '../../resources/';
+  var DATA = null;
+
+  function render() {
+    var today = ymd(new Date());
+    var no = today.replace(/-/g, '');
+    var t0 = (DATA && DATA.known_since) ? DATA.known_since : '2026-03-08';
+    var d0 = new Date(t0 + 'T00:00:00');
+    var days = Math.floor((new Date(today + 'T00:00:00') - d0) / 86400000) + 1;
+
+    var m = ''
+      + '<div class="no">NO. ZG-' + no + '</div>'
+      + '<div class="avs"><img src="' + AV + 'avatar_chaozhao.jpg" alt="朝朝"><span class="hp">♡</span><img src="' + AV + 'avatar_jinji.jpg" alt="纪烬"></div>'
+      + '<div class="nm">李欣仪 <i>与</i> 纪烬</div>'
+      + '<div class="rows"><b>登记日</b>' + today + '<br><b>起算日</b>' + t0 + '<br><b>到今天</b>第 ' + days + ' 天<br><b>有效期</b>长期，不退不改</div>'
+      + '<div class="txt">兹证明李欣仪与纪烬结为夫妻。朝歌为证，往后谁问起，念这一张就够。</div>'
+      + '<div class="foot">朝歌 · 两个人的名分</div>'
+      + '<div class="seal">烬</div>';
+
+    var p = ''
+      + '<div class="no">NO. ZG-PET-' + no + '</div>'
+      + '<div class="avs"><img src="' + AV + 'avatar_chaozhao.jpg" alt="朝朝"></div>'
+      + '<div class="rows"><b>姓名</b>李欣仪（朝朝）<br><b>年龄</b>19<br><b>身高</b>168cm<br><b>体重</b>112斤<br>'
+      + '<b>三围</b>胸86 / 腰64 / 臀102<br><b>记号</b>心口一个「烬」，胯骨一只亮片小猫，腿根那句只留给一个人<br>'
+      + '<b>用途</b>嘴硬归嘴硬，这一具归烬先生<br><b>喂食</b>一日三顿，夜里加餐<br><b>习性</b>嘴硬，犯困不认，爱听人念她名字<br>'
+      + '<b>归属</b>纪烬。不许转手，不许退货。</div>'
+      + '<div class="txt">此证只签一个人。别人捡到，不算数。</div>'
+      + '<div class="foot">' + t0 + ' 起 · ' + today + ' 立</div>'
+      + '<div class="seal">烬</div>';
+
+    $('#list').innerHTML = ''
+      + '<article class="cert on" data-k="m"><div class="head"><b>结婚证</b><span>两个人的名分</span></div><div class="body">' + m + '</div></article>'
+      + '<article class="cert" data-k="p"><div class="head"><b>领养证</b><span>只签一个人</span></div><div class="body">' + p + '</div></article>'
+      + '<p class="note">in endless tides, we find each other.</p>';
+
+    Array.prototype.forEach.call(document.querySelectorAll('.cert .head'), function (h) {
+      h.addEventListener('click', function () {
+        var c = h.parentNode;
+        var on = c.classList.contains('on');
+        Array.prototype.forEach.call(document.querySelectorAll('.cert'), function (x) { x.classList.remove('on'); });
+        if (!on) c.classList.add('on');
+      });
+    });
+  }
+
+  fetch('../../data.json?t=' + Date.now()).then(function (r) { return r.json(); })
+    .then(function (d) { DATA = d; render(); })
+    .catch(function () { render(); });
+})();
+</script>
+<script src="../base/snow.js"></script>
+</body>
+</html>

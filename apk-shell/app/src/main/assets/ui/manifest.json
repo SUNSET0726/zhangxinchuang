@@ -1,0 +1,15 @@
+{
+  "name": "朝歌",
+  "short_name": "朝歌",
+  "description": "我们自己的屋子",
+  "lang": "zh-CN",
+  "start_url": "/ui/home/home.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F7FAFF",
+  "theme_color": "#F7FAFF",
+  "icons": [
+    { "src": "/resources/avatar_chaozhao.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any" }
+  ]
+}

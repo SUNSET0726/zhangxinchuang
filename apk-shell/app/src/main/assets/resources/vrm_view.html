@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<style>
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}
+#c{width:100%;height:100%;display:block}
+#err{position:absolute;left:8px;top:8px;color:#ff8a8a;font:11px monospace;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="err"></div>
+<script src="vrm/three.min.js"></script>
+<script src="vrm/GLTFLoader.js"></script>
+<script src="vrm/three-vrm.min.js"></script>
+<script src="vrm/OrbitControls.js"></script>
+<script>
+(function () {
+  var errBox = document.getElementById('err');
+  function shout(m) { errBox.textContent += m + "\n"; }
+  window.onerror = function (m) { shout('js:' + m); };
+
+  var canvas = document.getElementById('c');
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  if (THREE.sRGBEncoding !== undefined) renderer.outputEncoding = THREE.sRGBEncoding;
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(30, 1, 0.1, 30);
+  camera.position.set(0, 1.34, 1.32);
+  camera.lookAt(0, 1.3, 0);
+
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.enablePan = false;
+  controls.rotateSpeed = 0.55;
+  controls.minPolarAngle = Math.PI * 0.22;
+  controls.maxPolarAngle = Math.PI * 0.60;
+
+  var dl = new THREE.DirectionalLight(0xfff1dd, 1.5); dl.position.set(0.5, 1.6, 1.3); scene.add(dl);
+  var dl2 = new THREE.DirectionalLight(0x9fb8ff, 0.6); dl2.position.set(-0.7, 1.1, -0.9); scene.add(dl2);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+
+  function resize() {
+    var w = canvas.clientWidth || window.innerWidth;
+    var h = canvas.clientHeight || window.innerHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var clock = new THREE.Clock();
+  var vrm = null, baseHipY = null, nextBlink = 2, blinkPhase = -1;
+  var fitBox = new THREE.Box3(), fSize = new THREE.Vector3(), fCtr = new THREE.Vector3();
+
+  function fitCamera() {
+    if (!vrm) return;
+    vrm.scene.position.set(0, 0, 0);
+    vrm.scene.updateMatrixWorld(true);
+    fitBox.setFromObject(vrm.scene);
+    fitBox.getSize(fSize);
+    fitBox.getCenter(fCtr);
+    vrm.scene.position.x -= fCtr.x;
+    vrm.scene.position.z -= fCtr.z;
+    vrm.scene.position.y -= fitBox.min.y;
+    vrm.scene.updateMatrixWorld(true);
+    fitBox.setFromObject(vrm.scene);
+    var hh = fitBox.max.y - fitBox.min.y;
+    var ww = fitBox.max.x - fitBox.min.x;
+    if (!(hh > 0)) hh = 1.5;
+    if (!(ww > 0)) ww = 0.8;
+    var vf = camera.fov * Math.PI / 180;
+    var asp = camera.aspect || 1;
+    var dv = (hh / 2) / Math.tan(vf / 2);
+    var dh = (ww / 2) / (Math.tan(vf / 2) * asp);
+    var d = Math.max(dv, dh) * 1.16;
+    camera.position.set(0, hh * 0.52, d);
+    camera.lookAt(0, hh * 0.5, 0);
+    camera.near = Math.max(0.01, d * 0.04);
+    camera.far = d * 8;
+    camera.updateProjectionMatrix();
+    controls.target.set(0, hh * 0.5, 0);
+    controls.minDistance = d * 0.55;
+    controls.maxDistance = d * 1.9;
+    controls.update();
+  }
+
+  var loader = new THREE.GLTFLoader();
+  loader.register(function (p) { return new THREE.VRMLoaderPlugin(p); });
+  loader.load('vrm/model.vrm', function (gltf) {
+    vrm = gltf.userData.vrm;
+    try { THREE.VRMUtils.removeUnnecessaryVertices(gltf.scene); } catch (e) { }
+    try { THREE.VRMUtils.combineSkeletons(gltf.scene); } catch (e) { }
+    try { THREE.VRMUtils.rotateVRM0(vrm); } catch (e) { }
+    scene.add(vrm.scene);
+    vrm.scene.traverse(function (o) {
+      o.frustumCulled = false;
+      if (o.material) o.material.side = THREE.DoubleSide;
+    });
+    fitCamera();
+    var hips = vrm.humanoid.getNormalizedBoneNode('hips');
+    if (hips) baseHipY = hips.position.y;
+    shout('');
+    errBox.textContent = '';
+  }, undefined, function (e) { shout('load:' + e); });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    var dt = clock.getDelta(), t = clock.elapsedTime;
+    if (vrm) {
+      if (baseHipY !== null) {
+        var hips = vrm.humanoid.getNormalizedBoneNode('hips');
+        if (hips) hips.position.y = baseHipY + Math.sin(t * 1.5) * 0.008;
+      }
+      var bv = 0;
+      if (blinkPhase < 0) {
+        nextBlink -= dt;
+        if (nextBlink <= 0) blinkPhase = 0;
+      }
+      if (blinkPhase >= 0) {
+        blinkPhase += dt / 0.16;
+        if (blinkPhase >= 1) { blinkPhase = -1; nextBlink = 2 + Math.random() * 3.5; }
+        else bv = Math.sin(blinkPhase * Math.PI);
+      }
+      if (vrm.expressionManager) vrm.expressionManager.setValue('blink', bv);
+      var head = vrm.humanoid.getNormalizedBoneNode('head');
+      if (head) {
+        head.rotation.y = Math.sin(t * 0.5) * 0.06;
+        head.rotation.z = Math.sin(t * 0.33) * 0.03;
+      }
+      try { vrm.update(dt); } catch (e) { }
+    }
+    if (controls) controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>

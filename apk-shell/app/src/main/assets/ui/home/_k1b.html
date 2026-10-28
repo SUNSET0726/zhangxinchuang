@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#eaf1fa">
+<title>朝歌</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#eaf1fa;color:#12305e;
+  font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC",sans-serif;overscroll-behavior:none}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.3;
+  background-image:radial-gradient(rgba(22,51,110,.18) .7px,transparent .7px);background-size:3px 3px}
+.app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 4px)}
+
+/* 头 */
+.hd{flex:0 0 auto;display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.hm{font:500 36px/1 "Times New Roman",Georgia,serif;letter-spacing:-.01em;color:#12305e}
+.dt{margin-top:5px;font:500 9px/1 var(--font-cn);
+  letter-spacing:.26em;color:#4d6d9c;text-transform:uppercase}
+.dayx{margin-top:7px;font:400 11.5px/1 var(--font-cn);color:#2b4f86;letter-spacing:.08em}
+.anchor{margin-top:6px;max-width:76%;font:400 11.5px/1.55 "Songti SC",serif;color:#3e5f8f}
+.anchor b{color:#12305e;font-weight:400}
+.ava{width:40px;height:40px;border-radius:50%;object-fit:cover;border:1.6px solid #12305e}
+
+/* 分镜 */
+.pages{flex:1;position:relative;margin-top:4px;overflow:hidden}
+.track{display:flex;height:100%;width:200%;transition:transform .5s cubic-bezier(.22,.9,.24,1)}
+.pg{position:relative;width:50%;height:100%;flex:0 0 auto}
+.frame{position:absolute;inset:0}
+.pane{position:absolute;inset:0;background:#fff;cursor:pointer;transition:filter .15s ease}
+.pane:active{filter:brightness(.97)}
+.pane.blue{background:#dbe7f7}
+.pane.navy{background:#1c3f7a}
+.pane .k{font:500 8px/1 var(--font-cn);letter-spacing:.26em;
+  color:#5f83b3;text-transform:uppercase}
+.pane .t{margin-top:5px;font:700 15px/1.35 "Songti SC","Noto Serif SC",serif;
+  letter-spacing:.05em;color:#12305e}
+.pane .s{margin-top:4px;font:400 10px/1.4 var(--font-cn);color:#5f83b3}
+.pane.navy .k,.pane.navy .s{color:#b9cdea}
+.pane.navy .t{color:#f4f9ff}
+.pane .n{position:absolute;right:8px;bottom:5px;font:500 8.5px/1 "Times New Roman",serif;
+  color:rgba(18,48,94,.4)}
+
+/* 墨线：深蓝，不是黑 */
+.ink{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.ink polygon{fill:none;stroke:#12305e;stroke-width:2.2;vector-effect:non-scaling-stroke;
+  stroke-linejoin:miter}
+.ink polygon.thin{stroke-width:.8;opacity:.5;transform:translate(.7px,.7px)}
+
+/* 底栏：一体深蓝 */
+.bar{position:relative;flex:0 0 auto;height:72px;margin-top:4px}
+.barbg{position:absolute;left:-14px;right:-14px;bottom:-4px;height:68px;background:#16336b}
+.barbg svg{position:absolute;inset:0;width:100%;height:100%}
+.tabs{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);height:50px;
+  align-items:center;margin-top:7px}
+.tab{border:0;background:none;color:#c3d6f0;display:flex;flex-direction:column;align-items:center;
+  gap:4px;cursor:pointer;font:500 10px/1 var(--font-cn);letter-spacing:.1em}
+.tab svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7}
+.tab.on{color:#fff}
+.tab.on svg{stroke-width:2.3}
+
+/* 枪：用她那张线稿，白底融进浅底 */
+.gunimg{position:absolute;right:-96px;bottom:-58px;width:330px;z-index:4;cursor:pointer;
+  mix-blend-mode:darken;transform:rotate(-4deg)}
+.gunimg:active{transform:rotate(-4deg) scale(.97)}
+
+/* 轮盘 */
+.wrath{position:fixed;inset:0;z-index:60;opacity:0;pointer-events:none;transition:opacity .26s}
+.wrath.on{opacity:1;pointer-events:auto}
+.wash{position:absolute;inset:0;background:rgba(255,255,255,.9)}
+.cylstage{position:absolute;left:-120px;top:43%;transform:translateY(-50%);width:206px;height:206px}
+.cyl{width:100%;height:100%;cursor:pointer;
+  transition:transform .45s cubic-bezier(.3,1.1,.4,1);mix-blend-mode:darken}
+.cyl img{width:100%;height:100%;object-fit:contain;display:block}
+.bullets{position:absolute;left:112px;right:12px;top:43%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:11px}
+.bullet{position:relative;height:39px;border:2px solid #16336b;border-radius:20px/18px;
+  background:#fff;display:flex;align-items:center;padding-left:24px;
+  font:600 13px/1 "Songti SC",serif;letter-spacing:.05em;color:#12305e;cursor:pointer;
+  box-shadow:3px 3px 0 rgba(22,51,107,.85);transition:transform .15s ease}
+.bullet:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(22,51,107,.85)}
+.bullet::before{content:'';position:absolute;left:4px;top:50%;transform:translateY(-50%);
+  width:13px;height:27px;border-right:2px solid #16336b;border-radius:0 11px 11px 0;
+  background:linear-gradient(90deg,#fff,#e3ecf9)}
+.bullet .idx{position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  font:500 8px/1 var(--font-cn);color:#6f8cb5;letter-spacing:.1em}
+.tagbox{position:absolute;border:2px solid #16336b;background:#fff;padding:5px 9px;
+  font:600 10.5px/1 "Songti SC",serif;letter-spacing:.1em;color:#12305e;
+  box-shadow:3px 3px 0 rgba(22,51,107,.85)}
+.leader{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.leader path{fill:none;stroke:#16336b;stroke-width:1.5}
+.leader circle{fill:#16336b}
+.wrclose{position:absolute;right:14px;top:calc(env(safe-area-inset-top) + 12px);
+  width:32px;height:32px;border:2px solid #16336b;border-radius:50%;background:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:2px 2px 0 rgba(22,51,107,.85)}
+.wrclose svg{width:12px;height:12px;stroke:#16336b;stroke-width:2.6}
+.wrhint{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 22px);
+  text-align:center;font:400 9.5px/1.6 var(--font-cn);color:#5f83b3;letter-spacing:.08em}
+.toast{position:fixed;left:50%;bottom:106px;transform:translate(-50%,8px);z-index:70;
+  padding:6px 13px;border:2px solid #16336b;border-radius:999px;background:#fff;
+  color:#12305e;font:400 11px/1 var(--font-cn);
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+  box-shadow:3px 3px 0 rgba(22,51,107,.85)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<!--BODY-->
+</body>
+</html>

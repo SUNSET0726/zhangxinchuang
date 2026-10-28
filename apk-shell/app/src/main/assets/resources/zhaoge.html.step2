@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>朝歌</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 20% 0%,var(--bgA) 0%,var(--bgB) 45%,var(--bgC) 100%);color:var(--ink);font-family:-apple-system,"PingFang SC","HarmonyOS Sans",sans-serif;overflow:hidden;display:flex;flex-direction:column}
+.hd{padding:18px 20px 8px;display:flex;align-items:baseline;justify-content:space-between}
+.hd h1{font-size:22px;font-weight:600;letter-spacing:4px}
+.hd .sub{font-size:12px;color:var(--ink5);letter-spacing:1px}
+.body{flex:1;overflow-y:auto;padding:8px 18px 112px}
+.card{background:linear-gradient(160deg,var(--cardA) 0%,var(--cardB) 100%);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden}
+.card:after{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--accLine),transparent)}
+.anni .n{font-size:30px;font-weight:700;color:var(--acc);letter-spacing:1px}
+.anni .l{font-size:12px;color:var(--ink4);margin-top:4px;letter-spacing:1px}
+.stats{display:flex;gap:10px;margin-top:14px}
+.st{flex:1;background:var(--panel2);border-radius:14px;padding:10px;text-align:center}
+.st b{display:block;font-size:18px;color:var(--acc)}
+.st span{font-size:10px;color:var(--ink5);letter-spacing:1px}
+.us{display:flex;align-items:center;justify-content:space-between;padding:6px 4px;position:relative}
+.us .p{display:flex;flex-direction:column;align-items:center;gap:8px;width:40%}
+.us .p img{width:74px;height:74px;border-radius:50%;object-fit:cover;border:2px solid var(--acc);background:var(--panel2)}
+.us .p .nm{font-size:14px;letter-spacing:2px;color:var(--ink)}
+.us .p .rl{font-size:10px;color:var(--ink5);letter-spacing:1px}
+.us .mid{position:absolute;left:50%;top:28%;transform:translate(-50%,-50%);font-size:24px;color:var(--acc);cursor:pointer}
+.calhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.calhd .m{font-size:14px;letter-spacing:1px;color:var(--ink3)}
+.calhd .nav b{display:inline-block;width:28px;height:28px;line-height:26px;text-align:center;border-radius:9px;background:var(--line2);color:var(--ink3);margin-left:8px;font-weight:400}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.wk div{text-align:center;font-size:11px;color:var(--ink6);padding:4px 0}
+.gd{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:13px;color:var(--ink2);position:relative;background:var(--panel3)}
+.d.emp{background:transparent}
+.d.has{color:var(--ink);background:var(--dayHas)}
+.d.today{color:var(--accInk);background:var(--acc);font-weight:700}
+.d.sel{outline:1px solid var(--acc);outline-offset:-2px}
+.dot{position:absolute;bottom:5px;width:4px;height:4px;border-radius:50%;background:var(--acc)}
+.d.today .dot{background:var(--accInk)}
+.sec{display:flex;align-items:center;justify-content:space-between;margin:16px 2px 8px}
+.sec span{font-size:13px;color:var(--ink4);letter-spacing:1px}
+.add{width:28px;height:28px;border-radius:10px;border:none;background:var(--acc);color:var(--accInk);font-size:17px;line-height:1}
+.empty{text-align:center;color:var(--ink7);font-size:13px;padding:26px 0}
+.drawer{display:flex;gap:6px;margin:4px 0 10px;background:var(--panel2);border-radius:12px;padding:4px}
+.drawer div{flex:1;text-align:center;font-size:12px;color:var(--ink5);padding:7px 0;border-radius:9px;letter-spacing:1px}
+.drawer div.on{background:var(--acc);color:var(--accInk);font-weight:600}
+.entry{position:relative;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--cardA);margin:8px 0}
+.badges{display:inline-flex;gap:4px;z-index:2;vertical-align:middle;margin-left:2px}
+.badge{width:10px;height:10px;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:9px;line-height:1;position:relative}
+.badge.on{display:inline-flex}
+.badge.pin{background:#E8893A;box-shadow:0 0 8px rgba(232,137,58,.65),inset 0 0 4px rgba(255,255,255,.25)}
+.badge.mark{background:#2E9E5B;box-shadow:0 0 8px rgba(46,158,91,.65),inset 0 0 4px rgba(255,255,255,.25)}
+.entry .who{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.entry .who img{width:22px;height:22px;border-radius:50%;object-fit:cover}
+.entry .who .nm{font-size:12px;color:var(--acc);letter-spacing:1px}
+.entry .who .dt{font-size:11px;color:var(--ink6);margin-left:auto}
+.entry .tt{font-size:14px;color:var(--ink);font-weight:600;margin-bottom:4px}
+.entry .ct{font-size:13px;color:var(--ink2);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.entry .ct.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.swipe{position:relative;overflow:hidden;border-radius:14px;margin:8px 0}
+.swipe .acts{position:absolute;top:0;right:0;bottom:0;display:flex;align-items:center;gap:6px;padding-right:12px;transform:translateX(112%);z-index:2;pointer-events:none}
+.swipe.open .acts{pointer-events:auto}
+.swipe.open .acts{transform:translateX(0);transition:transform .2s ease}
+
+.act.todo{background:#2E9E5B}
+.act.mark{background:#2E9E5B}
+.act.pin{background:#E8893A}
+.act.pin.on{background:#8A5A24;opacity:.75}
+.act.edit{background:#3D6BB3}
+.act.del{background:#C0392B}
+.swipe .inner{position:relative;z-index:1;background:var(--cardA);border-radius:14px;transition:transform .28s cubic-bezier(.22,.85,.35,1);touch-action:pan-y}
+.swipe.open .inner{transform:translateX(-290px);transition:transform .28s cubic-bezier(.22,.85,.35,1)}
+.swipe .act{width:45px;height:45px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;letter-spacing:1px;flex-shrink:0}
+.swipe .inner .entry,.swipe .inner .todoitem{border:none;margin:0}
+.todoitem{display:flex;gap:10px;align-items:center;border-radius:14px;padding:13px;background:var(--cardA)}
+.todoitem .rd{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ink6);flex:0 0 auto}
+.todoitem.done .rd{background:#2E9E5B;border-color:#2E9E5B}
+.todoitem .tx{font-size:13px;color:var(--ink)}
+.todoitem.done .tx{color:var(--ink6);text-decoration:line-through}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--tabbar);border-top:1px solid var(--line2);padding:8px 0 12px;z-index:200}
+.tabs div{flex:1;text-align:center;font-size:11px;color:var(--ink6);letter-spacing:1px}
+.tabs div i{display:block;width:6px;height:6px;border-radius:50%;background:transparent;margin:0 auto 5px}
+.tabs div.on{color:var(--acc)}
+.tabs div.on i{background:var(--acc)}
+.modal{position:fixed;inset:0;background:#000000aa;display:none;align-items:center;justify-content:center;z-index:300}
+.modal.on{display:flex}
+.mbox{width:calc(100% - 32px);background:var(--panel);border-radius:22px;padding:20px 18px 26px;border:1px solid var(--line)}
+.mbox h3{font-size:15px;color:var(--acc);letter-spacing:2px;margin-bottom:12px}
+.dwho.mrow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dwho img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+.dday{font-size:12px;color:var(--ink4);margin-bottom:10px}
+.dtitle{font-size:16px;font-weight:600;color:var(--inkStrong);margin-bottom:10px;white-space:pre-wrap;word-break:break-all}
+.dcontent{font-size:14px;line-height:1.7;color:var(--inkBody);white-space:pre-wrap;word-break:break-all;max-height:45vh;overflow-y:auto;padding-right:4px}
+#modal{z-index:400}
+#detailBox{z-index:350}
+#secModal{background:radial-gradient(120% 80% at 20% 0%,var(--bgA) 0%,var(--bgB) 45%,var(--bgC) 100%)}
+#secModal{z-index:320}
+#secModal .mbox{width:100%;height:100%;max-height:100%;border:none;border-radius:0;background:transparent;display:flex;flex-direction:column;padding:20px 16px 12px}
+.secbox-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;flex:0 0 auto}
+.secbox-head h3{font-size:17px;color:var(--acc);letter-spacing:2px;margin:0}
+.secbox-head .sub{font-size:11px;color:var(--ink6)}
+.seclist{flex:1;overflow-y:auto;padding-bottom:100px}
+.seclist .entry{border-radius:16px}
+.seclist .empty{color:var(--ink7)}
+.seclist .ac{position:fixed;left:16px;right:16px;bottom:16px;z-index:310}
+.seclist .ac button{width:48px;height:48px;border-radius:50%;border:none;background:var(--acc);color:var(--accInk);font-size:24px;line-height:1;margin-left:auto;display:block}
+.secretbox{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+.secretbox .subh{font-size:11px;color:var(--ink6);letter-spacing:1px;margin-bottom:8px}
+.secretgrid{display:flex;flex-direction:column;gap:10px}
+.secretcell{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sc-who{font-size:15px;color:var(--acc);letter-spacing:1px}
+.sc-state{font-size:12px;color:var(--ink5)}
+.sc-sub{font-size:10px;color:var(--ink6);margin-top:3px;min-height:12px}
+.secretcell.locked .sc-state{color:var(--ink6)}
+.secretcell.unlocked .sc-state{color:#E8893A}
+.secretcell.requested .sc-state{color:#3D6BB3}
+
+.mrow{display:flex;gap:8px;margin-bottom:12px}
+.mrow .who{flex:1;text-align:center;padding:9px 0;border-radius:11px;background:var(--panel2);color:var(--ink5);font-size:13px;letter-spacing:1px}
+.mrow .who.on{background:var(--acc);color:var(--accInk);font-weight:600}
+.mbox input,.mbox textarea{width:100%;background:var(--panel4);border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:11px;font-size:14px;margin-bottom:10px;font-family:inherit}
+.mbox textarea{min-height:110px;resize:none}
+.mbtns{display:flex;gap:10px;margin-top:6px}
+.mbtns button{flex:1;padding:12px 0;border-radius:12px;border:none;font-size:14px;letter-spacing:2px}
+.save{background:var(--acc);color:var(--accInk)}
+.cancel{background:var(--line2);color:var(--ink3)}
+
+/* ===== 主题栏 ===== */
+.themeFloat{position:fixed;right:14px;bottom:82px;z-index:240}
+.themeFloat button{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(20,16,32,.55);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:10px 16px;font-size:12px;letter-spacing:2px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.themeSheet{position:fixed;left:0;right:0;bottom:0;z-index:500;background:var(--tabbar);border-radius:26px 26px 0 0;padding:24px 18px 32px;border-top:1px solid var(--line);transform:translateY(105%);transition:transform .32s cubic-bezier(.22,.85,.35,1)}
+.themeSheet.on{transform:translateY(0)}
+.themeSheet h3{font-size:15px;color:var(--acc);letter-spacing:2px;margin:0}
+.themeSheet .sub{font-size:11px;color:var(--ink5);margin:6px 0 16px}
+.themeGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.themeItem{position:relative;border-radius:18px;padding:16px;border:1px solid var(--line);background:var(--panel);cursor:pointer}
+.themeItem .swatch{width:100%;height:52px;border-radius:12px;margin-bottom:10px}
+.themeItem .nm{font-size:13px;color:var(--ink);letter-spacing:1px}
+.themeItem.on{border-color:var(--acc)}
+.themeItem.on:after{content:"✓";position:absolute;top:10px;right:12px;color:var(--acc);font-size:16px}
+.themeClose{position:absolute;top:16px;right:18px;font-size:20px;color:var(--ink5);background:none;border:none}
+</style></head><body>
+<div class="hd"><h1>朝歌</h1><div class="sub">海棠与朝歌</div></div>
+<div class="body">
+  <div id="anniCard" class="card anni"><div class="n" id="days">—</div><div class="l">认识的第几天</div>
+    <div class="stats"><div class="st"><b id="c1">0</b><span>篇日记</span></div><div class="st"><b id="c2">0</b><span>封信</span></div><div class="st"><b id="c3">0</b><span>件做完</span></div></div>
+  </div>
+  <div id="usCard" class="card" style="display:none">
+    <div class="us">
+      <div class="p"><img id="av1" alt="朝朝"><div class="nm">朝朝</div><div class="rl">我的</div></div>
+      <div class="mid" id="secDoor">∞</div>
+      <div class="p"><img id="av2" alt="纪烬"><div class="nm">纪烬</div><div class="rl">我</div></div>
+    </div>
+    <div id="secretBox" class="secretbox" style="display:none">
+      <div class="subh">只能敲，不能撬。</div>
+      <div class="secretgrid">
+        <div class="secretcell" data-who="user"><div class="sc-who">朝朝</div><div class="sc-state">锁着</div><div class="sc-sub"></div></div>
+        <div class="secretcell" data-who="ta"><div class="sc-who">纪烬</div><div class="sc-state">锁着</div><div class="sc-sub"></div></div>
+      </div>
+    </div>
+  </div>
+  <div id="calCard" class="card">
+    <div class="calhd"><div class="m" id="mon">—</div><div class="nav"><b id="pv">‹</b><b id="nx">›</b></div></div>
+    <div class="wk"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
+    <div class="gd" id="gd"></div>
+  </div>
+  <div id="drawerBox" style="display:none">
+    <div class="drawer" id="dw">
+      <div data-d="0" class="on">全部</div><div data-d="1">纪烬</div><div data-d="2">朝朝</div>
+    </div>
+  </div>
+  <div id="pane"></div>
+</div>
+<div class="tabs">
+  <div class="on" data-t="0"><i></i>日记</div>
+  <div data-t="1"><i></i>待办</div>
+  <div data-t="2"><i></i>信</div>
+  <div data-t="3"><i></i>我们</div>
+</div>
+<div class="modal" id="modal">
+  <div class="mbox">
+    <h3 id="mtitle">写日记</h3>
+    <div class="mrow" id="mwho"><div class="who static" id="mwhoLabel">朝朝</div></div>
+    <input id="mtitle2" placeholder="标题（可不填）">
+    <textarea id="mcontent" placeholder="写点什么……"></textarea>
+    <div class="mbtns"><button class="cancel" id="mcancel">取消</button><button class="save" id="msave">收好</button></div>
+  </div>
+</div>
+
+<div class="modal" id="secModal">
+  <div class="mbox">
+    <div class="secbox-head"><h3 id="secTitle">小秘密</h3><div class="sub" id="secSub"></div><b id="secClose" style="font-size:22px;color:var(--ink5);cursor:pointer">×</b></div>
+    <div class="seclist" id="secList"></div>
+  </div>
+</div>
+<div class="modal" id="detailBox">
+  <div class="mbox">
+    <h3>信</h3>
+    <div class="dwho mrow"></div>
+    <div class="dday"></div>
+    <div class="dtitle"></div>
+    <div class="dcontent"></div>
+    <div class="mbtns"><button class="cancel" id="dclose">关掉</button></div>
+  </div>
+</div>
+
+<script>
+var DATA={known_since:"2026-07-26",diaries:[],todos:[],letters:[],secrets:[]};
+var today=new Date();
+var cur=new Date(today.getFullYear(),today.getMonth(),1);
+var sel=ymd(today);
+var tab=0;
+var drawer=0;
+var MODE="diary";
+  var EDIT_ID="";
+  var EDIT_TYPE="";
+function pad(n){return (n<10?"0":"")+n}
+function ymd(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function nowhm(){var d=new Date();return pad(d.getHours())+":"+pad(d.getMinutes())}
+function esc(t){var x=String(t===undefined?"":t);return x.split("\x3c").join("\x26lt;").split("\x3e").join("\x26gt;")}
+function host(){if(window.ZhaoGeHost){return window.ZhaoGeHost}return {}}
+function uid(p){return p+"_"+Date.now()+"_"+Math.floor(Math.random()*1e4)}
+function authorName(a){return a==="ta"?"纪烬":"朝朝"}
+function avSrc(a){return a==="ta"?"https://zhaoge.internal/avatar/jinji":"https://zhaoge.internal/avatar/chaozhao"}
+async function load(){
+  var h=host();
+  if(h.loadData){try{var r=await h.loadData();if(r&&r.data){DATA=r.data}}catch(e){}}
+  renderAll();
+}
+async function saveAll(){
+  var h=host();
+  if(h.saveData){try{var r=await h.saveData(DATA);return !!(r&&r.success)}catch(e){return false}}
+  return false;
+}
+</script>
+<script>
+function renderAnni(){
+  var t0=new Date((DATA.known_since||"2026-07-26")+"T00:00:00");
+  var n=Math.floor((today-t0)/86400000)+1;
+  document.getElementById("days").textContent=n+" 天";
+  document.getElementById("c1").textContent=(DATA.diaries||[]).length;
+  document.getElementById("c2").textContent=(DATA.letters||[]).length;
+  document.getElementById("c3").textContent=(DATA.todos||[]).filter(function(x){return x.done}).length;
+}
+function hasDay(ds){return (DATA.diaries||[]).some(function(x){return x.day===ds})}
+function renderCal(){
+  var y=cur.getFullYear(),m=cur.getMonth();
+  document.getElementById("mon").textContent=y+" 年 "+(m+1)+" 月";
+  var first=new Date(y,m,1).getDay();
+  var days=new Date(y,m+1,0).getDate();
+  var h="";
+  for(var i=0;i<first;i++)h+='<div class="d emp"></div>';
+  for(var d=1;d<=days;d++){
+    var ds=y+"-"+pad(m+1)+"-"+pad(d);
+    var cls="d";
+    if(ds===ymd(today))cls+=" today";
+    if(hasDay(ds))cls+=" has";
+    if(ds===sel)cls+=" sel";
+    h+='<div class="'+cls+'" data-day="'+ds+'">'+d+(hasDay(ds)?'<span class="dot"></span>':"")+"</div>";
+  }
+  document.getElementById("gd").innerHTML=h;
+}
+function byTime(arr){
+  return (arr||[]).slice().sort(function(a,b){
+    var ka=String(a.day||"")+" "+String(a.createdAt||"");
+    var kb=String(b.day||"")+" "+String(b.createdAt||"");
+    return kb.localeCompare(ka);
+  });
+}
+function sorted(arr){return (arr||[]).slice().sort(function(a,b){return (b.pin?1:0)-(a.pin?1:0)})}
+function entryHtml(x,full,type){
+  var bs='';
+  if(x.pin||x.mark){
+    bs='<div class="badges">'
+      +(x.pin?'<span class="badge pin on"></span>':"")
+      +(x.mark?'<span class="badge mark on"></span>':"")
+      +'</div>';
+  }
+  return '<div class="entry" data-entry="'+x.id+'" data-type="'+(type||"")+'">'
+    +'<div class="who"><img src="'+avSrc(x.author)+'" alt=""><span class="nm">'+authorName(x.author)+bs+'</span>'
+    +'<span class="dt">'+(x.day||"")+(x.createdAt?" "+x.createdAt:"")+'</span></div>'
+    +(x.title?'<div class="tt">'+esc(x.title)+'</div>':"")
+    +'<div class="ct'+(full?"":" clamp")+'">'+esc(x.content)+'</div>'
+    +'</div>';
+}
+function wrapInnerWithBadges(inner,pin,mark){
+  if(!pin&&!mark)return inner;
+  return inner+'<div class="badges">'+(pin?'<span class="badge pin on"></span>':"")+(mark?'<span class="badge mark on"></span>':"")+'</div>';
+}
+function swipeWrap(type,id,inner,pin,mark){
+  var acts='';
+  if(type==="todo")acts+='<div class="act todo" data-act="todo">完成</div>';
+  acts+='<div class="act edit" data-act="edit">编辑</div>';
+  acts+='<div class="act mark'+(mark?" on":"")+'" data-act="mark">标记</div>';
+  acts+='<div class="act pin'+(pin?" on":"")+'" data-act="pin">置顶</div>';
+  acts+='<div class="act del" data-act="del">删除</div>';
+  if(type==="todo")inner=wrapInnerWithBadges(inner,pin,mark);
+  return '<div class="swipe" data-type="'+type+'" data-id="'+id+'">'
+    +'<div class="inner">'+inner+'</div>'
+    +'<div class="acts">'+acts+'</div></div>';
+}
+</script>
+<script>
+function renderPane(){
+  var p=document.getElementById("pane"),h="";
+  var drawerBox=document.getElementById("drawerBox");
+  if(tab===0){
+    drawerBox.style.display="block";
+    if(drawer===1){
+      h+='<div class="sec"><span>纪烬的日记</span><span style="font-size:12px;color:var(--ink5)">只有纪烬能写</span></div>';
+    }else{
+      h+='<div class="sec"><span>日记</span><button class="add" data-add="diary">+</button></div>';
+    }
+    var list=byTime(DATA.diaries||[]);
+    if(drawer===1)list=list.filter(function(x){return x.author==="ta"});
+    if(drawer===2)list=list.filter(function(x){return x.author!=="ta"});
+    if(!list.length)h+='<div class="empty">这一页还空着。</div>';
+    else list.forEach(function(x){h+=swipeWrap("diary",x.id,entryHtml(x,false,"diary"),x.pin,x.mark)});
+  }else if(tab===1){
+    drawerBox.style.display="none";
+    h+='<div class="sec"><span>待办</span><button class="add" data-add="todo">+</button></div>';
+    var open=sorted((DATA.todos||[]).filter(function(x){return !x.done}));
+    var done=sorted((DATA.todos||[]).filter(function(x){return x.done}));
+    if(!open.length)h+='<div class="empty">眼下没有挂着的。</div>';
+    else open.forEach(function(x){
+      h+=swipeWrap("todo",x.id,'<div class="todoitem" data-todo="'+x.id+'"><div class="rd"></div><div class="tx">'+esc(x.title)+'</div></div>',x.pin);
+    });
+    if(done.length){
+      h+='<div class="sec" style="margin-top:16px"><span>做完的 '+done.length+' 件</span></div>';
+      done.forEach(function(x){
+        h+=swipeWrap("todo",x.id,'<div class="todoitem done" data-todo="'+x.id+'"><div class="rd"></div><div class="tx">'+esc(x.title)+'</div></div>',x.pin);
+      });
+    }
+  }else if(tab===2){
+    drawerBox.style.display="none";
+    h+='<div class="sec"><span>信</span><button class="add" data-add="letter">+</button></div>';
+    var ls=byTime(DATA.letters||[]);
+    if(!ls.length)h+='<div class="empty">还没有信。</div>';
+    else ls.forEach(function(x){
+      h+=swipeWrap("letter",x.id,entryHtml(x,false,"letter"),x.pin,x.mark);
+    });
+  }else{
+    drawerBox.style.display="none";
+    h+='<div class="sec"><span>我们</span></div>';
+    h+='<div class="empty">两个人，一间屋。</div>';
+  }
+  p.innerHTML=h;
+}
+var SEC_WHO="",SEC_UNLOCKED=false;
+function escText(t){return String(t||"").replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">")}
+function renderSecretList(){
+  var list=document.getElementById("secList"),h="";
+  var my=(DATA.secrets||[]).filter(function(x){return x.who===SEC_WHO});
+  if(my.length===0){
+    h='<div class="empty">这里还没有秘密。</div>';
+  }else{
+    my.slice().reverse().forEach(function(x){
+      h+='<div class="entry" data-entry="'+x.id+'" data-type="secret">'
+        +'<div class="who"><img src="'+avSrc(x.who==="ta"?"ta":"user")+'" alt=""><span class="nm">'+authorName(x.who==="ta"?"ta":"user")+'</span>'
+        +'<span class="dt">'+(x.day||"")+(x.createdAt?" "+x.createdAt:"")+'</span></div>'
+        +'<div class="ct">'+esc(x.content)+'</div>'
+        +'</div>';
+    });
+  }
+  if(SEC_WHO==="user")h+='<div class="ac"><button id="secAdd">＋</button></div>';
+  list.innerHTML=h;
+  var ab=document.getElementById("secAdd");
+  if(ab)ab.addEventListener("click",function(){openModal("secretUser","chaozhao")});
+  list.querySelectorAll(".entry").forEach(function(ent){
+    ent.addEventListener("click",function(){
+      var id=ent.dataset.entry;
+      var it=(DATA.secrets||[]).find(function(x){return x.id===id});
+      if(it)openSecretDetail(it);
+    });
+  });
+}
+function openSecretBox(who,unlocked){
+  SEC_WHO=who;
+  SEC_UNLOCKED=!!unlocked;
+  document.getElementById("secTitle").textContent=who==="user"?"朝朝的小秘密":"纪烬的小秘密";
+  document.getElementById("secSub").textContent=who==="user"?"只有你自己能看":(SEC_UNLOCKED?"已解锁，只给你看":"咚咚咚——");
+  renderSecretList();
+  document.getElementById("secModal").classList.add("on");
+}
+function openSecretDetail(it){
+  var dh=document.querySelector("#detailBox h3");
+  var who=document.querySelector("#detailBox .dwho");
+  var day=document.querySelector("#detailBox .dday");
+  var title=document.querySelector("#detailBox .dtitle");
+  var content=document.querySelector("#detailBox .dcontent");
+  if(!it)return;
+  dh.textContent=(it.who==="ta"?"纪烬":"朝朝")+"的秘密";
+  who.innerHTML=(it.who==="ta"?"纪烬":"朝朝");
+  day.textContent=(it.day||"")+(it.createdAt?" "+it.createdAt:"");
+  title.textContent="";
+  content.textContent=it.content||"";
+  document.getElementById("detailBox").classList.add("on");
+}
+function closeSecretBox(){
+  document.getElementById("secModal").classList.remove("on");
+  SEC_WHO="";SEC_UNLOCKED=false;
+}
+function renderUs(){
+  document.getElementById("av1").src="https://zhaoge.internal/avatar/chaozhao";
+  document.getElementById("av2").src="https://zhaoge.internal/avatar/jinji";
+  var my=DATA.secrets||[];
+  var mine=my.find(function(x){return x.who==="user"})||{who:"user",content:""};
+  var tas=my.find(function(x){return x.who==="ta"})||{who:"ta",content:""};
+  var bc=document.querySelectorAll(".secretcell");
+  if(bc.length){
+    bc[0].className="secretcell"+(mine.content?" unlocked":" locked");
+    bc[0].querySelector(".sc-state").textContent=mine.content?"写好了":"锁着";
+    bc[1].className="secretcell"+(tas.content?" unlocked":" locked");
+    bc[1].querySelector(".sc-state").textContent=tas.content?"写好了":"锁着";
+  }
+}
+function renderSecretGate(){
+  var door=document.getElementById("secDoor");
+  var box=document.getElementById("secretBox");
+  if(box)box.style.display=box.style.display==="none"?"block":"none";
+}
+var __secTap=0,__secTimer=undefined;
+function onSecDoor(){
+  __secTap++;
+  if(__secTimer)clearTimeout(__secTimer);
+  __secTimer=setTimeout(function(){
+    if(__secTap>=3){renderSecretGate()}
+    __secTap=0;
+  },400);
+}
+function renderAll(){
+  var showCal=(tab===0);
+  var showAnni=(tab===3);
+  var showUs=(tab===3);
+  document.getElementById("anniCard").style.display=showAnni?"block":"none";
+  document.getElementById("usCard").style.display=showUs?"block":"none";
+  document.getElementById("calCard").style.display=showCal?"block":"none";
+  renderAnni();renderCal();renderPane();
+}
+</script>
+<script>
+async function handleAct(sw,a){
+  var type=sw.dataset.type,id=sw.dataset.id;
+  var it=undefined;
+  if(type==="diary")it=(DATA.diaries||[]).find(function(x){return x.id===id});
+  if(type==="letter")it=(DATA.letters||[]).find(function(x){return x.id===id});
+  if(type==="todo")it=(DATA.todos||[]).find(function(x){return x.id===id});
+  if(!it)return;
+  if(a==="del"){
+    if(type==="diary")DATA.diaries=(DATA.diaries||[]).filter(function(x){return x.id!==id});
+    if(type==="letter")DATA.letters=(DATA.letters||[]).filter(function(x){return x.id!==id});
+    if(type==="todo")DATA.todos=(DATA.todos||[]).filter(function(x){return x.id!==id});
+  }else if(a==="mark"){
+    it.mark=!it.mark;
+  }else if(a==="pin"){
+    it.pin=!it.pin;
+  }else if(a==="todo"){
+    it.done=!it.done;it.doneAt=it.done?ymd(new Date()):"";
+  }else if(a==="edit"){
+    openEditor(type,it);
+    return;
+  }
+  await saveAll();renderAll();
+}
+function closeAllSwipes(){document.querySelectorAll(".swipe.open").forEach(function(x){x.classList.remove("open")})}
+function openModal(mode,who,oldContent){
+  MODE=mode;
+  var lb=document.getElementById("mwhoLabel");
+  if(who==="jinji"){lb.textContent="纪烬";lb.dataset.who="jinji"}
+  else{lb.textContent="朝朝";lb.dataset.who="chaozhao"}
+  document.getElementById("mtitle2").value="";
+  document.getElementById("mcontent").value=oldContent||"";
+  var t=document.getElementById("mtitle");
+  if(mode==="todo")t.textContent="加待办";
+  else if(mode==="letter")t.textContent="写信";
+  else if(mode==="secretUser")t.textContent="朝朝的小秘密";
+  else if(mode==="secretTa")t.textContent="纪烬的小秘密";
+  else t.textContent="写日记";
+  var ti=document.getElementById("mtitle2");
+  if(mode==="secretUser"||mode==="secretTa"){ti.style.display="none";document.getElementById("mcontent").placeholder="写进来，只此一条。"}
+  else{ti.style.display="";document.getElementById("mcontent").placeholder="写点什么……"}
+  document.getElementById("modal").classList.add("on");
+}
+function closeModal(){document.getElementById("modal").classList.remove("on")}
+function findItem(type,id){
+  var arr;
+  if(type==="diary")arr=DATA.diaries;
+  else if(type==="letter")arr=DATA.letters;
+  else arr=DATA.todos;
+  return (arr||[]).find(function(x){return x.id===id});
+}
+function openDetail(type,id){
+  var it=undefined,who=undefined;
+  if(typeof type==="object"){it=type;who=id;type="secret"}
+  else it=findItem(type,id);
+  if(!it)return;
+  if(type!=="letter"&&type!=="secret")return;
+  var box=document.getElementById("detailBox");
+  box.querySelector("h3").textContent=type==="letter"?"信":(who||"秘密");
+  box.querySelector(".dwho").innerHTML=type==="letter"?'<img src="'+avSrc(it.author)+'" alt=""><span>'+authorName(it.author)+'</span>':(it.who==="ta"?"纪烬":"朝朝");
+  box.querySelector(".dday").textContent=type==="letter"?(it.day||"")+(it.createdAt?" "+it.createdAt:""):"";
+  box.querySelector(".dtitle").textContent=type==="letter"?it.title||"":"";
+  box.querySelector(".dcontent").textContent=it.content||"";
+  box.dataset.type=type;
+  box.dataset.id=it.id||"";
+  box.classList.add("on");
+  closeAllSwipes();
+}
+function closeDetail(){document.getElementById("detailBox").classList.remove("on")}
+function openEditor(type,it){
+  EDIT_TYPE=type;EDIT_ID=it.id;
+  MODE=(type==="diary")?"editDiary":(type==="letter")?"editLetter":"editTodo";
+  var lb=document.getElementById("mwhoLabel");
+  if(type==="todo"){lb.textContent="待办";lb.dataset.who="chaozhao"}
+  else if(it.author==="ta"){lb.textContent="纪烬";lb.dataset.who="jinji"}
+  else{lb.textContent="朝朝";lb.dataset.who="chaozhao"}
+  document.getElementById("mtitle2").value=it.title||"";
+  document.getElementById("mcontent").value=it.content||"";
+  var t=document.getElementById("mtitle");
+  if(type==="todo")t.textContent="改待办";
+  else if(type==="letter")t.textContent="改信";
+  else t.textContent="改日记";
+  document.getElementById("modal").classList.add("on");
+  closeAllSwipes();
+}
+
+function toggleEntry(id){
+  var el=document.querySelector('.entry[data-entry="'+id+'"] .ct');
+  if(el)el.classList.toggle("clamp");
+}
+;
+  var __moved=false;
+  document.getElementById("pane").addEventListener("click",async function(e){
+    if(__moved){__moved=false;return}
+    var act=e.target.closest(".act");
+    if(act){
+      var sw=act.closest(".swipe");
+      await handleAct(sw,act.dataset.act);
+      return;
+    }
+    if(e.target===e.currentTarget){
+      closeAllSwipes();
+      return;
+    }
+    var add=e.target.closest(".add");
+    if(add){openModal(add.dataset.add,"chaozhao");return}
+    var ent=e.target.closest(".entry");
+    if(ent){
+      if(ent.dataset.type==="letter"){openDetail(ent.dataset.type,ent.dataset.entry);return}
+      toggleEntry(ent.dataset.entry);return
+    }
+    var td=e.target.closest(".todoitem");
+    if(td&&td.dataset.todo){
+      var t=(DATA.todos||[]).find(function(x){return x.id===td.dataset.todo});
+      if(t){t.done=!t.done;t.doneAt=t.done?ymd(new Date()):"";await saveAll();renderAll()}
+      return;
+    }
+  });
+  document.getElementById("gd").addEventListener("click",function(e){
+    var el=e.target.closest(".d");
+    if(!el||!el.dataset.day)return;
+    sel=el.dataset.day;
+    if(tab!==0){tab=0;document.querySelectorAll(".tabs div").forEach(function(t){t.classList.toggle("on",t.dataset.t==="0")})}
+    renderAll();
+  });
+  document.getElementById("pv").addEventListener("click",function(){cur.setMonth(cur.getMonth()-1);renderCal()});
+  document.getElementById("nx").addEventListener("click",function(){cur.setMonth(cur.getMonth()+1);renderCal()});
+  document.getElementById("dw").addEventListener("click",function(e){
+    var d=e.target.closest("div[data-d]");
+    if(!d)return;
+    drawer=parseInt(d.dataset.d,10);
+    document.querySelectorAll("#dw div").forEach(function(x){x.classList.remove("on")});
+    d.classList.add("on");
+    renderPane();
+  });
+  var secDoor=document.getElementById("secDoor");
+  if(secDoor){secDoor.addEventListener("click",onSecDoor)}
+  document.querySelectorAll(".secretcell").forEach(function(c){
+    c.addEventListener("click",function(){
+      var who=c.dataset.who;
+      var arr=DATA.secrets||[];
+      var it=arr.find(function(x){return x.who===who});
+      if(who==="user"){
+        if(it&&it.content){
+          openSecretBox("user",true);
+        }else{
+          openModal("secretUser","chaozhao");
+        }
+      }else{
+        if(it&&it.content&&it.unlocked){
+          openSecretBox("ta",true);
+        }else if(it&&it.content){
+          openSecretBox("ta",false);
+        }else{
+          var box=document.getElementById("secModal");
+          document.getElementById("secTitle").textContent="纪烬的小秘密";
+          document.getElementById("secSub").textContent="他还没写进来。";
+          var list=document.getElementById("secList");
+          list.innerHTML='<div class="empty">这里还没有秘密。</div>';
+          box.classList.add("on");
+        }
+      }
+    });
+  });
+  document.querySelectorAll(".tabs div").forEach(function(t){
+    t.addEventListener("click",function(){
+      tab=parseInt(t.dataset.t,10);
+      closeModal();
+      document.querySelectorAll(".tabs div").forEach(function(x){x.classList.remove("on")});
+      t.classList.add("on");
+      renderAll();
+    });
+  });
+
+  document.getElementById("secClose").addEventListener("click",closeSecretBox);
+  document.getElementById("mcancel").addEventListener("click",closeModal);
+  document.getElementById("dclose").addEventListener("click",closeDetail);
+  document.getElementById("msave").addEventListener("click",async function(){
+    var whoEl=document.getElementById("mwhoLabel");
+    var who=(whoEl&&whoEl.dataset.who==="jinji")?"ta":"user";
+    var title=document.getElementById("mtitle2").value.trim();
+    var content=document.getElementById("mcontent").value.trim();
+    if(!content&&!title)return;
+    if(MODE==="diary"){
+      DATA.diaries=DATA.diaries||[];
+      DATA.diaries.push({id:uid("d"),day:sel,title:title,content:content,author:who,createdAt:nowhm(),secret:false,images:[]});
+    }else if(MODE==="secretUser"){
+      DATA.secrets=DATA.secrets||[];
+      DATA.secrets.push({id:uid("s"),who:"user",content:content,day:ymd(new Date()),createdAt:nowhm()});
+    }else if(MODE==="secretTa"){
+      DATA.secrets=DATA.secrets||[];
+      DATA.secrets.push({id:uid("s"),who:"ta",content:content,day:ymd(new Date()),createdAt:nowhm(),unlocked:true});
+    }else if(MODE==="todo"){
+      var t={id:uid("t"),title:title||content,note:"",done:false,dueDay:sel,createdAt:ymd(new Date()),doneAt:""};
+      DATA.todos=DATA.todos||[];DATA.todos.push(t);
+    }else if(MODE==="letter"){
+      DATA.letters=DATA.letters||[];
+      DATA.letters.push({id:uid("l"),author:who,content:content,title:title,day:ymd(new Date()),createdAt:nowhm(),replyTo:""});
+    }
+    EDIT_ID="";EDIT_TYPE="";
+    await saveAll();closeModal();renderAll();if(SEC_WHO)openSecretBox(SEC_WHO);
+  });
+
+  var sw=undefined;
+  document.getElementById("pane").addEventListener("pointerdown",function(e){
+    var s=e.target.closest(".swipe");
+    if(!s)return;
+    sw={x:e.clientX,y:e.clientY,el:s,dx:0,dy:0,id:e.pointerId};
+  });
+  document.getElementById("pane").addEventListener("pointermove",function(e){
+    if(sw===undefined||e.pointerId!==sw.id)return;
+    sw.dx=e.clientX-sw.x; sw.dy=e.clientY-sw.y;
+    if(Math.abs(sw.dx)>10&&Math.abs(sw.dx)>Math.abs(sw.dy)){
+      e.preventDefault();
+      __moved=true;
+      closeAllSwipes();
+      sw.el.classList.add("dragging");
+      var dx=Math.max(-290,Math.min(0,sw.dx));
+      sw.el.querySelector(".inner").style.transition="none";
+      sw.el.querySelector(".inner").style.transform="translateX("+dx+"px)";
+    }
+  });
+  document.getElementById("pane").addEventListener("pointerup",function(e){
+    if(sw===undefined)return;
+    var dx=sw.dx,dy=sw.dy,el=sw.el;
+    var moved=Math.abs(dx)>8;
+    var inner=el.querySelector(".inner");
+    inner.style.transition="";inner.style.transform="";
+    el.classList.remove("dragging");
+    if(moved){
+      var shouldOpen=dx<-40&&Math.abs(dx)>Math.abs(dy);
+      if(shouldOpen){closeAllSwipes();el.classList.add("open")}
+      else el.classList.remove("open");
+      __moved=true;
+      setTimeout(function(){__moved=false},80);
+    }
+    sw=undefined;
+  });
+  document.getElementById("pane").addEventListener("pointercancel",function(e){
+    if(sw===undefined)return;
+    var inner=sw.el.querySelector(".inner");
+    inner.style.transition="";inner.style.transform="";
+    sw.el.classList.remove("dragging");
+    sw=undefined;
+  });
+
+  renderUs();
+  load();</script><div class="themeFloat"><button id="themeBtn">主题！</button></div><div class="themeSheet" id="themeSheet"><button class="themeClose" id="themeClose">×</button><h3>换一套我们的颜色</h3><div class="sub">点一个就换上</div><div class="themeGrid" id="themeGrid"></div></div></body></html>

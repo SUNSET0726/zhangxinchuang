@@ -1,0 +1,36 @@
+/* 朝歌 · 把它的界面掰成手机能看的样子 v2 */
+html,body{background:#EDF5FC!important;color:#1B3556!important;
+  font-family:"Noto Serif SC","Songti SC",serif!important;
+  font-size:13px!important;line-height:1.6!important;overflow-x:hidden!important}
+#root{width:100%!important;max-width:100vw!important;overflow-x:hidden!important}
+
+/* 深色底一律洗成浅蓝，字转深蓝 */
+[class*="bg-slate-9"],[class*="bg-slate-8"],[class*="bg-gray-9"],
+[class*="bg-zinc-9"],[class*="bg-neutral-9"],[class*="bg-black"],
+[style*="background:#0"],[style*="background: #0"],[style*="background:rgb(1"]{
+  background-color:#F4F9FF!important;color:#1B3556!important}
+[class*="bg-slate-7"],[class*="bg-slate-6"],[class*="bg-slate-5"]{
+  background-color:#E4EFFB!important;color:#1B3556!important}
+*{color:#1B3556!important;border-color:rgba(44,86,140,.16)!important;word-break:break-word!important}
+*::placeholder{color:#8199B6!important}
+[class*="text-slate-4"],[class*="text-slate-5"],[class*="text-gray-4"]{color:#5A7799!important}
+[class*="text-green"],[class*="text-emerald"]{color:#2E7D5B!important}
+[class*="bg-green"],[class*="bg-emerald"]{background-color:#E3F5EA!important}
+
+/* 顶部标签不许竖着排，排不下就横向滑 */
+[role="tablist"]{display:flex!important;flex-wrap:nowrap!important;gap:6px!important;
+  overflow-x:auto!important;white-space:nowrap!important}
+button,[role="tab"],a,nav span,header span,label{white-space:nowrap!important}
+.flex,.flex-row,header,nav,ul,ol{flex-wrap:wrap!important}
+header{overflow-x:auto!important}
+
+/* 输入与按钮，手指好点 */
+input,textarea,select{font-size:13px!important;background:#fff!important;color:#1B3556!important;
+  border:1px solid rgba(44,86,140,.2)!important;border-radius:10px!important}
+button{padding:7px 11px!important;border-radius:10px!important;font-size:12px!important;
+  background:#ffffffb8!important}
+pre,code,.whitespace-pre-wrap{white-space:pre-wrap!important;word-break:break-word!important;
+  font-size:12px!important;background:transparent!important}
+::-webkit-scrollbar{width:0;height:0}
+/* 卡片感：给带圆角边框的块一层浅底 */
+[class*="rounded"]{background-color:rgba(255,255,255,.55)}

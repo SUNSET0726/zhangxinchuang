@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>相片框 · 朝歌</title>
+<style>
+:root{--bg:#FBFAF7;--ink:#1B2C44;--line:#D8DFE9;--blue:#2C4E7C;--hint:#93A2B6;--soft:#F1F3F7}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Noto Sans SC",sans-serif}
+body{padding:calc(env(safe-area-inset-top) + 14px) 16px 90px;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.top{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.k{font-size:12px;letter-spacing:.14em;color:var(--hint);border:1px solid var(--line);border-radius:20px;padding:6px 12px}
+.k:active{background:var(--soft)}
+h1{font-size:19px;font-weight:600;letter-spacing:.06em}
+h1 small{display:block;font-size:10px;font-weight:400;letter-spacing:.2em;color:var(--hint);margin-top:3px;text-transform:lowercase}
+.sp{flex:1}
+.act{font-size:12px;color:var(--blue);border:1px solid #C9D5E4;border-radius:20px;padding:6px 12px;background:#fff}
+.act.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.path{margin:14px 0 6px;font-size:11px;color:var(--hint);letter-spacing:.04em;word-break:break-all;line-height:1.6}
+.crumb{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.crumb i{font-style:normal;font-size:11px;color:var(--blue);border-bottom:1px solid #C9D5E4;padding-bottom:1px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cell{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--soft);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+.cell img{width:100%;height:100%;object-fit:cover;display:block}
+.cell .dir{font-size:11px;color:var(--blue);letter-spacing:.06em;text-align:center;padding:6px;word-break:break-all;line-height:1.5}
+.cell .dirb{position:absolute;top:6px;left:6px;width:22px;height:16px;border:1px solid #C9D5E4;border-radius:3px;background:#fff}
+.cell .dirb:after{content:"";position:absolute;top:-4px;left:2px;width:9px;height:4px;border:1px solid #C9D5E4;border-bottom:0;border-radius:3px 3px 0 0;background:#fff}
+.cell .vt{position:absolute;right:5px;bottom:4px;font-size:9px;color:#fff;background:rgba(27,44,68,.62);padding:1px 5px;border-radius:8px;letter-spacing:.08em}
+.cell .ck{position:absolute;right:5px;top:5px;width:16px;height:16px;border-radius:50%;border:1px solid #fff;background:rgba(27,44,68,.25);display:none}
+.cell.sel .ck{display:block;background:var(--blue)}
+.cell.sel{outline:2px solid var(--blue);outline-offset:-2px}
+.empty{grid-column:1/-1;text-align:center;color:var(--hint);font-size:12px;padding:40px 0;letter-spacing:.1em}
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(251,250,247,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px 14px calc(12px + env(safe-area-inset-bottom));display:none;gap:8px}
+.bar.on{display:flex}
+.bar b{flex:1;text-align:center;font-size:12.5px;font-weight:500;color:var(--blue);border:1px solid #C9D5E4;background:#fff;border-radius:22px;padding:9px 0}
+.bar b.dg{color:#9B3B3B;border-color:#E7CFCF}
+.bar b:active{background:var(--soft)}
+.sheet{position:fixed;inset:0;background:rgba(20,32,48,.34);display:none;align-items:flex-end;z-index:40}
+.sheet.on{display:flex}
+.sheet .box{width:100%;max-height:72vh;background:var(--bg);border-radius:16px 16px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.sheet h3{font-size:13px;font-weight:600;letter-spacing:.06em;margin-bottom:4px}
+.sheet .p2{font-size:10.5px;color:var(--hint);word-break:break-all;margin-bottom:10px}
+.dlist{overflow:auto;flex:1;border-top:1px solid var(--line)}
+.dlist div{font-size:12.5px;padding:11px 4px;border-bottom:1px solid #EDF0F4;color:var(--ink);display:flex;align-items:center;gap:8px}
+.dlist div i{width:14px;height:11px;border:1px solid #C9D5E4;border-radius:2px;display:inline-block;flex:none}
+.sheet .row{display:flex;gap:8px;margin-top:10px}
+.sheet .row b{flex:1;text-align:center;font-size:12.5px;font-weight:500;padding:10px 0;border-radius:22px;border:1px solid #C9D5E4;color:var(--blue);background:#fff}
+.sheet .row b.ok{background:var(--blue);color:#fff;border-color:var(--blue)}
+.sheet input{width:100%;font-size:13px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);outline:none;margin-top:8px}
+.viewer{position:fixed;inset:0;background:#0E1723;display:none;flex-direction:column;z-index:50}
+.viewer.on{display:flex}
+.viewer img{flex:1;width:100%;object-fit:contain;min-height:0}
+.viewer .vh{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;color:#E8EEF6;font-size:11.5px}
+.viewer .vh b{font-weight:500;letter-spacing:.06em}
+.viewer .vh .x{margin-left:auto;border:1px solid rgba(232,238,246,.4);border-radius:16px;padding:4px 12px}
+.viewer .vf{color:#9FB0C4;font-size:10.5px;padding:10px 14px calc(16px + env(safe-area-inset-bottom));text-align:center;letter-spacing:.05em}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:rgba(27,44,68,.92);color:#fff;font-size:12px;padding:8px 15px;border-radius:20px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
+.toast.on{opacity:1}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="k" href="../home/home.html">返回</a>
+  <div><h1>相片框<small>frames of us.</small></h1></div>
+  <div class="sp"></div>
+  <div class="act" id="selbtn">选择</div>
+</div>
+
+<div class="crumb" id="crumb"></div>
+
+<div class="grid" id="grid"><div class="empty">读一下…</div></div>
+
+<div class="bar" id="bar">
+  <b data-do="copy">复制</b>
+  <b data-do="move">移动</b>
+  <b data-do="rename">改名</b>
+  <b data-do="delete" class="dg">删除</b>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="box">
+    <h3 id="sht">选一个地方</h3>
+    <div class="p2" id="shp"></div>
+    <div class="dlist" id="dl"></div>
+    <div class="row"><b id="shc">取消</b><b class="ok" id="sho">放这里</b></div>
+  </div>
+</div>
+
+<div class="sheet" id="ask">
+  <div class="box">
+    <h3 id="atitle">改名</h3>
+    <div class="p2" id="amsg"></div>
+    <input id="ain" placeholder="新名字">
+    <div class="row"><b id="ac">算了</b><b class="ok" id="ao">就这样</b></div>
+  </div>
+</div>
+
+<div class="viewer" id="viewer">
+  <div class="vh"><b id="vname"></b><div class="x" id="vx">关闭</div></div>
+  <img id="vimg" alt="">
+  <div class="vf" id="vinfo"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../../shared/zhaoge_ipc.js"></script>
+<script>
+(function () {
+  var API = 'http://127.0.0.1:8002/photos/';
+  var grid = document.getElementById('grid');
+  var crumb = document.getElementById('crumb');
+  var bar = document.getElementById('bar');
+  var selbtn = document.getElementById('selbtn');
+  var cur = '/sdcard';
+  var sel = false;
+  var pick = {};
+  var mode = '';
+
+  function T(s) {
+    var t = document.getElementById('toast');
+    t.textContent = s; t.classList.add('on');
+    clearTimeout(T._t); T._t = setTimeout(function () { t.classList.remove('on'); }, 1600);
+  }
+
+  function fmtSize(n) {
+    if (n > 1048576) return (n / 1048576).toFixed(1) + 'M';
+    if (n > 1024) return Math.round(n / 1024) + 'K';
+    return n + 'B';
+  }
+
+  function fmtTime(t) {
+    var d = new Date(t * 1000);
+    return (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  }
+
+  function paintCrumb(p) {
+    crumb.innerHTML = '';
+    var parts = (p || '').split('/').filter(Boolean);
+    var acc = '';
+    parts.forEach(function (s, i) {
+      acc += '/' + s;
+      var it = document.createElement('i');
+      it.textContent = s;
+      var target = acc;
+      it.onclick = function () { load(target); };
+      crumb.appendChild(it);
+    });
+  }
+
+  function clearSel() {
+    sel = false; pick = {};
+    selbtn.classList.remove('on'); selbtn.textContent = '选择';
+    bar.classList.remove('on');
+  }
+
+  function load(dir) {
+    grid.innerHTML = '<div class="empty">读一下…</div>';
+    fetch(API + 'list?dir=' + encodeURIComponent(dir || '')).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d.ok) { grid.innerHTML = '<div class="empty">这里打不开</div>'; return; }
+      cur = d.dir;
+      paintCrumb(cur);
+      grid.innerHTML = '';
+      if (!d.items.length) { grid.innerHTML = '<div class="empty">这一格是空的</div>'; return; }
+      d.items.forEach(function (it) {
+        var c = document.createElement('div');
+        c.className = 'cell';
+        c.dataset.p = it.p;
+        c.dataset.d = it.d ? '1' : '0';
+        c.dataset.n = it.n;
+        if (it.d) {
+          var db = document.createElement('div'); db.className = 'dirb'; c.appendChild(db);
+          var t = document.createElement('div'); t.className = 'dir'; t.textContent = it.n; c.appendChild(t);
+        } else {
+          var low = it.n.toLowerCase();
+          if (/\.(mp4|mov|3gp)$/.test(low)) {
+            var v = document.createElement('div'); v.className = 'dir'; v.textContent = it.n.slice(0, 18); c.appendChild(v);
+            var g = document.createElement('i'); g.className = 'vt'; g.textContent = 'VIDEO'; c.appendChild(g);
+          } else {
+            var im = document.createElement('img');
+            im.loading = 'lazy';
+            im.src = API + 'thumb?p=' + encodeURIComponent(it.p);
+            c.appendChild(im);
+          }
+        }
+        var ck = document.createElement('i'); ck.className = 'ck'; c.appendChild(ck);
+        c.onclick = function () {
+          if (sel) {
+            pick[it.p] = !pick[it.p];
+            if (!pick[it.p]) delete pick[it.p];
+            c.classList.toggle('sel', !!pick[it.p]);
+            return;
+          }
+          if (it.d) { load(it.p); return; }
+          openView(it);
+        };
+        c.oncontextmenu = function (e) { e.preventDefault(); enterSel(); pick[it.p] = true; c.classList.add('sel'); };
+        grid.appendChild(c);
+      });
+    }).catch(function () {
+      grid.innerHTML = '<div class="empty">8002 没应。桥还没醒。</div>';
+    });
+  }
+
+  function enterSel() {
+    sel = true; selbtn.classList.add('on'); selbtn.textContent = '取消';
+    bar.classList.add('on');
+  }
+
+  selbtn.onclick = function () {
+    if (sel) { clearSel(); Array.prototype.forEach.call(grid.querySelectorAll('.cell'), function (c) { c.classList.remove('sel'); }); return; }
+    enterSel();
+  };
+
+  var viewer = document.getElementById('viewer');
+  function openView(it) {
+    document.getElementById('vname').textContent = it.n;
+    document.getElementById('vimg').src = API + 'file?p=' + encodeURIComponent(it.p);
+    document.getElementById('vinfo').textContent = fmtSize(it.s) + ' · ' + fmtTime(it.t) + ' · ' + it.p;
+    viewer.classList.add('on');
+  }
+  document.getElementById('vx').onclick = function () { viewer.classList.remove('on'); document.getElementById('vimg').src = ''; };
+  viewer.onclick = function (e) { if (e.target === viewer) document.getElementById('vx').click(); };
+
+  // 目录选择
+  var sheet = document.getElementById('sheet'), dl = document.getElementById('dl');
+  var pickDir = '/sdcard';
+  var pending = null;
+
+  function dlLoad(d) {
+    pickDir = d;
+    document.getElementById('shp').textContent = d;
+    dl.innerHTML = '<div data-d="up">↑ 上一级</div>';
+    fetch(API + 'list?dir=' + encodeURIComponent(d)).then(function (r) { return r.json(); }).then(function (j) {
+      (j.items || []).filter(function (i) { return i.d; }).forEach(function (i) {
+        var row = document.createElement('div');
+        row.innerHTML = '<i></i>';
+        row.appendChild(document.createTextNode(i.n));
+        row.onclick = function () { dlLoad(i.p); };
+        dl.appendChild(row);
+      });
+    });
+    dl.querySelector('[data-d=up]').onclick = function () {
+      if (pickDir === '/sdcard') return;
+      dlLoad(pickDir.replace(/\/[^\/]+$/, '') || '/sdcard');
+    };
+  }
+
+  document.getElementById('shc').onclick = function () { sheet.classList.remove('on'); };
+  document.getElementById('sho').onclick = function () {
+    var srcs = Object.keys(pick);
+    if (!srcs.length || !pending) { sheet.classList.remove('on'); return; }
+    var i = 0;
+    (function step() {
+      if (i >= srcs.length) {
+        sheet.classList.remove('on');
+        clearSel();
+        Array.prototype.forEach.call(grid.querySelectorAll('.cell'), function (c) { c.classList.remove('sel'); });
+        load(cur);
+        T('好了');
+        return;
+      }
+      fetch(API + pending + '?src=' + encodeURIComponent(srcs[i]) + '&dst=' + encodeURIComponent(pickDir))
+        .then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) T(j.err || '有一个没成'); i++; step(); })
+        .catch(function () { T('桥没应'); });
+    })();
+  };
+
+  bar.addEventListener('click', function (e) {
+    var b = e.target.closest('b');
+    if (!b) return;
+    var act = b.dataset.do;
+    var srcs = Object.keys(pick);
+    if (!srcs.length) { T('先选一张'); return; }
+    if (act === 'copy' || act === 'move') {
+      pending = act;
+      document.getElementById('sht').textContent = (act === 'copy' ? '复制到哪' : '移到哪');
+      sheet.classList.add('on');
+      dlLoad(cur);
+      return;
+    }
+    if (act === 'rename') {
+      if (srcs.length !== 1) { T('一次改一个'); return; }
+      askWho = 'rename';
+      document.getElementById('atitle').textContent = '改个名字';
+      document.getElementById('amsg').textContent = srcs[0];
+      document.getElementById('ain').value = srcs[0].replace(/^.*\//, '');
+      document.getElementById('ask').classList.add('on');
+      return;
+    }
+    if (act === 'delete') {
+      askWho = 'delete';
+      document.getElementById('atitle').textContent = '删掉？';
+      document.getElementById('amsg').textContent = srcs.length + ' 个，删了找不回来';
+      document.getElementById('ain').style.display = 'none';
+      document.getElementById('ask').classList.add('on');
+    }
+  });
+
+  var askWho = '';
+  document.getElementById('ac').onclick = function () {
+    document.getElementById('ask').classList.remove('on');
+    document.getElementById('ain').style.display = 'block';
+  };
+  document.getElementById('ao').onclick = function () {
+    var srcs = Object.keys(pick);
+    var inp = document.getElementById('ain');
+    document.getElementById('ask').classList.remove('on');
+    document.getElementById('ain').style.display = 'block';
+    if (askWho === 'rename') {
+      fetch(API + 'rename?src=' + encodeURIComponent(srcs[0]) + '&name=' + encodeURIComponent(inp.value.trim()))
+        .then(function (r) { return r.json(); }).then(function (j) {
+          T(j.ok ? '改好了' : (j.err || '没改成'));
+          clearSel(); load(cur);
+        });
+      return;
+    }
+    if (askWho === 'delete') {
+      var i = 0;
+      (function step() {
+        if (i >= srcs.length) { clearSel(); load(cur); T('删掉了'); return; }
+        fetch(API + 'delete?src=' + encodeURIComponent(srcs[i])).then(function (r) { return r.json(); }).then(function () { i++; step(); });
+      })();
+    }
+  };
+
+  document.getElementById('ain').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') document.getElementById('ao').click();
+  });
+
+  load('/sdcard');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 580" width="240" height="278">
+  <defs>
+    <style>
+      .float { animation: float 3.6s ease-in-out infinite alternate; transform-origin: 190px 470px; }
+      @keyframes float { from { transform: translateY(0px); } to { transform: translateY(-8px); } }
+      .tail { animation: tail 2.7s ease-in-out infinite alternate; transform-origin: 305px 452px; }
+      @keyframes tail { from { transform: rotate(-6deg); } to { transform: rotate(7deg); } }
+      .bird { animation: bird 2.4s ease-in-out infinite alternate; transform-origin: 168px 150px; }
+      @keyframes bird { from { transform: translateY(1px) rotate(-2deg); } to { transform: translateY(-5px) rotate(2deg); } }
+      .leafA { animation: leafA 3.2s ease-in-out infinite alternate; transform-origin: 168px 68px; }
+      @keyframes leafA { from { transform: rotate(-8deg); } to { transform: rotate(9deg); } }
+      .leafB { animation: leafB 3.9s ease-in-out infinite alternate; transform-origin: 232px 142px; }
+      @keyframes leafB { from { transform: rotate(8deg); } to { transform: rotate(-9deg); } }
+      .eye { animation: blink 6.5s infinite; }
+      @keyframes blink { 0%,92%,100% { transform: scaleY(1); } 95%,97% { transform: scaleY(0.07); } }
+    </style>
+  </defs>
+
+  <g class="float">
+    <path class="tail" d="M300 455 C 382 468, 448 405, 432 330" fill="none" stroke="#101012" stroke-width="46" stroke-linecap="round"/>
+
+    <path d="M212 268 C 128 292, 96 400, 118 494 C 132 552, 226 566, 268 534 C 322 492, 306 330, 262 272 Z" fill="#101012"/>
+    <path d="M138 520 c -14 16, -4 34, 18 34 c 22 0, 30 -16, 20 -32 z" fill="#101012"/>
+    <path d="M246 526 c -12 16, -2 32, 20 32 c 22 0, 30 -16, 18 -32 z" fill="#101012"/>
+
+    <ellipse cx="168" cy="212" rx="114" ry="84" fill="#101012"/>
+    <path d="M262 160 L 286 112 L 296 176 Z" fill="#101012"/>
+    <path d="M78 158 L 96 108 L 122 152 Z" fill="#101012"/>
+
+    <path d="M58 276 C 84 246, 252 246, 286 280 C 268 312, 86 312, 58 276 Z" fill="#efdca9"/>
+    <path d="M150 288 C 128 372, 136 466, 156 520 L 216 514 C 200 462, 196 372, 208 286 Z" fill="#efdca9"/>
+    <rect x="151" y="462" width="58" height="11" rx="2" fill="#ffffff" opacity="0.9"/>
+    <rect x="149" y="492" width="60" height="10" rx="2" fill="#ffffff" opacity="0.9"/>
+
+    <g class="eye" style="transform-origin:141px 216px">
+      <circle cx="141" cy="216" r="25" fill="#ffffff"/>
+      <circle cx="141" cy="216" r="9" fill="#101012"/>
+    </g>
+    <g class="eye" style="transform-origin:209px 216px">
+      <circle cx="209" cy="216" r="25" fill="#ffffff"/>
+      <circle cx="209" cy="216" r="9" fill="#101012"/>
+    </g>
+  </g>
+
+  <g class="bird">
+    <circle cx="168" cy="106" r="58" fill="#ffffff"/>
+    <path d="M146 102 q 11 -14 22 0" stroke="#101012" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+    <path d="M180 102 q 11 -14 22 0" stroke="#101012" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+    <path d="M163 118 l 9 8 l 9 -8 z" fill="#3a2a18"/>
+    <path d="M142 154 l 8 10 M196 154 l -8 10" stroke="#e0a33c" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <g class="leafA">
+    <path d="M170 62 C 152 34, 176 10, 190 30 C 200 8, 226 20, 206 56 Z" fill="#4f7d4c"/>
+    <path d="M178 54 C 168 36, 182 22, 190 34 Z" fill="#7fae6f" opacity="0.8"/>
+  </g>
+  <g class="leafB">
+    <path d="M228 132 C 252 122, 268 138, 258 152 C 272 158, 260 176, 240 168 Z" fill="#4f7d4c"/>
+    <path d="M238 140 C 252 134, 260 142, 254 150 Z" fill="#7fae6f" opacity="0.8"/>
+    <path d="M246 168 C 262 176, 254 196, 236 186 Z" fill="#4f7d4c"/>
+  </g>
+</svg>

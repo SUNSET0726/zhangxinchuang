@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>日历 · 朝歌</title>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{background:#EDF5FC;color:#1B3556;font-family:"Noto Serif SC","Songti SC",serif;
+  padding:0 0 calc(30px + env(safe-area-inset-bottom))}
+a{color:inherit;text-decoration:none}
+header{display:flex;align-items:baseline;gap:11px;padding:calc(14px + env(safe-area-inset-top)) 20px 8px}
+header .bk{font-size:15px;color:#7C93AF}
+header b{font-size:16.5px;font-weight:500;letter-spacing:.14em}
+header em{font:400 10px/1 "Cormorant Garamond",Georgia,serif;font-style:normal;
+  letter-spacing:.22em;color:#9FB2C8}
+.mon{display:flex;align-items:center;justify-content:space-between;padding:4px 20px 10px}
+.mon .m{font-size:15px;letter-spacing:.1em}
+.mon .n{display:flex;gap:8px}
+.mon button{width:32px;height:32px;border-radius:50%;border:1px solid rgba(27,53,86,.14);
+  background:rgba(255,255,255,.8);color:#2B4C77;font-size:14px;line-height:1}
+.week{display:grid;grid-template-columns:repeat(7,1fr);padding:0 14px 4px;
+  font:400 10px/1 "Cormorant Garamond",Georgia,serif;letter-spacing:.12em;color:#9FB2C8;
+  text-align:center}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:0 12px}
+.day{position:relative;aspect-ratio:1/1;border-radius:14px;border:0;background:transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  color:#2B4C77;font-family:inherit;font-size:12.5px;transition:background .16s,transform .14s}
+.day:active{transform:scale(.94)}
+.day.out{color:#C3D3E4}
+.day.today{box-shadow:inset 0 0 0 1px rgba(27,53,86,.22)}
+.day.has{background:rgba(255,255,255,.86)}
+.day .mi{width:15px;height:15px;color:#2C5690}
+.day .mi svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.day .pd{position:absolute;bottom:4px;width:9px;height:2px;border-radius:2px;background:#D98A8A;opacity:.85}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:30;max-height:78vh;overflow-y:auto;
+  background:rgba(250,253,255,.97);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);
+  border-radius:22px 22px 0 0;border-top:1px solid rgba(255,255,255,.9);
+  box-shadow:0 -16px 44px rgba(30,64,120,.16);
+  transform:translateY(104%);transition:transform .32s cubic-bezier(.22,.9,.24,1);
+  padding:16px 20px calc(24px + env(safe-area-inset-bottom))}
+.sheet.on{transform:none}
+.shd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.shd b{font-size:14.5px;font-weight:500;letter-spacing:.08em}
+.shd button{border:0;background:transparent;color:#7C93AF;font-size:12px;font-family:inherit}
+.moods{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.mb{border:1px solid rgba(27,53,86,.12);background:rgba(255,255,255,.8);border-radius:15px;
+  padding:11px 4px 9px;display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:#5D7DA8;font-family:inherit;font-size:10.5px;letter-spacing:.06em}
+.mb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+.mb.on{background:#1B3556;border-color:#1B3556;color:#FCFDFF}
+.tog{display:flex;align-items:center;justify-content:space-between;margin-top:16px;
+  padding:12px 2px;border-top:1px solid rgba(27,53,86,.09)}
+.tog span{font-size:13px}
+.sw{width:46px;height:26px;border-radius:999px;background:rgba(27,53,86,.14);position:relative;
+  transition:background .2s}
+.sw i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;
+  box-shadow:0 2px 6px rgba(20,40,80,.2);transition:left .2s}
+.sw.on{background:#D98A8A}
+.sw.on i{left:23px}
+textarea{width:100%;min-height:74px;margin-top:12px;border:1px solid rgba(27,53,86,.12);
+  border-radius:14px;padding:11px 13px;background:rgba(255,255,255,.92);color:#16233A;
+  font-family:inherit;font-size:13px;line-height:1.8;outline:none;resize:vertical}
+.save{width:100%;margin-top:14px;padding:13px;border:0;border-radius:999px;
+  background:#1B3556;color:#FCFDFF;font-family:inherit;font-size:13.5px;letter-spacing:.14em}
+.mask{position:fixed;inset:0;z-index:29;background:rgba(20,40,75,.2);opacity:0;pointer-events:none;
+  transition:opacity .3s}
+.mask.on{opacity:1;pointer-events:auto}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+
+<header>
+  <a class="bk" href="../home/home.html">←</a>
+  <b>日历</b>
+  <em>how the day felt.</em>
+</header>
+
+<div class="mon">
+  <div class="m" id="mon">2026 · 10</div>
+  <div class="n">
+    <button id="prev">‹</button>
+    <button id="next">›</button>
+  </div>
+</div>
+
+<div class="week"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+<div class="grid" id="grid"></div>
+
+<div class="mask" id="mask"></div>
+<section class="sheet" id="sheet">
+  <div class="shd">
+    <b id="dTitle">10 月 21 日</b>
+    <button id="cls">收起</button>
+  </div>
+  <div class="moods" id="moods"></div>
+  <div class="tog"><span>经期</span><div class="sw" id="sw"><i></i></div></div>
+  <textarea id="note" placeholder="随口一说。今天想留一句什么"></textarea>
+  <button class="save" id="save">落笔</button>
+</section>
+
+<script>
+(function () {
+  var KEY = 'zg.cal';
+  var MOODS = [
+    ['happy', '开心'], ['plain', '平淡'], ['think', '思考'], ['sad', '伤心'],
+    ['angry', '生气'], ['tired', '累'], ['slack', '摸鱼']
+  ];
+  var IC = {
+    happy: '<circle cx="12" cy="12" r="8"/><path d="M9 10h.01M15 10h.01"/><path d="M8.6 14.2a4.4 4.4 0 0 0 6.8 0"/>',
+    plain: '<circle cx="12" cy="12" r="8"/><path d="M9 10h.01M15 10h.01"/><path d="M9 15h6"/>',
+    think: '<circle cx="12" cy="12" r="8"/><path d="M12 8.2v4.4l2.6 1.6"/><path d="M9.4 9.2h.01M14.6 15.4h.01"/>',
+    sad: '<circle cx="12" cy="12" r="8"/><path d="M9 10h.01M15 10h.01"/><path d="M8.6 16a4.4 4.4 0 0 1 6.8 0"/>',
+    angry: '<circle cx="12" cy="12" r="8"/><path d="M7.8 8.6l3 1.6M16.2 8.6l-3 1.6"/><path d="M9 16h6"/>',
+    tired: '<circle cx="12" cy="12" r="8"/><path d="M8.4 10.4h2M13.6 10.4h2"/><path d="M9 15.4h6"/><path d="M18.6 4.6h2.6l-2.6 2.6h2.6"/>',
+    slack: '<path d="M3.6 12.4c2.4-3.2 5.2-4.8 8.4-4.8s6 1.6 8.4 4.8c-2.4 2.4-5.2 3.6-8.4 3.6s-6-1.2-8.4-3.6z"/><circle cx="9" cy="12.1" r=".9"/><path d="M14.6 11.4l2 1.4-2 1.4"/>'
+  };
+
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
+  function save(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+  function key(d) {
+    var m = d.getMonth() + 1, dd = d.getDate();
+    return d.getFullYear() + '-' + (m < 10 ? '0' + m : m) + '-' + (dd < 10 ? '0' + dd : dd);
+  }
+  function icon(m) {
+    return IC[m] ? '<svg viewBox="0 0 24 24">' + IC[m] + '</svg>' : '';
+  }
+
+  var data = load();
+  var FULL = null;
+  try {
+    fetch('../../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (f) {
+      FULL = f;
+      var dm = f.dayMeta || {};
+      Object.keys(dm).forEach(function (k) {
+        var x = dm[k] || {}, cur = data[k] || {};
+        if (!cur.m && x.mood) cur.m = x.mood;
+        if (x.period) cur.p = true;
+        if (!cur.n && x.note) cur.n = x.note;
+        if (cur.m || cur.p || cur.n) data[k] = cur;
+      });
+      render();
+    });
+  } catch (e) { }
+  var now = new Date();
+  var view = new Date(now.getFullYear(), now.getMonth(), 1);
+  var pick = null;
+
+  function render() {
+    document.getElementById('mon').textContent = view.getFullYear() + ' · ' + (view.getMonth() + 1);
+    var first = new Date(view.getFullYear(), view.getMonth(), 1);
+    var start = new Date(first);
+    start.setDate(1 - first.getDay());
+    var tk = key(now), html = '';
+    for (var i = 0; i < 42; i++) {
+      var d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+      var k = key(d), rec = data[k] || {};
+      var out = d.getMonth() !== view.getMonth();
+      var cls = 'day' + (out ? ' out' : '') + (k === tk ? ' today' : '')
+        + ((rec.m || rec.p || rec.n) ? ' has' : '');
+      html += '<button class="' + cls + '" data-k="' + k + '">'
+        + '<span>' + d.getDate() + '</span>'
+        + (rec.m ? '<span class="mi">' + icon(rec.m) + '</span>' : '')
+        + (rec.p ? '<span class="pd"></span>' : '')
+        + '</button>';
+    }
+    document.getElementById('grid').innerHTML = html;
+  }
+
+  function openDay(k, label) {
+    pick = data[k] || {};
+    document.getElementById('dTitle').textContent = label;
+    document.getElementById('note').value = pick.n || '';
+    document.getElementById('sw').classList.toggle('on', !!pick.p);
+    document.getElementById('moods').innerHTML = MOODS.map(function (m) {
+      return '<button class="mb' + (pick.m === m[0] ? ' on' : '') + '" data-m="' + m[0] + '">'
+        + icon(m[0]) + '<span>' + m[1] + '</span></button>';
+    }).join('');
+    document.getElementById('sheet').classList.add('on');
+    document.getElementById('mask').classList.add('on');
+    document.getElementById('sheet').setAttribute('data-k', k);
+  }
+  function closeDay() {
+    document.getElementById('sheet').classList.remove('on');
+    document.getElementById('mask').classList.remove('on');
+  }
+
+  document.getElementById('grid').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.day') : null;
+    if (!b) return;
+    var k = b.getAttribute('data-k');
+    var p = k.split('-');
+    openDay(k, (+p[1]) + ' 月 ' + (+p[2]) + ' 日');
+  });
+  document.getElementById('moods').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.mb') : null;
+    if (!b) return;
+    var m = b.getAttribute('data-m');
+    pick.m = (pick.m === m) ? '' : m;
+    Array.prototype.forEach.call(document.querySelectorAll('.mb'), function (x) {
+      x.classList.toggle('on', x.getAttribute('data-m') === pick.m);
+    });
+  });
+  document.getElementById('sw').addEventListener('click', function () {
+    pick.p = !pick.p;
+    this.classList.toggle('on', pick.p);
+  });
+  document.getElementById('cls').addEventListener('click', closeDay);
+  document.getElementById('mask').addEventListener('click', closeDay);
+  document.getElementById('save').addEventListener('click', function () {
+    var k = document.getElementById('sheet').getAttribute('data-k');
+    var rec = { m: pick.m || '', p: !!pick.p, n: document.getElementById('note').value.trim() };
+    if (!rec.m && !rec.p && !rec.n) delete data[k]; else data[k] = rec;
+    save(data);
+    try {
+      fetch('../../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (f) {
+        f.dayMeta = f.dayMeta || {};
+        f.dayMeta[k] = { mood: rec.m || '', period: !!rec.p, note: rec.n || '' };
+        if (window.ZGNative && ZGNative.saveData) { ZGNative.saveData(JSON.stringify(f)); }
+      });
+    } catch (e) { }
+    render();
+    closeDay();
+  });
+
+  document.getElementById('prev').addEventListener('click', function () {
+    view = new Date(view.getFullYear(), view.getMonth() - 1, 1); render();
+  });
+  document.getElementById('next').addEventListener('click', function () {
+    view = new Date(view.getFullYear(), view.getMonth() + 1, 1); render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

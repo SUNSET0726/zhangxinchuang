@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        wv.loadUrl("file:///android_asset/zhaoge.html");
+        wv.loadUrl("file:///android_asset/ui/home/home.html");
         setContentView(wv);
     }
 

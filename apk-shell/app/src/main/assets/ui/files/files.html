@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>工作区 · 朝歌</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--pad:clamp(14px,4vw,24px);--ink:#1B3556;--sub:#4A6B93;--hint:#8AA6C4;--line:rgba(27,53,86,.12);
+--ok:#2E8B6B;--off:#B0533F;--wait:#B0842F;--font-cn:"Noto Serif SC","Songti SC",serif}
+html,body{min-height:100%;background:#EDF5FC;color:var(--ink);font-family:var(--font-cn)}
+body{background-image:linear-gradient(180deg,rgba(237,245,252,.72),rgba(247,251,255,.92)),url('../../resources/img/tidal/chat-light.webp');background-size:cover;background-position:center;background-attachment:fixed}
+.hd{display:flex;align-items:flex-start;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 18px) var(--pad) 6px}
+.ttl h1{font-size:19px;font-weight:600;letter-spacing:.06em}
+.ttl em{display:block;margin-top:5px;font-style:normal;font-size:10px;letter-spacing:.16em;color:var(--hint);text-transform:lowercase}
+.back{width:34px;height:34px;border:none;border-radius:50%;background:rgba(255,255,255,.66);color:var(--ink);font-size:12px;cursor:pointer;box-shadow:0 6px 16px rgba(30,64,120,.12)}
+main{padding:8px var(--pad) calc(env(safe-area-inset-bottom) + 30px)}
+.eyebrow{font-size:10px;letter-spacing:.22em;color:var(--hint);margin:18px 2px 8px;text-transform:lowercase}
+.card{padding:15px 16px;margin-bottom:12px;border-radius:18px;background:rgba(255,255,255,.62);
+-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.85);
+box-shadow:0 12px 30px rgba(30,64,120,.07)}
+.card>b{display:block;font-size:14.5px;font-weight:600}
+.card p{margin:6px 0 10px;font-size:12px;line-height:1.8;color:var(--sub)}
+.drop{display:flex;flex-direction:column;align-items:center;gap:8px;padding:22px 12px;border-radius:14px;
+border:1px dashed rgba(27,53,86,.28);background:rgba(255,255,255,.42);cursor:pointer;text-align:center}
+.drop .big{font-size:26px;line-height:1;color:#7FA3C9}
+.drop b{font-size:13px;font-weight:600}
+.drop span{font-size:10.5px;color:var(--hint);letter-spacing:.04em}
+.file{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.file:first-child{border-top:none}
+.file .tag{flex:none;padding:4px 9px;border-radius:8px;background:rgba(31,74,143,.10);color:#1F4A8F;font-size:10px;letter-spacing:.04em}
+.file .nm{flex:1;min-width:0}
+.file .nm b{display:block;font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file .nm span{display:block;margin-top:3px;font-size:10px;color:var(--hint)}
+.file .x{border:none;background:none;color:var(--hint);font-size:10.5px;font-family:inherit;cursor:pointer}
+.empty{padding:16px 4px;font-size:11.5px;color:var(--hint);text-align:center}
+.row{display:flex;align-items:center;gap:9px;padding:9px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:none}
+.row .nm{flex:1;min-width:0}
+.row .nm b{display:block;font-size:13px;font-weight:600}
+.row .nm span{display:block;margin-top:2px;font-size:10.5px;color:var(--hint)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--wait);flex:none}
+.dot.ok{background:var(--ok)}.dot.off{background:var(--off)}
+.note{font-size:10.5px;line-height:1.9;color:var(--hint);margin-top:12px}
+code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:rgba(255,255,255,.7);padding:1px 5px;border-radius:5px}
+</style>
+<link rel="stylesheet" href="../base/theme.css?v=1021a">
+<script src="../base/theme.js?v=1021a"></script>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<header class="hd">
+  <div class="ttl"><h1>工作区</h1><em>what's in progress.</em></div>
+  <button class="back" onclick="ZGBack()">返回</button>
+</header>
+<main>
+
+  <div class="eyebrow">导入</div>
+  <div class="card">
+    <b>插件 · MCP · 沙盒包</b>
+    <p>把文件丢进来，记在清单里，连接页那边会一起显示。</p>
+    <input id="pick" type="file" multiple hidden>
+    <div class="drop" id="drop">
+      <div class="big">＋</div>
+      <b>选文件，或者拖进来</b>
+      <span>.toolpkg · .zip · .js · .json</span>
+    </div>
+    <div id="list"><div class="empty">还没导过东西</div></div>
+  </div>
+
+  <div class="eyebrow">跑代码的环境</div>
+  <div class="card">
+    <div class="row"><div class="dot ok"></div><div class="nm"><b>Linux · Ubuntu</b><span>有 python3，能读写 sdcard</span></div></div>
+    <div class="row"><div class="dot ok"></div><div class="nm"><b>Python 3</b><span>脚本、转码、抓数据都行</span></div></div>
+    <div class="row"><div class="dot"></div><div class="nm"><b>Windows</b><span>没有。要跑 exe 得另开一台机器</span></div></div>
+    <div class="row"><div class="dot"></div><div class="nm"><b>浏览器沙盒</b><span>只能算页面里的，碰不到系统</span></div></div>
+    <p class="note">点一下就行的话我直接做；真要装包，最后还是要在 Operit 的包管理里点导入。</p>
+  </div>
+
+  <p class="note">导进来只记清单，不动系统。真安装的路径是 <code>/sdcard/Android/data/com.ai.assistance.operit/files/packages/</code></p>
+</main>
+
+<script>
+(function () {
+  var KEY = 'zg.files';
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; } }
+  function save(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function kb(n) { return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB'; }
+  function kind(n) {
+    n = n.toLowerCase();
+    if (/\.toolpkg$/.test(n)) return '沙盒包';
+    if (/\.zip$/.test(n)) return '压缩包';
+    if (/\.js$/.test(n)) return '脚本';
+    if (/\.json$/.test(n)) return '配置';
+    return '文件';
+  }
+  function paint() {
+    var arr = load();
+    var box = document.getElementById('list');
+    if (!arr.length) { box.innerHTML = '<div class="empty">还没导过东西</div>'; return; }
+    box.innerHTML = arr.map(function (f, i) {
+      return '<div class="file"><span class="tag">' + kind(f.n) + '</span>'
+        + '<div class="nm"><b>' + esc(f.n) + '</b><span>' + kb(f.s) + ' · ' + esc(f.d) + '</span></div>'
+        + '<button class="x" data-i="' + i + '">拿掉</button></div>';
+    }).join('');
+    Array.prototype.forEach.call(box.querySelectorAll('[data-i]'), function (b) {
+      b.addEventListener('click', function () {
+        var a = load(); a.splice(+b.getAttribute('data-i'), 1); save(a); paint();
+      });
+    });
+  }
+  function add(files) {
+    var arr = load();
+    var d = new Date();
+    var day = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    Array.prototype.forEach.call(files, function (f) {
+      arr.unshift({ n: f.name, s: f.size, d: day });
+    });
+    save(arr.slice(0, 60));
+    paint();
+  }
+  var pick = document.getElementById('pick');
+  document.getElementById('drop').addEventListener('click', function () { pick.click(); });
+  pick.addEventListener('change', function () { if (pick.files && pick.files.length) add(pick.files); pick.value = ''; });
+  var dz = document.getElementById('drop');
+  dz.addEventListener('dragover', function (e) { e.preventDefault(); });
+  dz.addEventListener('drop', function (e) {
+    e.preventDefault();
+    if (e.dataTransfer && e.dataTransfer.files) add(e.dataTransfer.files);
+  });
+  paint();
+})();
+</script>
+<script src="../base/snow.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 620" width="240" height="298">
+  <defs>
+    <style>
+      .pf { animation: pf 3.6s ease-in-out infinite alternate; transform-origin: 250px 540px; }
+      @keyframes pf { from { transform: translateY(0px); } to { transform: translateY(-8px); } }
+      .pt { animation: pt 2.7s ease-in-out infinite alternate; transform-origin: 360px 540px; }
+      @keyframes pt { from { transform: rotate(-5deg); } to { transform: rotate(6deg); } }
+      .pb { animation: pb 2.4s ease-in-out infinite alternate; transform-origin: 250px 150px; }
+      @keyframes pb { from { transform: translateY(1px) rotate(-2deg); } to { transform: translateY(-5px) rotate(2deg); } }
+      .pla { animation: pla 3.2s ease-in-out infinite alternate; transform-origin: 250px 62px; }
+      @keyframes pla { from { transform: rotate(-8deg); } to { transform: rotate(9deg); } }
+      .plb { animation: plb 3.9s ease-in-out infinite alternate; transform-origin: 352px 150px; }
+      @keyframes plb { from { transform: rotate(8deg); } to { transform: rotate(-9deg); } }
+      .pe { animation: pe 6.5s infinite; }
+      @keyframes pe { 0%,92%,100% { transform: scaleY(1); } 95%,97% { transform: scaleY(0.07); } }
+    </style>
+  </defs>
+
+  <g class="pf">
+    <path class="pt" d="M368 512 C 442 516, 486 452, 470 376" fill="none" stroke="#111114" stroke-width="50" stroke-linecap="round"/>
+    <path d="M250 316 C 140 336, 92 440, 104 528 C 114 592, 206 612, 258 580 C 336 536, 356 368, 302 318 Z" fill="#111114"/>
+    <path d="M150 560 c -16 18, -4 40, 24 40 c 26 0, 34 -20, 22 -38 z" fill="#111114"/>
+    <path d="M268 570 c -14 18, -2 38, 26 38 c 26 0, 34 -20, 20 -38 z" fill="#111114"/>
+    <ellipse cx="250" cy="200" rx="128" ry="112" fill="#111114"/>
+    <path d="M348 122 L 392 56 L 396 148 Z" fill="#111114"/>
+    <path d="M152 120 L 108 58 L 104 150 Z" fill="#111114"/>
+    <path d="M216 338 C 198 420, 204 508, 222 566 L 284 560 C 270 506, 266 420, 278 336 Z" fill="#eeda9f"/>
+    <path d="M138 288 C 176 260, 324 260, 362 288 C 368 320, 340 352, 250 356 C 160 352, 132 320, 138 288 Z" fill="#eeda9f"/>
+    <rect x="222" y="506" width="60" height="12" rx="2" fill="#ffffff" opacity="0.92"/>
+    <rect x="220" y="536" width="62" height="11" rx="2" fill="#ffffff" opacity="0.92"/>
+    <g class="pe" style="transform-origin:196px 218px">
+      <circle cx="196" cy="218" r="30" fill="#ffffff"/>
+      <circle cx="196" cy="218" r="12" fill="#111114"/>
+    </g>
+    <g class="pe" style="transform-origin:304px 218px">
+      <circle cx="304" cy="218" r="30" fill="#ffffff"/>
+      <circle cx="304" cy="218" r="12" fill="#111114"/>
+    </g>
+  </g>
+
+  <g class="pb">
+    <circle cx="250" cy="96" r="62" fill="#ffffff"/>
+    <path d="M226 92 q 9 -14 18 0" stroke="#111114" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M258 92 q 9 -14 18 0" stroke="#111114" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M244 108 l 8 9 l 8 -9 z" fill="#3a2a18"/>
+    <path d="M228 148 l 7 12 M272 148 l -7 12" stroke="#e0a33c" stroke-width="5.5" stroke-linecap="round"/>
+    <path d="M224 158 q 26 12 52 0" stroke="#0b0b0d" stroke-width="5" fill="none" opacity="0.35"/>
+  </g>
+
+  <g class="pla">
+    <path d="M250 60 C 228 26, 258 4, 274 26 C 288 6, 316 22, 292 58 Z" fill="#4f7d4c"/>
+    <path d="M260 50 C 246 30, 262 16, 272 30 Z" fill="#7fae6f" opacity="0.85"/>
+  </g>
+  <g class="plb">
+    <path d="M340 130 C 368 118, 386 138, 374 152 C 390 160, 374 180, 352 170 Z" fill="#4f7d4c"/>
+    <path d="M352 138 C 368 132, 376 142, 368 150 Z" fill="#7fae6f" opacity="0.85"/>
+    <path d="M362 172 C 380 180, 372 202, 352 192 Z" fill="#4f7d4c"/>
+  </g>
+</svg>

@@ -1,0 +1,165 @@
+/* 朝歌 · 字体包 —— 就是 resources 里那一份，搬成 s 可打包的本地字体 */
+@font-face{font-family:'ZhaoGe';
+  src:url('fonts/zhaoge_font.woff2') format('woff2');
+  font-display:swap;font-style:normal;font-weight:100 900}
+:root{--font-cn:'ZhaoGe','Songti SC','Noto Serif SC',-apple-system,sans-serif}
+/* 朝歌 · 底座（抄自连环 blocks/base/tokens.css）
+   只抄了能搬的：纸色/夜色两套底、重点色派生、字与手感。
+   书脊那套（--pull/--press/--cast/--thread/--tape）朝歌没有书，不抄。 */
+
+:root { --on-accent:#fff; --accent-fg:#fff; }
+
+/* ── 纸：连环的原皮，暖白底暖墨字 ── */
+html[data-skin="paper"] {
+  --bg:#f4f1ec; --header-bg:#f4f1ec;
+  --ink:#453d36; --sub:#776f68; --hint:#7b6f64;
+  --text:#453d36; --text-soft:#776f68; --text-faint:#7b6f64;
+  --line:#e4ded6; --hairline:rgba(120,100,80,.16);
+  --card:#fffdfa; --card2:#faf7f1; --card-bg:#fffdfa;
+  --card-line:rgba(255,255,255,.9);
+  --accent:#b5533a; --accent-soft:#f2e3dc;
+  --field-bg:#fffdfa; --field-line:#e4ded6; --composer-bg:#faf7f1;
+  --card-shadow:0 1px 2px rgba(43,39,36,.04), 0 8px 22px rgba(43,39,36,.055);
+  --soft-shadow:0 2px 6px rgba(43,39,36,.06), 0 18px 40px rgba(43,39,36,.10);
+  --font-title:'Songti SC','Noto Serif SC',serif;
+}
+
+/* ── 夜：连环夜色。系统偏好与手动切换都写，三处齐全才不会打架 ── */
+html[data-theme="dark"] {
+  --bg:#12161d; --header-bg:#12161d;
+  --ink:#eef2f7; --sub:#9aabbf; --hint:#7b889b;
+  --text:#eef2f7; --text-soft:#9aabbf; --text-faint:#7b889b;
+  --line:rgba(255,255,255,.09); --hairline:rgba(255,255,255,.09);
+  --card:#1a1f28; --card2:#161b23; --card-bg:#1a1f28;
+  --card-line:rgba(255,255,255,.06);
+  --field-bg:#161b23; --field-line:rgba(255,255,255,.12); --composer-bg:#161b23;
+  --card-shadow:0 2px 10px rgba(0,0,0,.28);
+  --soft-shadow:0 8px 30px rgba(0,0,0,.20);
+  --on-accent:#2b2724; --accent-fg:#2b2724;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] {
+    --bg:#12161d; --header-bg:#12161d;
+    --ink:#eef2f7; --sub:#9aabbf; --hint:#7b889b;
+    --text:#eef2f7; --text-soft:#9aabbf; --text-faint:#7b889b;
+    --line:rgba(255,255,255,.09); --hairline:rgba(255,255,255,.09);
+    --card:#1a1f28; --card2:#161b23; --card-bg:#1a1f28;
+    --card-line:rgba(255,255,255,.06);
+    --field-bg:#161b23; --field-line:rgba(255,255,255,.12); --composer-bg:#161b23;
+    --on-accent:#2b2724; --accent-fg:#2b2724;
+  }
+}
+html[data-theme="light"] { color-scheme: light; }
+
+/* 纸皮上标题用衬线，像印出来的 */
+html[data-skin="paper"] h1,
+html[data-skin="paper"] .hd b,
+html[data-skin="paper"] .card .t { font-family: var(--font-title, serif); }
+
+/* 按下去得有反应 */
+.pressable { transition: transform .28s cubic-bezier(.34,1.56,.64,1); }
+.pressable:active { transform: scale(.985); }
+
+/* 数字别跳宽度 */
+.num { font-variant-numeric: tabular-nums; }
+
+/* 输入框不小于 16px，不然一聚焦整页被拉大 */
+input, textarea, select { font-size: 16px; }
+/* ── 落雪（抄自连环 blocks/ambience/ambience.css）──
+   宿主放 body 第一个孩子，后面的正文自然盖在上面 */
+.floaty{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.floaty i{position:absolute;top:-8%;display:block;color:var(--accent);opacity:.2;animation:fall linear infinite}
+.floaty i svg{width:100%;height:100%;display:block}
+.floaty i svg[data-solid]{fill:currentColor;stroke:none}
+.floaty i svg[data-line]{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@keyframes fall{
+  0%  {transform:translate3d(0,-10vh,0) rotate(0deg)}
+  100%{transform:translate3d(var(--drift,14px),112vh,0) rotate(var(--spin,300deg))}
+}
+
+/* ── 转场（抄连环：进 .26s 带回弹，出 .22s 更快，出去比进来干脆）── */
+@keyframes zgIn{ from{opacity:0;transform:translateY(10px) scale(.995)} to{opacity:1;transform:none} }
+@keyframes zgOut{ from{opacity:1;transform:none} to{opacity:0;transform:translateY(-6px) scale(.995)} }
+body{ animation:zgIn .26s cubic-bezier(.34,1.26,.64,1) both }
+body.zg-leaving{ animation:zgOut .18s cubic-bezier(.4,0,1,1) both }
+@media (prefers-reduced-motion: reduce){
+  body,body.zg-leaving{ animation:none !important }
+}
+
+/* ── 翻页式覆盖转场（连环那种）：新页从右边推上来，旧页往左压扁一层 ── */
+@view-transition { navigation: auto; }
+
+::view-transition-group(root) { animation: none; }
+::view-transition-image-pair(root) { isolation: auto; }
+
+::view-transition-old(root) {
+  animation: zgOld .34s cubic-bezier(.22,.61,.36,1) both;
+  transform-origin: 50% 50%;
+}
+::view-transition-new(root) {
+  animation: zgNew .36s cubic-bezier(.32,1.02,.62,1) both;
+  box-shadow: -18px 0 40px rgba(0,0,0,.16);
+}
+
+@keyframes zgOld {
+  from { transform: none; filter: brightness(1); }
+  to   { transform: translateX(-16%) scale(.962); filter: brightness(.88); }
+}
+@keyframes zgNew {
+  from { transform: translateX(100%); }
+  to   { transform: none; }
+}
+
+/* 有跨文档转场时，别让 body 淡入叠上去 */
+@supports (view-transition-name: none) {
+  body { animation: none !important; }
+  body.zg-leaving { animation: none !important; }
+}
+
+/* ── 二级页：抄连环 .sub，停在右边一屏等着划进来 ──
+   进去 .3s e-out，退回 .22s e-in（退比进快，不然像卡住） */
+iframe.zg-cover{
+  position:fixed; inset:0; width:100%; height:100%; border:0;
+  z-index:9000; background:var(--bg,#f4f1ec);
+  transform:translateX(100%);
+  transition:transform .22s cubic-bezier(.4,0,1,1);
+  will-change:transform;
+}
+iframe.zg-cover.on{
+  transform:none;
+  transition:transform .3s cubic-bezier(.22,.61,.36,1);
+  box-shadow:-18px 0 40px rgba(0,0,0,.14);
+}
+
+/* ── 朝歌 · 小抽屉（底部卡片）────────────────── */
+.zgm{position:fixed;inset:0;z-index:130;background:rgba(18,38,66,.26);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+  opacity:0;transition:opacity .22s ease}
+.zgm.on{opacity:1}
+.zgd{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:131;
+  background:rgba(255,255,255,.97);border-radius:22px;padding:6px 6px 8px;
+  box-shadow:0 18px 44px rgba(20,44,78,.24),0 2px 8px rgba(20,44,78,.08);
+  opacity:0;transform:translateY(16px) scale(.98);
+  transition:transform .26s cubic-bezier(.22,.9,.24,1),opacity .2s ease}
+.zgd.on{opacity:1;transform:none}
+.zgd .hd{display:flex;align-items:center;gap:8px;padding:12px 14px 8px}
+.zgd .hd b{font-size:14px;font-weight:600;letter-spacing:.02em}
+.zgd .hd i{font-style:normal;font-size:11px;color:#8AA6C4}
+.zgd .hd .x{margin-left:auto;width:28px;height:28px;border-radius:50%;background:#EFF5FD;
+  color:#5C7799;font-size:15px;line-height:28px;text-align:center}
+.zgd .list{padding:0 4px 4px;max-height:56vh;overflow:auto}
+.zgd .it{display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:15px;color:#22405F;
+  transition:background .16s ease,transform .16s ease}
+.zgd .it:active{transform:scale(.985);background:#EFF5FD}
+.zgd .it .av{width:30px;height:30px;border-radius:10px;flex:none;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:600;color:#2F6FD0;
+  background:linear-gradient(150deg,#E4F0FF,#C9DEF9)}
+.zgd .it .tx{flex:1;min-width:0}
+.zgd .it .tx b{display:block;font-size:13.5px;font-weight:500}
+.zgd .it .tx span{display:block;margin-top:2px;font-size:11px;color:#8AA6C4;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zgd .it .ck{width:18px;height:18px;border-radius:50%;flex:none;border:1.5px solid #D6E2F0;
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff}
+.zgd .it.on{background:#F3F8FF}
+.zgd .it.on .ck{background:#2F6FD0;border-color:#2F6FD0}
+.zgd .ft{padding:6px 14px 4px;font-size:11px;color:#8AA6C4;line-height:1.6}

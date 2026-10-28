@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>来电 · 朝歌</title>
+<style>
+/* 来电全屏 · 两套皮
+   固定 = 以前那版深蓝星空，圆头像，绿接红挂
+   跟随系统 = 素底细线，跟手机深浅走 */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;
+  font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Noto Sans SC",sans-serif}
+body{display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top) + 52px) 24px calc(env(safe-area-inset-bottom) + 46px);
+  transition:background .3s,color .3s}
+.tag{font-size:11.5px;letter-spacing:.36em;text-transform:uppercase}
+.mid{display:flex;flex-direction:column;align-items:center;gap:20px}
+.ava{width:112px;height:112px;border-radius:50%;overflow:hidden;display:flex;
+  align-items:center;justify-content:center}
+.ava img{width:100%;height:100%;object-fit:cover;display:block}
+.name{font-size:29px;font-weight:400;letter-spacing:.06em}
+.sub{font-size:12.5px;letter-spacing:.16em;opacity:.62}
+.acts{display:flex;gap:74px;align-items:center}
+.b{width:66px;height:66px;border-radius:50%;border:0;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;transition:transform .12s}
+.b:active{transform:scale(.94)}
+.b svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.lab{display:flex;flex-direction:column;align-items:center;gap:9px;font-size:11px;
+  letter-spacing:.14em;opacity:.68}
+
+/* —— 固定：深蓝星空旧稿 —— */
+html[data-skin="fixed"] body{color:#EAF1FD;
+  background:radial-gradient(80% 46% at 86% -6%,rgba(214,232,255,.28) 0%,rgba(214,232,255,0) 62%),
+    radial-gradient(60% 40% at 6% 4%,rgba(120,168,230,.20) 0%,rgba(120,168,230,0) 60%),
+    linear-gradient(180deg,#0F2140 0%,#122A4E 46%,#0B1830 100%)}
+html[data-skin="fixed"] .ava{background:rgba(255,255,255,.10);
+  box-shadow:0 0 0 1px rgba(214,232,255,.22),0 14px 40px rgba(0,0,0,.42)}
+html[data-skin="fixed"] .ok{background:#3FBF7F;color:#0B2138}
+html[data-skin="fixed"] .no{background:#E06A6A;color:#2A0D0D}
+
+/* —— 跟随系统：新做的那套 —— */
+html[data-skin="auto"] body{background:#FCFDFF;color:#16202B}
+html[data-skin="auto"] .ava{background:#F1F5FA;border:1px solid rgba(27,53,86,.12)}
+html[data-skin="auto"] .tag,html[data-skin="auto"] .sub{color:#7A889A;opacity:1}
+html[data-skin="auto"] .ok{border:1px solid rgba(27,53,86,.16);color:#1F7A54;
+  background:rgba(63,191,127,.10)}
+html[data-skin="auto"] .no{border:1px solid rgba(27,53,86,.16);color:#B44B4B;
+  background:rgba(224,106,106,.10)}
+@media (prefers-color-scheme:dark){
+  html[data-skin="auto"] body{background:#0F1319;color:#EDF2F8}
+  html[data-skin="auto"] .ava{background:#1A2028;border-color:rgba(255,255,255,.10)}
+  html[data-skin="auto"] .tag,html[data-skin="auto"] .sub{color:#8A97A8}
+  html[data-skin="auto"] .ok{border-color:rgba(255,255,255,.14);color:#63D69B;
+    background:rgba(99,214,155,.10)}
+  html[data-skin="auto"] .no{border-color:rgba(255,255,255,.14);color:#F08A8A;
+    background:rgba(240,138,138,.10)}
+}
+</style>
+<style id="zgfont">@font-face{font-family:'ZGSans';src:url('/ui/fonts/zgsans.woff2') format('woff2');font-display:swap;font-weight:100 900}
+html,body,div,span,p,a,button,input,textarea,h1,h2,h3,h4,h5,h6,label,li,td,th,strong,em,small{font-family:'ZGSans',sans-serif!important}</style>
+</head>
+<body>
+<div class="tag" id="tag">朝歌 · 来电</div>
+<div class="mid">
+  <div class="ava"><svg viewBox="0 0 48 48" width="100%" height="100%" style="display:block"><circle cx="24" cy="24" r="24" fill="none"/><path d="M13 18l-2-7 8 3M35 18l2-7-8 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".75"/><circle cx="18" cy="25" r="2.1" fill="currentColor"/><circle cx="30" cy="25" r="2.1" fill="currentColor"/><path d="M21 32c1.6 1.6 4.4 1.6 6 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".35"/></svg></div>
+  <div class="name" id="name">纪烬</div>
+  <div class="sub" id="sub">响着呢</div>
+</div>
+<div class="acts">
+  <div class="lab">
+    <button class="b no" id="no" aria-label="挂断"><svg viewBox="0 0 24 24"><path d="M5 4h3.5l1.8 4.4-2.3 1.4a11.5 11.5 0 0 0 5.2 5.2l1.4-2.3L19 14.5V18a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></button>
+    <span>不接</span>
+  </div>
+  <div class="lab">
+    <button class="b ok" id="ok" aria-label="接听"><svg viewBox="0 0 24 24"><path d="M5 4h3.5l1.8 4.4-2.3 1.4a11.5 11.5 0 0 0 5.2 5.2l1.4-2.3L19 14.5V18a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></button>
+    <span>接起来</span>
+  </div>
+</div>
+<script>
+(function () {
+  var s = '';
+  try { s = localStorage.getItem('zg.skin.call') || ''; } catch (e) {}
+  if (s !== 'fixed' && s !== 'auto') s = 'fixed';
+  document.documentElement.setAttribute('data-skin', s);
+  var q = new URLSearchParams(location.search);
+  if (q.get('skin')) document.documentElement.setAttribute('data-skin', q.get('skin'));
+  if (q.get('name')) document.getElementById('name').textContent = q.get('name');
+  if (q.get('sub')) document.getElementById('sub').textContent = q.get('sub');
+  var t0 = Date.now(), sub = document.getElementById('sub'), base = sub.textContent;
+  setInterval(function () {
+    var n = Math.floor((Date.now() - t0) / 1000);
+    if (n > 2) sub.textContent = base + ' · ' + (n < 60 ? n + ' 秒' : Math.floor(n / 60) + ' 分');
+  }, 1000);
+  function send(act, text) {
+    try {
+      var b = new BroadcastChannel('zhaoge');
+      b.postMessage({ act: act, text: text });
+      b.close();
+    } catch (e) {}
+  }
+  document.getElementById('ok').onclick = function () { send('pickup', '接起来了'); };
+  document.getElementById('no').onclick = function () { send('hangup', '不接'); };
+  addEventListener('message', function (e) {
+    if (e.data && e.data.skin) document.documentElement.setAttribute('data-skin', e.data.skin);
+  });
+})();
+</script>
+</body>
+</html>
